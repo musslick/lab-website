@@ -1,0 +1,1238 @@
+/* =========================================
+   GLOBAL STYLES
+   ========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root, .app {
+  height: 100%;
+  background-color: #ffffff; /* Ensure consistent white background */
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+  Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, button, .nav-links, .logo-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+}
+
+/* Global rule to remove underlines */
+h1::after, 
+h2::after, 
+h3::after, 
+h4::after, 
+h5::after, 
+h6::after {
+  display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  border-bottom: none !important;
+}
+
+a, a:hover, a:active, a:visited {
+  text-decoration: none;
+}
+
+/* Add global color rules */
+h1, h2, h3, h4, h5, h6, p, span, div, li, a {
+  color: #000000; /* Set text to pure black by default */
+}
+
+/* Exceptions for specific elements that need different colors */
+.project-excerpt, 
+.feed-item .date,
+.hero-section .subtitle {
+  color: #666; /* Keep some secondary text in grey */
+}
+
+/* White text for elements on dark backgrounds */
+.project-color-header h1,
+footer {
+  color: #ffffff;
+}
+
+/* Hidden elements */
+header {
+  display: none; /* Hide the header completely */
+}
+
+.side-nav {
+  display: none;
+}
+
+/* =========================================
+   LAYOUT CONTAINERS
+   ========================================= */
+
+.main-content {
+  min-height: calc(100vh - 80px); /* Adjust for just the footer */
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 5px 10px; /* Decreased horizontal padding from 10px to 5px */
+}
+
+.container {
+  flex: 1;
+  padding: 10px 5px; /* Decreased horizontal padding from 10px to 5px */
+  width: 100%;
+  margin: auto;
+  overflow: hidden;
+  text-align: left;
+}
+
+/* =========================================
+   TOP NAVIGATION
+   ========================================= */
+
+.top-nav {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff !important; /* Set fixed color and use !important to ensure it takes precedence */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Lighter shadow for white background */
+  z-index: 1000;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0;
+  transition: background 0.3s ease;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid #eee !important; /* Ensure border is visible */
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px; /* Decreased horizontal padding from 20px to 10px */
+  height: 70px;
+}
+
+.logo-container {
+  flex: 0 0 auto;
+}
+
+.logo {
+  text-decoration: none;
+  color: #000000; /* Black text for the logo */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: none;
+}
+
+.logo-text {
+  display: inline-block;
+  color: #000000; /* Black text color */
+  font-weight: 500; /* Match the weight of nav items */
+  font-size: 1rem; /* Match the font size of navigation links */
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links li {
+  position: relative;
+}
+
+.nav-links a {
+  display: inline-block;
+  padding: 8px 12px;
+  color: #000000; /* Black text for nav links */
+  text-decoration: none;
+  font-weight: 500;
+  transition: font-weight 0.2s;
+  border-radius: 4px;
+  text-shadow: none;
+  background-color: transparent;
+}
+
+/* Remove underline from active nav items */
+.nav-links a.active::after {
+  display: none; /* Hide the underline */
+}
+
+/* Make active items only bold without background */
+.nav-links a.active {
+  color: #000000; /* Black text for active items */
+  font-weight: 700; /* Keep bold for active items */
+  background-color: transparent;
+}
+
+.nav-links a:hover {
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.7); /* Slightly darken on hover */
+}
+
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.bar {
+  height: 3px;
+  width: 100%;
+  background-color: #000000; /* Changed to black for contrast on white background */
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background-color: #ffffff !important; /* White background for mobile menu */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    z-index: 100;
+  }
+
+  .nav-links.active {
+    max-height: 300px;
+    padding: 10px 0;
+  }
+
+  .nav-links li {
+    width: 100%;
+  }
+
+  .nav-links a {
+    padding: 15px 20px;
+    width: 100%;
+    display: block;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Darker border for white background */
+    text-shadow: none; /* Ensure no text shadow on mobile */
+    color: #000000; /* Ensure text is black on mobile */
+  }
+
+  .logo-text {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-menu-toggle .bar {
+    background-color: #000000; /* Black bars for the hamburger menu */
+  }
+}
+
+/* =========================================
+   PAGE HEADER
+   ========================================= */
+
+.page-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  text-align: center;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.page-header p {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .page-header p {
+    font-size: 1rem;
+  }
+}
+
+/* =========================================
+   TEAM STYLES
+   ========================================= */
+
+/* Team Gradient Banner */
+.team-gradient-banner {
+  height: 200px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #ffffff; /* Changed from gradient to white */
+}
+
+.team-gradient-banner::before {
+  content: none; /* Remove the dark overlay */
+}
+
+.banner-content {
+  position: relative;
+  z-index: 2;
+  color: #000000; /* Changed from white to black for better contrast on white background */
+  text-align: center;
+  padding: 20px;
+}
+
+.banner-content h2 {
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+  text-shadow: none; /* Removed text shadow */
+}
+
+.banner-content p {
+  margin: 0;
+  font-size: 1.2rem;
+  text-shadow: none; /* Removed text shadow */
+  color: #666; /* Added gray color for subtitle */
+}
+
+@media (max-width: 768px) {
+  .team-gradient-banner {
+    height: 150px;
+  }
+  
+  .banner-content h2 {
+    font-size: 1.8rem;
+  }
+  
+  .banner-content p {
+    font-size: 1rem;
+  }
+}
+
+/* Team Page */
+.team-page {
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+  text-align: left;
+}
+
+.team-intro {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 40px;
+  color: #666; /* Keep this muted color for intro text */
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.team-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px; /* Reduced gap from 30px to 15px */
+  margin-top: 30px;
+}
+
+.team-member {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.team-member-color {
+  height: 10px;
+  width: 100%;
+}
+
+.team-member-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 20px auto;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-member-info {
+  padding: 15px; /* Decreased padding from 20px */
+  text-align: left;
+}
+
+.team-member-name {
+  margin: 0 0 10px;
+  /* color: #333; - Use default body text color */
+  text-align: left;
+}
+
+.team-member-bio {
+  color: #666; /* Keep this muted color for bio text */
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .team-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.team-member-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.team-member-color-header {
+  height: 10px;
+  width: 100%;
+}
+
+.member-projects {
+  margin-top: 15px;
+}
+
+.member-projects h4 {
+  font-size: 1rem;
+  color: #555; /* Keep this muted color for section headers */
+  margin-bottom: 8px;
+}
+
+.member-project-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.member-project-chip {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.member-project-chip:hover {
+  transform: scale(1.05);
+}
+
+/* =========================================
+   PROJECTS STYLES
+   ========================================= */
+
+.projects-page {
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+}
+
+.projects-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.projects-header h1 {
+  /* color: #007acc; - Remove specific color */
+  margin-bottom: 10px;
+  border-bottom: none;
+}
+
+.projects-header p {
+  color: #666;
+  font-size: 18px;
+}
+
+.projects-grid {
+  display: grid;
+  /* Adjusted to fit exactly 3 cards per row with equal width */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* Make sure projects fit 3 on larger screens, 2 on medium screens, and 1 on small screens */
+@media (max-width: 1100px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Enhanced styles for project cards */
+.project-card {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+  color: #000000; /* Changed from inherit to pure black */
+  background: white;
+  height: 100%;
+  position: relative; /* Ensure the card is positioned relatively for mouse tracking */
+  cursor: pointer; /* Show pointer cursor to indicate interactivity */
+  will-change: transform; /* Optimize performance for transforms */
+  margin-bottom: 15px; /* Add some spacing between cards */
+  min-height: 350px; /* Set minimum height for consistency */
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.project-thumbnail {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* Make color blocks taller to accommodate the larger card size */
+.project-color-block {
+  width: 100%;
+  height: 200px; /* Increased from 180px for more visual impact */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  position: relative;
+  background-size: 150% 150% !important; /* Larger background size for more movement */
+  transition: background-position 0.05s ease-out, transform 0.3s ease; /* Smooth transition for gradient movement and hover effect */
+  will-change: background; /* Optimize performance for background changes */
+  overflow: hidden;
+}
+
+.project-card:hover .project-color-block::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle highlight */
+  z-index: 1;
+}
+
+/* Add animation for gradient color blocks */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* Remove the title overlay since we don't want text on hover */
+.project-title-overlay {
+  display: none;
+}
+
+/* Remove hover animation since we're doing dynamic gradients */
+@keyframes gradientFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Apply animation when not being hovered (subtle background movement) */
+.project-color-block:not(:hover) {
+  animation: none;
+}
+
+/* Add subtle zoom effect when hovering over the card */
+.project-card:hover .project-color-block {
+  transform: scale(1.02);
+}
+
+.project-content {
+  padding: 18px; /* Increased padding for better spacing */
+  text-align: left;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 200px); /* Adjust to match the color block height */
+}
+
+.project-title {
+  font-size: 1.4rem; /* Increased font size from 1.3rem */
+  margin: 0 0 12px 0; /* Increased bottom margin for spacing */
+  color: #000000; /* Added pure black color */
+}
+
+.project-excerpt {
+  color: #666;
+  font-size: 1rem; /* Slightly increased from 0.95rem */
+  line-height: 1.5;
+  margin: 0;
+  margin-bottom: 15px; /* Add some spacing */
+  flex: 1; /* Allow excerpt to take available space */
+}
+
+/* Enhanced Filter Component */
+.filter {
+  display: flex;
+  justify-content: flex-start;
+  margin: 20px 0;
+}
+
+.filter select {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  min-width: 200px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter select:focus {
+  border-color: #555; /* Changed from #333 to #555 to match other grays */
+}
+
+.filter h3 {
+  margin-right: 15px;
+  line-height: 40px;
+  border-bottom: none;
+}
+
+/* Replace thumbnail styling with color block styling */
+.project-color-block {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  position: relative;
+  background-size: cover !important;
+}
+
+.project-category {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #666; /* Keep this muted color for category tags */
+  font-size: 0.8rem;
+  margin-top: 10px;
+  margin: 5px 0 10px 0; /* Adjusted margins */
+}
+
+/* Updated team tag styles with color dots */
+.project-team {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  margin-top: 10px;
+}
+
+.team-member-tag {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  padding: 4px 10px;
+  transition: transform 0.2s;
+}
+
+.team-member-tag:hover {
+  transform: translateY(-2px);
+}
+
+.team-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.team-name {
+  font-size: 0.75rem;
+  color: #555; /* Keep this muted color for team tags */
+}
+
+/* Remove the old team-tag style */
+.team-tag {
+  display: none;
+}
+
+/* Remove team color indicators from the color block since we're moving them beside names */
+.team-color-indicators {
+  display: none;
+}
+
+/* Ensure the project color block has proper positioning for the indicators */
+.project-color-block {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  position: relative;
+  background-size: cover !important;
+}
+
+.project-team-member {
+  color: #000000; /* Changed from #333 to pure black */
+}
+
+/* Project Details */
+.project-details {
+  max-width: 1200px; /* Match main content width */
+  margin: 0 auto;
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+  text-align: left;
+}
+
+.project-main-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.project-section {
+  margin: 30px 0;
+}
+
+.project-section h2 {
+  border-bottom: none; /* Remove bottom border */
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.project-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.project-section li {
+  margin: 10px 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.project-section a {
+  text-decoration: none;
+}
+
+.project-section a:hover {
+  text-decoration: none;
+}
+
+.project-color-header {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  background-size: cover !important;
+  text-align: center;
+}
+
+.project-color-header h1 {
+  color: white; /* Keep this for contrast on colored backgrounds */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  margin: 0;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.project-team-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.project-team-member {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-team-member:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-color-indicator {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.project-team-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* =========================================
+   HOME PAGE STYLES
+   ========================================= */
+
+.home-page {
+  padding: 0 5px; /* Decreased horizontal padding from 40px to 5px */
+  text-align: left;
+}
+
+.hero-section {
+  text-align: left;
+  margin-bottom: 0px;
+  margin-top: 20px;
+  padding: 100px 0; /* Removed horizontal padding, will inherit from parent */
+  background-color: transparent;
+  border-radius: 0;
+  background-image: none;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-title-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.hero-logo {
+  width: 400px; /* Restored reasonable size */
+  height: 400px; /* Restored reasonable size */
+  margin-right: 70px;
+  display: block; /* Ensure the SVG displays properly */
+  flex-shrink: 0; /* Prevent the SVG from shrinking */
+}
+
+.hero-section h1 {
+  font-size: 5.4rem; /* Increased from 5rem to 7rem */
+  margin-bottom: 30px; /* Increased bottom margin */
+  font-weight: 600;
+  line-height: 1; /* Tightened line height */
+  letter-spacing: -2px; /* More negative tracking for large titles */
+  max-width: 1900px; /* Increased max-width */
+  font-family: 'Inter', sans-serif;
+  color: #000000; /* Ensure pure black text */
+  margin-top: 0; /* Remove top margin to align with logo */
+  margin-bottom: 0; /* Remove bottom margin since wrapper has margin */
+}
+
+.hero-section h1 .highlight-text {
+  color: #00AAFF; /* Blue color for Mind and Brain words */
+  font-weight: 600; /* Make sure highlighted text is bold */
+  display: inline; /* Keep the text inline with the rest */
+}
+
+.hero-text {
+  font-size: 1.8rem; /* Increased from 1.6rem */
+  color: #000000; /* Changed from #666 to pure black */
+  max-width: 1000px;
+  margin: 50px 0 0 0;
+  line-height: 1.6;
+  font-family: 'Inter', sans-serif;
+  font-weight: 100;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title {
+  position: relative;
+  display: inline-block;
+}
+
+/* Use Projects.css grid styling for featured projects */
+.featured-projects {
+  margin: 60px 0; /* Increased margin for better spacing */
+  padding: 0 5px; /* Add minimal horizontal padding */
+}
+
+.featured-projects h2 {
+  text-align: left;
+  margin-bottom: 30px;
+  position: relative;
+  padding-bottom: 15px;
+  font-weight: 400;
+}
+
+.home-page .projects-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 1100px) {
+  .home-page .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .home-page .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Ensure collaborators section has consistent styling */
+.collaborators {
+  margin: 80px 0;
+  text-align: center;
+  padding: 0 5px; /* Add minimal horizontal padding */
+}
+
+/* Make sure media queries don't affect project cards */
+@media (max-width: 1200px) {
+  .hero-section h1 {
+    font-size: 5.5rem;
+  }
+  
+  .hero-logo {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 992px) {
+  .hero-section h1 {
+    font-size: 4.5rem;
+  }
+  
+  .hero-logo {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 40px 20px 80px; /* Reduced top padding for mobile */
+  }
+  
+  .hero-section h1 {
+    font-size: 3.5rem;
+  }
+  
+  .hero-text {
+    font-size: 1.4rem;
+  }
+  
+  .hero-logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+  }
+  
+  .hero-title-wrapper {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section h1 {
+    font-size: 2.8rem;
+    letter-spacing: -1px;
+  }
+  
+  .hero-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .hero-title-wrapper {
+    align-items: flex-start; /* Align at the top for very small screens */
+  }
+}
+
+/* =========================================
+   ABOUT PAGE STYLES
+   ========================================= */
+
+.about-page {
+  max-width: 1200px; /* Match main content width */
+  margin: 0 auto;
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+}
+
+.about-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.about-header p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.about-section {
+  margin-bottom: 40px;
+}
+
+.about-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.about-section p {
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.about-section ul {
+  padding-left: 20px;
+}
+
+.about-section li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   FEED STYLES
+   ========================================= */
+
+.feed-container {
+  padding: 2rem 10px; /* Decreased horizontal padding from 40px to 10px */
+  max-width: 1200px; /* Match main content width */
+  margin: 0 auto;
+}
+
+.feed-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.feed-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feed-item h2 {
+  margin: 0 0 0.5rem 0;
+  text-align: left;
+}
+
+.feed-item .date {
+  color: #666; /* Keep this muted color for dates */
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+  text-align: left;
+}
+
+.feed-item .content {
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* =========================================
+   FOOTER STYLES
+   ========================================= */
+
+footer {
+  background: #ffffff; /* Changed from #333 to white */
+  color: #000000; /* Changed from white to black for better contrast on white background */
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #eee; /* Added subtle border to separate from content */
+}
+
+footer a {
+  color: #000000; /* Changed from white to black */
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+footer div {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px; /* Decreased from 20px */
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+@media (max-width: 768px) {
+  footer div {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* =========================================
+   PAGE SPECIFIC STYLES - Standardize margins
+   ========================================= */
+
+/* Home page */
+.home-page {
+  padding: 0 5px; /* Decreased horizontal padding from 40px to 5px */
+}
+
+.hero-section {
+  text-align: left;
+  margin-bottom: 20px;
+  padding: 100px 0; /* Removed horizontal padding, will inherit from parent */
+  background-color: transparent;
+  border-radius: 0;
+  background-image: none;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.featured-projects {
+  margin: 60px 0; /* Vertical margin only */
+  padding: 0 5px; /* Add minimal horizontal padding */
+}
+
+.collaborators {
+  margin: 80px 0;
+  text-align: center;
+  padding: 0 5px; /* Add minimal horizontal padding */
+}
+
+/* About page */
+.about-page {
+  max-width: 1200px; /* Match main content width */
+  margin: 0 auto;
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+}
+
+/* Team page */
+.team-page {
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+  text-align: left;
+}
+
+/* Projects page */
+.projects-page {
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+}
+
+/* Project details page */
+.project-details {
+  max-width: 1200px; /* Match main content width */
+  margin: 0 auto;
+  padding: 20px 10px; /* Decreased horizontal padding from 40px to 10px */
+  text-align: left;
+}
+
+/* Feed page */
+.feed-container {
+  padding: 2rem 10px; /* Decreased horizontal padding from 40px to 10px */
+  max-width: 1200px; /* Match main content width */
+  margin: 0 auto;
+}
+
+/* Adjust responsive designs for standardized margins */
+@media (max-width: 768px) {
+  .main-content,
+  .home-page,
+  .about-page,
+  .team-page,
+  .projects-page,
+  .project-details,
+  .feed-container {
+    padding-left: 5px; /* Further reduced from 20px to 5px */
+    padding-right: 5px; /* Further reduced from 20px to 5px */
+  }
+
+  .nav-links a {
+    padding: 15px 10px; /* Decreased right padding from 20px to 10px */
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content,
+  .home-page,
+  .about-page,
+  .team-page,
+  .projects-page,
+  .project-details,
+  .feed-container {
+    padding-left: 3px; /* Further reduced from 15px to 3px */
+    padding-right: 3px; /* Further reduced from 15px to 3px */
+  }
+}
