@@ -10,19 +10,20 @@ const ProjectForm: React.FC = () => {
   const { projects, teamMembers, updateProject, addProject, deleteProject } = useContent();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  const emptyProject: Project = {
-    id: '',
-    title: '',
-    description: '',
-    color: 'linear-gradient(135deg, #FF5733, #00AAFF)',
-    category: '',
-    team: []
-  };
+  // Create separate state variables for each field
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const [team, setTeam] = useState<string[]>([]);
+  const [projectId, setProjectId] = useState('');
+  const [color, setColor] = useState('');
   
-  const [project, setProject] = useState<Project>(emptyProject);
+  // State for available options
   const [availableTeamMembers, setAvailableTeamMembers] = useState<{ name: string }[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  
   const isEditMode = id !== 'new';
   
   useEffect(() => {
@@ -37,60 +38,76 @@ const ProjectForm: React.FC = () => {
     if (isEditMode) {
       const projectToEdit = projects.find(p => p.id === id);
       if (projectToEdit) {
-        setProject(JSON.parse(JSON.stringify(projectToEdit))); // Deep copy
+        console.log("Loading project for editing:", projectToEdit);
+        // Set individual field values
+        setTitle(projectToEdit.title || '');
+        setDescription(projectToEdit.description || '');
+        setCategory(projectToEdit.category || '');
+        setTeam(projectToEdit.team || []);
+        setProjectId(projectToEdit.id);
+        setColor(projectToEdit.color || '');
       } else {
-        navigate('/admin');
+        setError(`Could not find project with ID: ${id}`);
+        setTimeout(() => navigate('/admin'), 2000);
       }
     } else {
       // Set up a new project with a generated ID
-      setProject({
-        ...emptyProject,
-        id: `project-${Date.now()}`
-      });
+      const newId = `project-${Date.now()}`;
+      setProjectId(newId);
+      setColor('linear-gradient(135deg, #FF5733, #00AAFF)');
     }
-  }, [id, isEditMode, projects, teamMembers, navigate, emptyProject]);
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setProject(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  }, [id, isEditMode, projects, teamMembers, navigate]);
   
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
-    setProject(prev => ({
-      ...prev,
-      team: selected
-    }));
+    setTeam(selected);
   };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields
-    if (!project.title || !project.description || !project.category) {
-      alert('Please fill in all required fields');
+    if (!title || !description || !category) {
+      setError('Please fill in all required fields');
       return;
     }
     
-    if (isEditMode) {
-      updateProject(project);
-    } else {
-      addProject(project);
-    }
+    // Clear any previous errors
+    setError(null);
     
-    setFormSubmitted(true);
-    setTimeout(() => {
-      navigate('/admin');
-    }, 1500);
+    // Construct the project object
+    const projectData: Project = {
+      id: projectId,
+      title,
+      description,
+      category,
+      team,
+      color
+    };
+    
+    console.log("Submitting project data:", projectData);
+    
+    try {
+      if (isEditMode) {
+        updateProject(projectData);
+      } else {
+        addProject(projectData);
+      }
+      
+      setFormSubmitted(true);
+      setTimeout(() => {
+        navigate('/admin');
+      }, 1500);
+    } catch (error) {
+      console.error("Error saving project:", error);
+      setError("An error occurred while saving the project.");
+    }
   };
   
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       setIsDeleting(true);
-      deleteProject(project.id);
+      deleteProject(projectId);
       setTimeout(() => {
         navigate('/admin');
       }, 1000);
@@ -114,7 +131,7 @@ const ProjectForm: React.FC = () => {
     height: '100px',
     borderRadius: '8px',
     marginTop: '15px',
-    background: project.color
+    background: color
   };
   
   return (
@@ -128,15 +145,27 @@ const ProjectForm: React.FC = () => {
           </div>
         )}
         
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+        
+        {/* Debug info */}
+        <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
+          <strong>ID:</strong> {projectId}<br/>
+          <strong>Mode:</strong> {isEditMode ? 'Edit' : 'New'}<br/>
+          <strong>Title:</strong> {title}
+        </div>
+        
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <label htmlFor="title">Project Title*</label>
             <input
               type="text"
               id="title"
-              name="title"
-              value={project.title}
-              onChange={handleChange}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
             />
           </div>
@@ -145,9 +174,8 @@ const ProjectForm: React.FC = () => {
             <label htmlFor="description">Description*</label>
             <textarea
               id="description"
-              name="description"
-              value={project.description}
-              onChange={handleChange}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               rows={5}
               required
             />
@@ -158,15 +186,14 @@ const ProjectForm: React.FC = () => {
             <input
               type="text"
               id="category"
-              name="category"
-              value={project.category}
-              onChange={handleChange}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               list="categories"
               required
             />
             <datalist id="categories">
-              {categories.map((category, index) => (
-                <option key={index} value={category} />
+              {categories.map((cat, index) => (
+                <option key={index} value={cat} />
               ))}
             </datalist>
             <p className="form-help-text">Type to select an existing category or enter a new one</p>
@@ -176,9 +203,8 @@ const ProjectForm: React.FC = () => {
             <label htmlFor="team">Team Members</label>
             <select
               id="team"
-              name="team"
               multiple
-              value={project.team || []}
+              value={team}
               onChange={handleTeamChange}
               style={{ height: '150px' }}
             >

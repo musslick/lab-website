@@ -10,18 +10,18 @@ const TeamMemberForm: React.FC = () => {
   const { teamMembers, projects, updateTeamMember, addTeamMember, deleteTeamMember } = useContent();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  const emptyMember: TeamMember = {
-    id: '',
-    name: '',
-    role: '',
-    bio: '',
-    imageUrl: '',
-    color: '#000000',
-    projects: []
-  };
+  // Create separate state variables for each field
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('');
+  const [bio, setBio] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [color, setColor] = useState('#000000');
+  const [memberProjects, setMemberProjects] = useState<string[]>([]);
+  const [email, setEmail] = useState('');
+  const [memberId, setMemberId] = useState('');
   
-  const [member, setMember] = useState<TeamMember>(emptyMember);
   const [availableProjects, setAvailableProjects] = useState<{ id: string, title: string }[]>([]);
   
   const isEditMode = id !== 'new';
@@ -37,67 +37,84 @@ const TeamMemberForm: React.FC = () => {
     if (isEditMode) {
       const memberToEdit = teamMembers.find(m => m.id === id);
       if (memberToEdit) {
-        setMember(JSON.parse(JSON.stringify(memberToEdit))); // Deep copy
+        console.log("Loading team member for editing:", memberToEdit);
+        // Set individual field values
+        setName(memberToEdit.name || '');
+        setRole(memberToEdit.role || '');
+        setBio(memberToEdit.bio || '');
+        setImageUrl(memberToEdit.imageUrl || '');
+        setColor(memberToEdit.color || '#000000');
+        setMemberProjects(memberToEdit.projects || []);
+        setEmail(memberToEdit.email || '');
+        setMemberId(memberToEdit.id);
       } else {
-        navigate('/admin');
+        setError(`Could not find team member with ID: ${id}`);
+        setTimeout(() => navigate('/admin'), 2000);
       }
     } else {
       // Set up a new team member with a generated ID
-      setMember({
-        ...emptyMember,
-        id: `member-${Date.now()}`
-      });
+      const newId = `member-${Date.now()}`;
+      setMemberId(newId);
+      setColor('#000000');
     }
-  }, [id, isEditMode, teamMembers, projects, navigate, emptyMember]);
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setMember(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  }, [id, isEditMode, teamMembers, projects, navigate]);
   
   const handleProjectsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
-    setMember(prev => ({
-      ...prev,
-      projects: selected
-    }));
-  };
-  
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMember(prev => ({
-      ...prev,
-      color: e.target.value
-    }));
+    setMemberProjects(selected);
   };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields
-    if (!member.name || !member.role || !member.bio) {
-      alert('Please fill in all required fields');
+    if (!name || !role || !bio) {
+      setError('Please fill in all required fields');
       return;
     }
     
-    if (isEditMode) {
-      updateTeamMember(member);
-    } else {
-      addTeamMember(member);
+    // Clear any previous errors
+    setError(null);
+    
+    // Construct the team member object
+    const memberData: TeamMember = {
+      id: memberId,
+      name,
+      role,
+      bio,
+      imageUrl,
+      color,
+      projects: memberProjects
+    };
+    
+    // Add email if provided
+    if (email) {
+      memberData.email = email;
     }
     
-    setFormSubmitted(true);
-    setTimeout(() => {
-      navigate('/admin');
-    }, 1500);
+    console.log("Submitting team member data:", memberData);
+    
+    try {
+      if (isEditMode) {
+        updateTeamMember(memberData);
+      } else {
+        addTeamMember(memberData);
+      }
+      
+      setFormSubmitted(true);
+      setTimeout(() => {
+        navigate('/admin');
+      }, 1500);
+    } catch (error) {
+      console.error("Error saving team member:", error);
+      setError("An error occurred while saving the team member.");
+    }
   };
   
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this team member?')) {
       setIsDeleting(true);
-      deleteTeamMember(member.id);
+      deleteTeamMember(memberId);
       setTimeout(() => {
         navigate('/admin');
       }, 1000);
@@ -127,15 +144,27 @@ const TeamMemberForm: React.FC = () => {
           </div>
         )}
         
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+        
+        {/* Debug info */}
+        <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
+          <strong>ID:</strong> {memberId}<br/>
+          <strong>Mode:</strong> {isEditMode ? 'Edit' : 'New'}<br/>
+          <strong>Name:</strong> {name}
+        </div>
+        
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <label htmlFor="name">Name*</label>
             <input
               type="text"
               id="name"
-              name="name"
-              value={member.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
@@ -145,9 +174,8 @@ const TeamMemberForm: React.FC = () => {
             <input
               type="text"
               id="role"
-              name="role"
-              value={member.role}
-              onChange={handleChange}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
               required
             />
           </div>
@@ -156,9 +184,8 @@ const TeamMemberForm: React.FC = () => {
             <label htmlFor="bio">Bio*</label>
             <textarea
               id="bio"
-              name="bio"
-              value={member.bio}
-              onChange={handleChange}
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
               rows={5}
               required
             />
@@ -170,15 +197,14 @@ const TeamMemberForm: React.FC = () => {
               <input
                 type="text"
                 id="imageUrl"
-                name="imageUrl"
-                value={member.imageUrl}
-                onChange={handleChange}
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="/assets/team/default.jpg"
               />
-              {member.imageUrl && (
+              {imageUrl && (
                 <div className="image-preview">
                   <img 
-                    src={member.imageUrl} 
+                    src={imageUrl} 
                     alt="Member preview" 
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none';
@@ -193,17 +219,16 @@ const TeamMemberForm: React.FC = () => {
               <input
                 type="color"
                 id="color"
-                name="color"
-                value={member.color}
-                onChange={handleColorChange}
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
               />
-              <span className="color-value">{member.color}</span>
+              <span className="color-value">{color}</span>
               <div 
                 className="color-preview" 
                 style={{ 
                   height: '30px', 
                   width: '100%', 
-                  backgroundColor: member.color,
+                  backgroundColor: color,
                   marginTop: '10px',
                   borderRadius: '4px'
                 }}
@@ -215,9 +240,8 @@ const TeamMemberForm: React.FC = () => {
             <label htmlFor="projects">Projects</label>
             <select
               id="projects"
-              name="projects"
               multiple
-              value={member.projects || []}
+              value={memberProjects}
               onChange={handleProjectsChange}
               style={{ height: '120px' }}
             >
@@ -235,9 +259,8 @@ const TeamMemberForm: React.FC = () => {
             <input
               type="email"
               id="email"
-              name="email"
-              value={member.email || ''}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           
