@@ -25,7 +25,6 @@ const Home: React.FC = () => {
             </section>
             
             <section className="featured-projects">
-                <h2 style={{ textAlign: 'left' }}>Featured Projects</h2>
                 {/* Use the same projects-grid class as in Projects.tsx */}
                 <div className="projects-grid">
                     {featuredProjects.map(project => (
