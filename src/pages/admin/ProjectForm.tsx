@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { Project } from '../../data/projects';
+import { createGradient } from '../../utils/colorUtils';
 
 const ProjectForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -10,12 +11,13 @@ const ProjectForm: React.FC = () => {
   const { projects, teamMembers, updateProject, addProject, deleteProject } = useContent();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [previewGradient, setPreviewGradient] = useState<string>('');
 
   const emptyProject: Project = {
     id: '',
     title: '',
     description: '',
-    color: 'linear-gradient(120deg, #FF5733, #33A8FF)',
+    color: 'linear-gradient(120deg, #FF5733, #00AAFF)',
     category: '',
     team: [],
     status: 'ongoing',
@@ -30,6 +32,7 @@ const ProjectForm: React.FC = () => {
       const projectToEdit = projects.find(p => p.id === id);
       if (projectToEdit) {
         setProject(projectToEdit);
+        setPreviewGradient(projectToEdit.color);
       } else {
         navigate('/admin');
       }
@@ -39,8 +42,36 @@ const ProjectForm: React.FC = () => {
         ...emptyProject,
         id: `project-${Date.now()}`
       });
+      setPreviewGradient(emptyProject.color);
     }
   }, [id, projects, isEditMode, navigate]);
+
+  // Generate a preview gradient when team members change
+  useEffect(() => {
+    // Only update the preview if we have team members selected
+    if (project.team && project.team.length > 0) {
+      const teamColors = project.team.map(memberName => {
+        const member = teamMembers.find(m => m.name === memberName);
+        return member ? member.color : '#CCCCCC';
+      });
+
+      const gradient = createGradient(teamColors, {
+        includeHighlight: true,
+        highlightColor: '#00AAFF', // Lab blue
+        mixColors: true,
+        mixRatio: 0.3,
+        angle: 135
+      });
+
+      setPreviewGradient(gradient);
+    } else if (project.color) {
+      // If no team members but we have a color, use that
+      setPreviewGradient(project.color);
+    } else {
+      // Default gradient
+      setPreviewGradient('linear-gradient(120deg, #FF5733, #00AAFF)');
+    }
+  }, [project.team, teamMembers]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -81,20 +112,16 @@ const ProjectForm: React.FC = () => {
       return;
     }
     
-    // Make sure we have a proper color value
-    if (!project.color.includes('gradient') && !project.color.match(/#[0-9A-Fa-f]{6}/)) {
-      setProject(prev => ({
-        ...prev,
-        color: 'linear-gradient(120deg, #FF5733, #33A8FF)'
-      }));
-    }
-    
-    console.log('Submitting project:', project);
+    // Use the preview gradient as the project color
+    const updatedProject = {
+      ...project,
+      color: previewGradient
+    };
     
     if (isEditMode) {
-      updateProject(project);
+      updateProject(updatedProject);
     } else {
-      addProject(project);
+      addProject(updatedProject);
     }
     
     setFormSubmitted(true);
@@ -164,19 +191,35 @@ const ProjectForm: React.FC = () => {
           </div>
           
           <div className="form-group">
-            <label htmlFor="color">Color (Gradient or Hex)*</label>
-            <input
-              type="text"
-              id="color"
-              name="color"
-              value={project.color}
-              onChange={handleChange}
-              required
-            />
+            <label>Project Color</label>
             <div 
               className="color-preview" 
-              style={{ background: project.color, height: '30px', width: '100%', marginTop: '5px', borderRadius: '4px' }}
-            />
+              style={{ 
+                background: previewGradient, 
+                height: '30px', 
+                width: '100%', 
+                marginTop: '5px', 
+                borderRadius: '4px',
+                position: 'relative'
+              }}
+            >
+              <div className="gradient-info">
+                <span style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  color: '#fff',
+                  textShadow: '0px 0px 3px rgba(0,0,0,0.7)',
+                  fontSize: '12px'
+                }}>
+                  Color is auto-generated from team members
+                </span>
+              </div>
+            </div>
+            <p className="form-help-text">
+              The project color is automatically generated based on the team members you select.
+            </p>
           </div>
           
           <div className="form-group">
@@ -190,12 +233,19 @@ const ProjectForm: React.FC = () => {
               size={Math.min(5, teamMembers.length)}
             >
               {teamMembers.map(member => (
-                <option key={member.id} value={member.name}>
+                <option 
+                  key={member.id} 
+                  value={member.name}
+                  style={{
+                    borderLeft: `4px solid ${member.color}`,
+                    paddingLeft: '8px'
+                  }}
+                >
                   {member.name} - {member.role}
                 </option>
               ))}
             </select>
-            <p className="form-help-text">Hold Ctrl/Cmd to select multiple members</p>
+            <p className="form-help-text">Hold Ctrl/Cmd to select multiple members. Selected team members will affect the project's color scheme.</p>
           </div>
           
           <div className="form-group">

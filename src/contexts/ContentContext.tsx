@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { Project, projects as initialProjects } from '../data/projects';
 import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
+import { createGradient } from '../utils/colorUtils';
 
 interface ContentContextType {
   projects: Project[];
@@ -36,6 +37,39 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [projects, setProjects] = useState<Project[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
+  // Helper function to generate color gradients for projects based on team members
+  const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
+    return currentProjects.map(project => {
+      // Get the colors of team members assigned to this project
+      const teamColors = project.team.map(memberName => {
+        const member = currentTeamMembers.find(m => m.name === memberName);
+        return member ? member.color : '#CCCCCC'; // Default gray if member not found
+      });
+      
+      // If no team members, use a default color
+      if (teamColors.length === 0) {
+        return {
+          ...project,
+          color: 'linear-gradient(120deg, #FF5733, #00AAFF)'
+        };
+      }
+      
+      // Generate a new gradient based on team members' colors
+      const gradient = createGradient(teamColors, {
+        includeHighlight: true,
+        highlightColor: '#00AAFF', // Lab blue
+        mixColors: true,
+        mixRatio: 0.3,
+        angle: 135
+      });
+      
+      return {
+        ...project,
+        color: gradient
+      };
+    });
+  };
+
   useEffect(() => {
     // Load saved data or use initial data
     const loadData = () => {
@@ -43,17 +77,32 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedProjects = localStorage.getItem('projects');
         const savedTeamMembers = localStorage.getItem('teamMembers');
   
-        if (savedProjects) {
-          setProjects(JSON.parse(savedProjects));
-        } else {
-          setProjects(initialProjects);
-        }
+        let projectsData: Project[];
+        let teamData: TeamMember[];
   
         if (savedTeamMembers) {
-          setTeamMembers(JSON.parse(savedTeamMembers));
+          teamData = JSON.parse(savedTeamMembers);
         } else {
-          setTeamMembers(initialTeamMembers);
+          teamData = initialTeamMembers;
         }
+        
+        setTeamMembers(teamData);
+  
+        if (savedProjects) {
+          projectsData = JSON.parse(savedProjects);
+        } else {
+          projectsData = initialProjects;
+        }
+        
+        // Update project colors based on team members
+        const updatedProjects = updateProjectGradients(projectsData, teamData);
+        setProjects(updatedProjects);
+        
+        // Save the updated projects if necessary
+        if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
+          localStorage.setItem('projects', JSON.stringify(updatedProjects));
+        }
+        
       } catch (error) {
         console.error("Error loading data from localStorage:", error);
         setProjects(initialProjects);
@@ -79,6 +128,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     try {
       localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
       setTeamMembers(updatedMembers);
+      
+      // When team members change, update all project colors
+      const updatedProjects = updateProjectGradients(projects, updatedMembers);
+      saveProjects(updatedProjects);
+      
     } catch (error) {
       console.error("Error saving team members to localStorage:", error);
       alert("Failed to save team members. LocalStorage might be full or unavailable.");
@@ -88,9 +142,29 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   // Project management functions
   const updateProject = (updatedProject: Project) => {
     console.log("Updating project:", updatedProject);
+    
+    // Ensure the color is updated based on team members
+    const teamColors = updatedProject.team.map(memberName => {
+      const member = teamMembers.find(m => m.name === memberName);
+      return member ? member.color : '#CCCCCC'; // Default gray if member not found
+    });
+    
+    // Generate a new gradient if team members have changed
+    const projectWithUpdatedColor = {
+      ...updatedProject,
+      color: createGradient(teamColors, {
+        includeHighlight: true,
+        highlightColor: '#00AAFF', // Lab blue
+        mixColors: true,
+        mixRatio: 0.3,
+        angle: 135
+      })
+    };
+    
     const newProjects = projects.map(project => 
-      project.id === updatedProject.id ? updatedProject : project
+      project.id === updatedProject.id ? projectWithUpdatedColor : project
     );
+    
     saveProjects(newProjects);
   };
 
@@ -100,7 +174,28 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       ...newProject,
       id: newProject.id || `project-${Date.now()}`
     };
-    saveProjects([...projects, projectWithId]);
+    
+    // Ensure the color is generated based on team members
+    const teamColors = projectWithId.team.map(memberName => {
+      const member = teamMembers.find(m => m.name === memberName);
+      return member ? member.color : '#CCCCCC'; // Default gray if member not found
+    });
+    
+    // Generate a new gradient if team members are present
+    const projectWithColor = {
+      ...projectWithId,
+      color: teamColors.length > 0 
+        ? createGradient(teamColors, {
+            includeHighlight: true,
+            highlightColor: '#00AAFF', // Lab blue
+            mixColors: true,
+            mixRatio: 0.3,
+            angle: 135
+          })
+        : projectWithId.color // Keep the existing color if no team members
+    };
+    
+    saveProjects([...projects, projectWithColor]);
   };
 
   const deleteProject = (id: string) => {
@@ -123,10 +218,45 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   // Team member management functions
   const updateTeamMember = (updatedMember: TeamMember) => {
+    const previousMember = teamMembers.find(m => m.id === updatedMember.id);
     const newTeamMembers = teamMembers.map(member => 
       member.id === updatedMember.id ? updatedMember : member
     );
-    saveTeamMembers(newTeamMembers);
+    
+    // First update team members
+    setTeamMembers(newTeamMembers);
+    
+    // If color changed, update all projects that include this team member
+    if (previousMember && previousMember.color !== updatedMember.color) {
+      const updatedProjects = projects.map(project => {
+        if (project.team.includes(updatedMember.name)) {
+          // Get the updated team colors
+          const teamColors = project.team.map(memberName => {
+            if (memberName === updatedMember.name) return updatedMember.color;
+            const member = newTeamMembers.find(m => m.name === memberName);
+            return member ? member.color : '#CCCCCC';
+          });
+          
+          return {
+            ...project,
+            color: createGradient(teamColors, {
+              includeHighlight: true,
+              highlightColor: '#00AAFF',
+              mixColors: true,
+              mixRatio: 0.3,
+              angle: 135
+            })
+          };
+        }
+        return project;
+      });
+      
+      // Save the updated projects with new gradients
+      saveProjects(updatedProjects);
+    } else {
+      // Otherwise just save team members
+      localStorage.setItem('teamMembers', JSON.stringify(newTeamMembers));
+    }
   };
 
   const addTeamMember = (newMember: TeamMember) => {
@@ -135,27 +265,55 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       ...newMember,
       id: newMember.id || `member-${Date.now()}`
     };
-    saveTeamMembers([...teamMembers, memberWithId]);
+    const updatedMembers = [...teamMembers, memberWithId];
+    saveTeamMembers(updatedMembers);
   };
 
   const deleteTeamMember = (id: string) => {
     const memberToDelete = teamMembers.find(member => member.id === id);
     const newTeamMembers = teamMembers.filter(member => member.id !== id);
-    saveTeamMembers(newTeamMembers);
     
     // If we have a member name, update all projects that reference this member
     if (memberToDelete) {
       const updatedProjects = projects.map(project => {
         if (project.team.includes(memberToDelete.name)) {
+          // Remove this member from the team
+          const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
+          
+          // Get the updated team colors
+          const teamColors = updatedTeam.map(memberName => {
+            const member = newTeamMembers.find(m => m.name === memberName);
+            return member ? member.color : '#CCCCCC';
+          });
+          
+          // Create a new gradient based on remaining team members
+          const updatedColor = teamColors.length > 0 
+            ? createGradient(teamColors, {
+                includeHighlight: true,
+                highlightColor: '#00AAFF',
+                mixColors: true,
+                mixRatio: 0.3,
+                angle: 135
+              })
+            : 'linear-gradient(120deg, #FF5733, #00AAFF)'; // Default gradient if no members left
+          
           return {
             ...project,
-            team: project.team.filter(name => name !== memberToDelete.name)
+            team: updatedTeam,
+            color: updatedColor
           };
         }
         return project;
       });
       
-      saveProjects(updatedProjects);
+      // Save both updated projects and team members
+      setProjects(updatedProjects);
+      setTeamMembers(newTeamMembers);
+      localStorage.setItem('projects', JSON.stringify(updatedProjects));
+      localStorage.setItem('teamMembers', JSON.stringify(newTeamMembers));
+    } else {
+      // If no member found, just save the team members
+      saveTeamMembers(newTeamMembers);
     }
   };
   
@@ -164,8 +322,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
       localStorage.removeItem('projects');
       localStorage.removeItem('teamMembers');
-      setProjects(initialProjects);
       setTeamMembers(initialTeamMembers);
+      
+      // Update projects with default gradients based on default team members
+      const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
+      setProjects(projectsWithGradients);
+      
       alert('Data has been reset to defaults.');
     }
   };
