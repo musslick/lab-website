@@ -1,48 +1,108 @@
-import React from 'react';
-
-interface FeedItem {
-    id: number;
-    title: string;
-    date: string;
-    content: string;
-}
-
-const feedData: FeedItem[] = [
-    {
-        id: 1,
-        title: "New Research Publication",
-        date: "2023-08-15",
-        content: "Our team has published groundbreaking research in neural network analysis."
-    },
-    {
-        id: 2,
-        title: "Upcoming Conference",
-        date: "2023-09-01",
-        content: "Join us at the International Conference on Brain Research next month."
-    },
-    {
-        id: 3,
-        title: "Lab Update",
-        date: "2023-08-10",
-        content: "We've acquired new equipment for advanced brain imaging studies."
-    }
-];
+import React, { useState } from 'react';
+import Layout from '../components/Layout';
+import { useContent } from '../contexts/ContentContext';
+import '../styles/styles.css';
 
 const Feed: React.FC = () => {
-    return (
-        <div className="feed-container">
-            <h1>Latest Updates</h1>
-            <div className="feed-items">
-                {feedData.map((item) => (
-                    <div key={item.id} className="feed-item">
-                        <h2>{item.title}</h2>
-                        <p className="date">{item.date}</p>
-                        <p className="content">{item.content}</p>
-                    </div>
-                ))}
-            </div>
+  const { newsItems } = useContent();
+  const [selectedTag, setSelectedTag] = useState<string>('All');
+  
+  // Get unique tags
+  const allTags = newsItems.flatMap(item => item.tags || []);
+  const uniqueTags = ['All', ...Array.from(new Set(allTags))];
+  
+  // Filter news by selected tag
+  const filteredNews = selectedTag === 'All' 
+    ? newsItems 
+    : newsItems.filter(item => item.tags?.includes(selectedTag));
+  
+  // Sort news by date (newest first), with featured items at the top
+  const sortedNews = [...filteredNews].sort((a, b) => {
+    // First sort by featured status
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    // Then by date
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+
+  // Format date for display
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  return (
+    <div className="feed-page">
+      <div className="feed-header">
+        <h1>Latest News</h1>
+        <p>Stay updated with the latest news from our lab</p>
+      </div>
+
+      <div className="tag-filter">
+        <h3>Filter by Tag</h3>
+        <div className="tag-list">
+          {uniqueTags.map(tag => (
+            <button 
+              key={tag} 
+              className={`tag-button ${selectedTag === tag ? 'active' : ''}`}
+              onClick={() => setSelectedTag(tag)}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
-    );
+      </div>
+      
+      <div className="news-grid">
+        {sortedNews.length > 0 ? (
+          sortedNews.map(item => (
+            <div key={item.id} className={`news-card ${item.featured ? 'featured' : ''}`}>
+              {item.imageUrl && (
+                <div className="news-image">
+                  <img src={item.imageUrl} alt={item.title} />
+                  {item.featured && <span className="featured-banner">Featured</span>}
+                </div>
+              )}
+              {!item.imageUrl && item.featured && (
+                <div className="featured-header">
+                  <span className="featured-banner">Featured</span>
+                </div>
+              )}
+              <div className="news-content">
+                <h3>{item.title}</h3>
+                <div className="news-meta">
+                  <span className="news-date">{formatDate(item.date)}</span>
+                  <span className="news-author">By {item.author}</span>
+                </div>
+                <p className="news-text">{item.content}</p>
+                {item.tags && item.tags.length > 0 && (
+                  <div className="news-tags">
+                    {item.tags.map(tag => (
+                      <span 
+                        key={tag} 
+                        className="news-tag"
+                        onClick={() => setSelectedTag(tag)}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="no-news">
+            <p>No news items found for this tag.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Feed;

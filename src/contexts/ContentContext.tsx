@@ -1,29 +1,38 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { Project, projects as initialProjects } from '../data/projects';
 import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
+import { NewsItem, newsItems as initialNewsItems } from '../data/news';
 import { createGradient } from '../utils/colorUtils';
 
 interface ContentContextType {
   projects: Project[];
   teamMembers: TeamMember[];
+  newsItems: NewsItem[];
   updateProject: (updatedProject: Project) => void;
   addProject: (newProject: Project) => void;
   deleteProject: (id: string) => void;
   updateTeamMember: (updatedMember: TeamMember) => void;
   addTeamMember: (newMember: TeamMember) => void;
   deleteTeamMember: (id: string) => void;
+  updateNewsItem: (updatedNewsItem: NewsItem) => void;
+  addNewsItem: (newNewsItem: NewsItem) => void;
+  deleteNewsItem: (id: string) => void;
   resetToDefaults: () => void;
 }
 
 const ContentContext = createContext<ContentContextType>({
   projects: [],
   teamMembers: [],
+  newsItems: [],
   updateProject: () => {},
   addProject: () => {},
   deleteProject: () => {},
   updateTeamMember: () => {},
   addTeamMember: () => {},
   deleteTeamMember: () => {},
+  updateNewsItem: () => {},
+  addNewsItem: () => {},
+  deleteNewsItem: () => {},
   resetToDefaults: () => {},
 });
 
@@ -36,6 +45,7 @@ interface ContentProviderProps {
 export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
 
   // Helper function to generate color gradients for projects based on team members
   const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
@@ -76,16 +86,17 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       try {
         const savedProjects = localStorage.getItem('projects');
         const savedTeamMembers = localStorage.getItem('teamMembers');
+        const savedNewsItems = localStorage.getItem('newsItems');
   
         let projectsData: Project[];
         let teamData: TeamMember[];
+        let newsData: NewsItem[];
   
         if (savedTeamMembers) {
           teamData = JSON.parse(savedTeamMembers);
         } else {
           teamData = initialTeamMembers;
         }
-        
         setTeamMembers(teamData);
   
         if (savedProjects) {
@@ -98,15 +109,22 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const updatedProjects = updateProjectGradients(projectsData, teamData);
         setProjects(updatedProjects);
         
+        if (savedNewsItems) {
+          newsData = JSON.parse(savedNewsItems);
+        } else {
+          newsData = initialNewsItems;
+        }
+        setNewsItems(newsData);
+        
         // Save the updated projects if necessary
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
           localStorage.setItem('projects', JSON.stringify(updatedProjects));
         }
-        
       } catch (error) {
         console.error("Error loading data from localStorage:", error);
         setProjects(initialProjects);
         setTeamMembers(initialTeamMembers);
+        setNewsItems(initialNewsItems);
       }
     };
 
@@ -136,6 +154,17 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     } catch (error) {
       console.error("Error saving team members to localStorage:", error);
       alert("Failed to save team members. LocalStorage might be full or unavailable.");
+    }
+  };
+
+  const saveNewsItems = (updatedNews: NewsItem[]) => {
+    try {
+      localStorage.setItem('newsItems', JSON.stringify(updatedNews));
+      console.log("Saved news items to localStorage, count:", updatedNews.length);
+      setNewsItems(updatedNews);
+    } catch (error) {
+      console.error("Error saving news items to localStorage:", error);
+      alert("Failed to save news. LocalStorage might be full or unavailable.");
     }
   };
 
@@ -317,16 +346,102 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
   };
   
+  // News management functions
+  const updateNewsItem = (updatedNewsItem: NewsItem) => {
+    try {
+      console.log("Updating news item:", updatedNewsItem);
+      
+      // First check if the item exists
+      const existingItemIndex = newsItems.findIndex(item => item.id === updatedNewsItem.id);
+      
+      if (existingItemIndex === -1) {
+        throw new Error(`News item with ID ${updatedNewsItem.id} not found`);
+      }
+      
+      // Create a new array with the updated item
+      const newNewsItems = [...newsItems];
+      newNewsItems[existingItemIndex] = {...updatedNewsItem};
+      
+      // Save to localStorage
+      localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
+      
+      // Update state
+      setNewsItems(newNewsItems);
+      console.log("News item updated successfully:", updatedNewsItem.id);
+      
+      return true;
+    } catch (error) {
+      console.error("Failed to update news item:", error);
+      throw error;
+    }
+  };
+
+  const addNewsItem = (newNewsItem: NewsItem) => {
+    try {
+      console.log("Adding news item:", newNewsItem);
+      
+      // Ensure the item has an ID
+      const itemToAdd = {
+        ...newNewsItem,
+        id: newNewsItem.id || `news-${Date.now()}`
+      };
+      
+      // Create a new array with the added item
+      const newNewsItems = [...newsItems, itemToAdd];
+      
+      // Save to localStorage
+      localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
+      
+      // Update state
+      setNewsItems(newNewsItems);
+      console.log("News item added successfully:", itemToAdd.id);
+      
+      return true;
+    } catch (error) {
+      console.error("Failed to add news item:", error);
+      throw error;
+    }
+  };
+
+  const deleteNewsItem = (id: string) => {
+    try {
+      console.log("Deleting news item:", id);
+      
+      // Check if item exists
+      const existingItem = newsItems.find(item => item.id === id);
+      if (!existingItem) {
+        throw new Error(`News item with ID ${id} not found`);
+      }
+      
+      // Filter out the item to delete
+      const newNewsItems = newsItems.filter(item => item.id !== id);
+      
+      // Save to localStorage
+      localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
+      
+      // Update state
+      setNewsItems(newNewsItems);
+      console.log("News item deleted successfully:", id);
+      
+      return true;
+    } catch (error) {
+      console.error("Failed to delete news item:", error);
+      throw error;
+    }
+  };
+
   // Function to reset all data to defaults
   const resetToDefaults = () => {
     if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
       localStorage.removeItem('projects');
       localStorage.removeItem('teamMembers');
+      localStorage.removeItem('newsItems');
       setTeamMembers(initialTeamMembers);
       
       // Update projects with default gradients based on default team members
       const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
       setProjects(projectsWithGradients);
+      setNewsItems(initialNewsItems);
       
       alert('Data has been reset to defaults.');
     }
@@ -336,12 +451,16 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     <ContentContext.Provider value={{
       projects,
       teamMembers,
+      newsItems,
       updateProject,
       addProject,
       deleteProject,
       updateTeamMember,
       addTeamMember,
       deleteTeamMember,
+      updateNewsItem,
+      addNewsItem,
+      deleteNewsItem,
       resetToDefaults
     }}>
       {children}

@@ -3,11 +3,12 @@ import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
+import { cleanupStorage, resetNewsItems } from '../../utils/debugStorage';
 
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { projects, teamMembers, resetToDefaults } = useContent();
-  const [activePage, setActivePage] = useState<'overview' | 'projects' | 'team'>('overview');
+  const { projects, teamMembers, newsItems, resetToDefaults } = useContent();
+  const [activePage, setActivePage] = useState<'overview' | 'projects' | 'team' | 'news'>('overview');
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
   
@@ -37,6 +38,36 @@ const AdminDashboard: React.FC = () => {
       localStorage.clear();
       window.location.reload();
     }
+  };
+
+  const handleCleanupNewsItems = () => {
+    if (window.confirm('Cleanup news items? This will remove any corrupted items.')) {
+      const success = cleanupStorage('newsItems');
+      if (success) {
+        alert('News items cleaned up. Please reload the page.');
+        window.location.reload();
+      } else {
+        alert('Failed to clean up news items.');
+      }
+    }
+  };
+  
+  const handleResetNewsItems = () => {
+    if (window.confirm('Reset news items? This will remove all news items and restore defaults.')) {
+      resetNewsItems();
+      alert('News items have been reset. Please reload the page.');
+      window.location.reload();
+    }
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
@@ -75,6 +106,12 @@ const AdminDashboard: React.FC = () => {
           >
             Manage Team
           </button>
+          <button 
+            className={activePage === 'news' ? 'active' : ''}
+            onClick={() => setActivePage('news')}
+          >
+            Manage News
+          </button>
         </div>
 
         {showDebugInfo && (
@@ -112,6 +149,11 @@ const AdminDashboard: React.FC = () => {
               <h4>Team Members Data ({teamMembers.length})</h4>
               <pre>{JSON.stringify(teamMembers, null, 2)}</pre>
             </div>
+            
+            <div className="data-preview">
+              <h4>News Data ({newsItems.length})</h4>
+              <pre>{JSON.stringify(newsItems, null, 2)}</pre>
+            </div>
           </div>
         )}
 
@@ -129,6 +171,13 @@ const AdminDashboard: React.FC = () => {
               <p className="stats-number">{teamMembers.length}</p>
               <Link to="/admin/team/new" className="action-link">
                 Add Team Member
+              </Link>
+            </div>
+            <div className="stats-card">
+              <h3>News Items</h3>
+              <p className="stats-number">{newsItems.length}</p>
+              <Link to="/admin/news/new" className="action-link">
+                Add News Item
               </Link>
             </div>
           </div>
@@ -194,6 +243,68 @@ const AdminDashboard: React.FC = () => {
                 ))
               )}
             </div>
+          </div>
+        )}
+
+        {activePage === 'news' && (
+          <div className="admin-news">
+            <div className="admin-action-header">
+              <h2>News Items</h2>
+              <div>
+                <button 
+                  onClick={handleCleanupNewsItems} 
+                  style={{marginRight: '10px'}}
+                  className="cleanup-button"
+                >
+                  Cleanup News Items
+                </button>
+                <button 
+                  onClick={handleResetNewsItems}
+                  style={{marginRight: '10px'}}
+                  className="reset-button"
+                >
+                  Reset News Items
+                </button>
+                <Link to="/admin/news/new" className="add-button">
+                  Add News Item
+                </Link>
+              </div>
+            </div>
+            {newsItems.length === 0 ? (
+              <div className="empty-state">
+                <p>No news items yet. Add your first news item to get started!</p>
+              </div>
+            ) : (
+              <>
+                <div className="debug-info" style={{marginBottom: '20px', fontSize: '12px'}}>
+                  <strong>Total News Items:</strong> {newsItems.length}
+                </div>
+                <div className="admin-list">
+                  {newsItems
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map(item => (
+                      <div key={item.id} className="admin-list-item">
+                        <div className="admin-item-title">
+                          {item.title} {item.featured && <span className="featured-badge">Featured</span>}
+                        </div>
+                        <div className="admin-item-category">
+                          <span className="news-date">{formatDate(item.date)}</span>
+                          <span className="news-author">By {item.author}</span>
+                        </div>
+                        <div className="admin-item-actions">
+                          <Link to={`/admin/news/edit/${item.id}`} className="edit-button">
+                            Edit
+                          </Link>
+                          <Link to="/feed" className="view-button" target="_blank">
+                            View All
+                          </Link>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

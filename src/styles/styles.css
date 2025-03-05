@@ -360,6 +360,7 @@ header {
   color: #666; /* Keep this muted color for intro text */
   font-size: 1.1rem;
   line-height: 1.6;
+  margin-top: 0;
 }
 
 .team-container {
@@ -461,6 +462,33 @@ header {
 
 .member-project-chip:hover {
   transform: scale(1.05);
+}
+
+/* Team page header styles to match other pages */
+
+.team-page .projects-header {
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.team-page .projects-header h1 {
+  margin-bottom: 10px;
+  border-bottom: none;
+}
+
+.team-page .projects-header p {
+  color: #666;
+  font-size: 18px;
+}
+
+/* Hide the team gradient banner since we're using the standard header */
+.team-gradient-banner {
+  display: none;
+}
+
+/* Ensure proper spacing between header and intro */
+.team-intro {
+  margin-top: 0;
 }
 
 /* =========================================
@@ -623,9 +651,7 @@ header {
 
 /* Enhanced Filter Component */
 .filter {
-  display: flex;
-  justify-content: flex-start;
-  margin: 20px 0;
+  display: none !important;
 }
 
 .filter select {
@@ -835,6 +861,46 @@ header {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
+}
+
+/* Project filter styles matching news filter styles */
+
+.projects-page .tag-filter {
+  margin-bottom: 20px;
+}
+
+.projects-page .tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.projects-page .tag-button {
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.projects-page .tag-button:hover {
+  background-color: #e0e0e0;
+}
+
+.projects-page .tag-button.active {
+  background-color: #00AAFF;
+  color: white;
+}
+
+.no-projects {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 18px;
 }
 
 /* =========================================
@@ -1291,4 +1357,242 @@ footer div {
 /* Add some spacing between about and team sections */
 .team-page .about-section + .team-container {
   margin-top: 60px;
+}
+
+/* =========================================
+   NEWS AND FEED STYLES
+   ========================================= */
+
+.feed-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feed-header {
+  margin-bottom: 30px;
+}
+
+.feed-header h1 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.feed-header p {
+  color: #666;
+  font-size: 18px;
+}
+
+.tag-filter {
+  margin-bottom: 20px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag-button {
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-button:hover {
+  background-color: #e0e0e0;
+}
+
+.tag-button.active {
+  background-color: #00AAFF;
+  color: white;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.news-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.news-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.news-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.news-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-content h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.news-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 15px;
+}
+
+.news-date {
+  font-weight: 600;
+}
+
+.news-author {
+  font-style: italic;
+}
+
+.news-text {
+  flex-grow: 1;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.news-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.news-tag {
+  background-color: #f1f1f1;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.news-tag:hover {
+  background-color: #00AAFF;
+  color: white;
+}
+
+.no-news {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 18px;
+}
+
+/* Admin news form styles */
+.tag-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tag-input-container input {
+  flex-grow: 1;
+}
+
+.tag-add-button {
+  background-color: #00AAFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.tag-add-button:hover {
+  background-color: #0089cc;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag-badge {
+  background-color: #f1f1f1;
+  border-radius: 16px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  margin-left: 5px;
+}
+
+.tag-remove:hover {
+  color: #ff4444;
+}
+
+.checkbox-label {
+  margin-left: 10px;
+}
+
+/* Additional styles for featured news items */
+
+.news-card.featured {
+  border: 2px solid #00AAFF;
+  transform: scale(1.02);
+}
+
+.featured-banner {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  background-color: #00AAFF;
+  color: white;
+  padding: 5px 15px;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.featured-header {
+  height: 50px;
+  background-color: #f1f7ff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }

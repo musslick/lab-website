@@ -389,7 +389,6 @@ const Footer: React.FC = () => {
 export {
     TopNav,
     TeamMember,
-    TeamGradientBanner,
     SideNav,
     ProjectCard,
     PageHeader,

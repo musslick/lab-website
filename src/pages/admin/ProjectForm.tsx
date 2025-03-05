@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { Project } from '../../data/projects';
-import { createGradient } from '../../utils/colorUtils';
 
 const ProjectForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,98 +10,62 @@ const ProjectForm: React.FC = () => {
   const { projects, teamMembers, updateProject, addProject, deleteProject } = useContent();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [previewGradient, setPreviewGradient] = useState<string>('');
-
+  
   const emptyProject: Project = {
     id: '',
     title: '',
     description: '',
-    color: 'linear-gradient(120deg, #FF5733, #00AAFF)',
+    color: 'linear-gradient(135deg, #FF5733, #00AAFF)',
     category: '',
-    team: [],
-    status: 'ongoing',
-    startDate: new Date().toISOString().split('T')[0],
+    team: []
   };
-
+  
   const [project, setProject] = useState<Project>(emptyProject);
+  const [availableTeamMembers, setAvailableTeamMembers] = useState<{ name: string }[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const isEditMode = id !== 'new';
-
+  
   useEffect(() => {
+    // Extract unique categories from existing projects
+    const uniqueCategories = Array.from(new Set(projects.map(p => p.category)));
+    setCategories(uniqueCategories);
+    
+    // Get team member names
+    const teamMemberNames = teamMembers.map(member => ({ name: member.name }));
+    setAvailableTeamMembers(teamMemberNames);
+    
     if (isEditMode) {
       const projectToEdit = projects.find(p => p.id === id);
       if (projectToEdit) {
-        setProject(projectToEdit);
-        setPreviewGradient(projectToEdit.color);
+        setProject(JSON.parse(JSON.stringify(projectToEdit))); // Deep copy
       } else {
         navigate('/admin');
       }
     } else {
-      // Generate a unique ID for new projects
+      // Set up a new project with a generated ID
       setProject({
         ...emptyProject,
         id: `project-${Date.now()}`
       });
-      setPreviewGradient(emptyProject.color);
     }
-  }, [id, projects, isEditMode, navigate]);
-
-  // Generate a preview gradient when team members change
-  useEffect(() => {
-    // Only update the preview if we have team members selected
-    if (project.team && project.team.length > 0) {
-      const teamColors = project.team.map(memberName => {
-        const member = teamMembers.find(m => m.name === memberName);
-        return member ? member.color : '#CCCCCC';
-      });
-
-      const gradient = createGradient(teamColors, {
-        includeHighlight: true,
-        highlightColor: '#00AAFF', // Lab blue
-        mixColors: true,
-        mixRatio: 0.3,
-        angle: 135
-      });
-
-      setPreviewGradient(gradient);
-    } else if (project.color) {
-      // If no team members but we have a color, use that
-      setPreviewGradient(project.color);
-    } else {
-      // Default gradient
-      setPreviewGradient('linear-gradient(120deg, #FF5733, #00AAFF)');
-    }
-  }, [project.team, teamMembers]);
-
+  }, [id, isEditMode, projects, teamMembers, navigate, emptyProject]);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setProject(prevProject => ({
-      ...prevProject,
+    setProject(prev => ({
+      ...prev,
       [name]: value
     }));
   };
-
+  
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptions = Array.from(
-      e.target.selectedOptions,
-      option => option.value
-    );
-    
-    setProject(prevProject => ({
-      ...prevProject,
-      team: selectedOptions
+    const selected = Array.from(e.target.selectedOptions, option => option.value);
+    setProject(prev => ({
+      ...prev,
+      team: selected
     }));
   };
-
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      setIsDeleting(true);
-      deleteProject(project.id);
-      setTimeout(() => {
-        navigate('/admin');
-      }, 1000);
-    }
-  };
-
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -112,16 +75,10 @@ const ProjectForm: React.FC = () => {
       return;
     }
     
-    // Use the preview gradient as the project color
-    const updatedProject = {
-      ...project,
-      color: previewGradient
-    };
-    
     if (isEditMode) {
-      updateProject(updatedProject);
+      updateProject(project);
     } else {
-      addProject(updatedProject);
+      addProject(project);
     }
     
     setFormSubmitted(true);
@@ -129,7 +86,17 @@ const ProjectForm: React.FC = () => {
       navigate('/admin');
     }, 1500);
   };
-
+  
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      setIsDeleting(true);
+      deleteProject(project.id);
+      setTimeout(() => {
+        navigate('/admin');
+      }, 1000);
+    }
+  };
+  
   if (isDeleting) {
     return (
       <Layout>
@@ -141,11 +108,19 @@ const ProjectForm: React.FC = () => {
       </Layout>
     );
   }
-
+  
+  // Preview the project's color gradient
+  const colorPreviewStyle = {
+    height: '100px',
+    borderRadius: '8px',
+    marginTop: '15px',
+    background: project.color
+  };
+  
   return (
     <Layout>
       <div className="admin-form-container">
-        <h1>{isEditMode ? 'Edit Project' : 'Add New Project'}</h1>
+        <h1>{isEditMode ? 'Edit Project' : 'Add Project'}</h1>
         
         {formSubmitted && (
           <div className="success-message">
@@ -173,7 +148,7 @@ const ProjectForm: React.FC = () => {
               name="description"
               value={project.description}
               onChange={handleChange}
-              rows={4}
+              rows={5}
               required
             />
           </div>
@@ -186,40 +161,15 @@ const ProjectForm: React.FC = () => {
               name="category"
               value={project.category}
               onChange={handleChange}
+              list="categories"
               required
             />
-          </div>
-          
-          <div className="form-group">
-            <label>Project Color</label>
-            <div 
-              className="color-preview" 
-              style={{ 
-                background: previewGradient, 
-                height: '30px', 
-                width: '100%', 
-                marginTop: '5px', 
-                borderRadius: '4px',
-                position: 'relative'
-              }}
-            >
-              <div className="gradient-info">
-                <span style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  color: '#fff',
-                  textShadow: '0px 0px 3px rgba(0,0,0,0.7)',
-                  fontSize: '12px'
-                }}>
-                  Color is auto-generated from team members
-                </span>
-              </div>
-            </div>
-            <p className="form-help-text">
-              The project color is automatically generated based on the team members you select.
-            </p>
+            <datalist id="categories">
+              {categories.map((category, index) => (
+                <option key={index} value={category} />
+              ))}
+            </datalist>
+            <p className="form-help-text">Type to select an existing category or enter a new one</p>
           </div>
           
           <div className="form-group">
@@ -228,62 +178,23 @@ const ProjectForm: React.FC = () => {
               id="team"
               name="team"
               multiple
-              value={project.team}
+              value={project.team || []}
               onChange={handleTeamChange}
-              size={Math.min(5, teamMembers.length)}
+              style={{ height: '150px' }}
             >
-              {teamMembers.map(member => (
-                <option 
-                  key={member.id} 
-                  value={member.name}
-                  style={{
-                    borderLeft: `4px solid ${member.color}`,
-                    paddingLeft: '8px'
-                  }}
-                >
-                  {member.name} - {member.role}
+              {availableTeamMembers.map((member, index) => (
+                <option key={index} value={member.name}>
+                  {member.name}
                 </option>
               ))}
             </select>
-            <p className="form-help-text">Hold Ctrl/Cmd to select multiple members. Selected team members will affect the project's color scheme.</p>
+            <p className="form-help-text">Hold Ctrl/Cmd to select multiple team members</p>
           </div>
           
           <div className="form-group">
-            <label htmlFor="status">Status*</label>
-            <select
-              id="status"
-              name="status"
-              value={project.status}
-              onChange={handleChange}
-              required
-            >
-              <option value="ongoing">Ongoing</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="startDate">Start Date</label>
-              <input
-                type="date"
-                id="startDate"
-                name="startDate"
-                value={project.startDate}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="endDate">End Date (if completed)</label>
-              <input
-                type="date"
-                id="endDate"
-                name="endDate"
-                value={project.endDate || ''}
-                onChange={handleChange}
-              />
-            </div>
+            <label>Color Preview</label>
+            <div style={colorPreviewStyle}></div>
+            <p className="form-help-text">Color is automatically generated based on team members</p>
           </div>
           
           <div className="form-actions">
