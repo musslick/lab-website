@@ -4,7 +4,6 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Team from './pages/Team';
-import About from './pages/About';
 import Feed from './pages/Feed';
 import ProjectDetails from './pages/ProjectDetails';
 import './styles/styles.css';
@@ -17,11 +16,6 @@ const App: React.FC = () => {
           <Route path="/" element={
             <Layout>
               <Home />
-            </Layout>
-          } />
-          <Route path="/about" element={
-            <Layout>
-              <About />
             </Layout>
           } />
           <Route path="/team" element={

@@ -25,8 +25,7 @@ const Home: React.FC = () => {
             </section>
             
             <section className="featured-projects">
-                <h2>Featured Projects</h2>
-                
+                <h2 style={{ textAlign: 'left' }}>Featured Projects</h2>
                 {/* Use the same projects-grid class as in Projects.tsx */}
                 <div className="projects-grid">
                     {featuredProjects.map(project => (
@@ -36,8 +35,8 @@ const Home: React.FC = () => {
             </section>
             
             <section className="collaborators">
-                <h2>Our Collaborators</h2>
-                <div className="collaborator-logos">
+                <h2 style={{ textAlign: 'left' }}>Our Collaborators</h2>
+                <div className="collaborator-logos" style={{ textAlign: 'left' }}>
                     <div className="collaborator-logo">University of Science</div>
                     <div className="collaborator-logo">National Research Lab</div>
                     <div className="collaborator-logo">Tech Institute</div>

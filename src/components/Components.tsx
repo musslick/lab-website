@@ -50,11 +50,6 @@ const TopNav: React.FC = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/about" className={({isActive}) => isActive ? 'active' : ''}>
-                            About
-                        </NavLink>
-                    </li>
-                    <li>
                         <NavLink to="/team" className={({isActive}) => isActive ? 'active' : ''}>
                             Team
                         </NavLink>
@@ -127,8 +122,8 @@ const TeamGradientBanner: React.FC<TeamGradientBannerProps> = ({ teamMembers }) 
             style={{ background: createTeamGradient() }}
         >
             <div className="banner-content">
-                <h2>Our Research Team</h2>
-                <p>Meet the people behind our groundbreaking work</p>
+                <h2 style={{ textAlign: 'left' }}>Our Research Team</h2>
+                <p style={{ textAlign: 'left' }}>Meet the people behind our groundbreaking work</p>
             </div>
         </div>
     );
@@ -144,11 +139,6 @@ const SideNav: React.FC = () => {
                 <li>
                     <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>
                         Home
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/about" className={({ isActive }) => isActive ? 'active' : ''}>
-                        About
                     </NavLink>
                 </li>
                 <li>
@@ -313,8 +303,8 @@ interface PageHeaderProps {
 const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle }) => {
   return (
     <div className="page-header">
-      <h1>{title}</h1>
-      {subtitle && <p>{subtitle}</p>}
+      <h1 style={{ textAlign: 'left' }}>{title}</h1>
+      {subtitle && <p style={{ textAlign: 'left' }}>{subtitle}</p>}
     </div>
   );
 };

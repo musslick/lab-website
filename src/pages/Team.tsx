@@ -12,12 +12,39 @@ const Team: React.FC = () => {
           <p>Meet the people behind our groundbreaking work</p>
         </div>
       </div>
-
-      <p className="team-intro">
-        Our lab brings together experts from various disciplines including neuroscience, 
-        computer science, psychology, and data science to advance our understanding of 
-        the mind and brain through innovative research approaches.
-      </p>
+      
+      {/* About section incorporated into Team page */}
+      <div className="about-section">
+        <h2>About Our Lab</h2>
+        <p className="team-intro">
+          Our lab is dedicated to uncovering the fundamental computational principles that underlie the capabilities and limitations of human cognition. 
+          Ironically, as human scientists, we are constrained by the very cognitive limitations we aim to understand: The complexity of the brain, its behaviors, 
+          and its interactions with the environment is often too vast for human minds to fully grasp. To overcome this, we harness artificial intelligence 
+          and other automated scientific discovery techniques to efficiently explore spaces of experiments, models, and theories that exceed our cognitive reach.
+        </p>
+      </div>
+      
+      <div className="about-section">
+        <h2>Research Focus</h2>
+        <p>
+          At the Automated Scientific Discovery of Mind and Brain lab, we focus on several key areas:
+        </p>
+        <ul style={{ paddingLeft: '20px' }}>
+          <li>Neural network mapping and analysis</li>
+          <li>Cognitive process modeling</li>
+          <li>Brain-computer interfaces</li>
+          <li>Machine learning applications in neuroscience</li>
+        </ul>
+      </div>
+      
+      <div className="about-section">
+        <h2>Our Team</h2>
+        <p className="team-intro">
+          Our lab brings together experts from various disciplines including neuroscience, 
+          computer science, psychology, and data science to advance our understanding of 
+          the mind and brain through innovative research approaches.
+        </p>
+      </div>
 
       <div className="team-container">
         {teamMembers.map((member, index) => (

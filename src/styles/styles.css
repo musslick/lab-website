@@ -19,11 +19,13 @@ body {
   color: #000000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-align: left;
 }
 
 h1, h2, h3, h4, h5, h6, button, .nav-links, .logo-text {
   font-family: 'Inter', sans-serif;
   font-weight: 700;
+  text-align: left;
 }
 
 /* Global rule to remove underlines */
@@ -47,6 +49,7 @@ a, a:hover, a:active, a:visited {
 /* Add global color rules */
 h1, h2, h3, h4, h5, h6, p, span, div, li, a {
   color: #000000; /* Set text to pure black by default */
+  text-align: left;
 }
 
 /* Exceptions for specific elements that need different colors */
@@ -259,20 +262,22 @@ header {
 .page-header {
   margin-bottom: 40px;
   padding-bottom: 20px;
-  text-align: center;
+  text-align: left;
 }
 
 .page-header h1 {
   font-size: 2.5rem;
   margin-bottom: 12px;
   font-weight: 700;
+  text-align: left;
 }
 
 .page-header p {
   font-size: 1.2rem;
   color: #666;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0;
+  text-align: left;
 }
 
 @media (max-width: 768px) {
@@ -311,7 +316,7 @@ header {
   position: relative;
   z-index: 2;
   color: #000000; /* Changed from white to black for better contrast on white background */
-  text-align: center;
+  text-align: left;
   padding: 20px;
 }
 
@@ -349,9 +354,9 @@ header {
 }
 
 .team-intro {
-  text-align: center;
+  text-align: left;
   max-width: 800px;
-  margin: 0 auto 40px;
+  margin: 0 0 40px 0;
   color: #666; /* Keep this muted color for intro text */
   font-size: 1.1rem;
   line-height: 1.6;
@@ -467,7 +472,7 @@ header {
 }
 
 .projects-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 30px;
 }
 
@@ -940,7 +945,7 @@ header {
 /* Ensure collaborators section has consistent styling */
 .collaborators {
   margin: 80px 0;
-  text-align: center;
+  text-align: left;
   padding: 0 5px; /* Add minimal horizontal padding */
 }
 
@@ -1169,7 +1174,7 @@ footer div {
 
 .collaborators {
   margin: 80px 0;
-  text-align: center;
+  text-align: left;
   padding: 0 5px; /* Add minimal horizontal padding */
 }
 
@@ -1235,4 +1240,55 @@ footer div {
     padding-left: 3px; /* Further reduced from 15px to 3px */
     padding-right: 3px; /* Further reduced from 15px to 3px */
   }
+}
+
+/* =========================================
+   COMBINED TEAM & ABOUT STYLES
+   ========================================= */
+
+/* About sections on team page */
+.team-page .about-section {
+  margin-bottom: 40px;
+  max-width: 1000px;
+  margin-left: 0;
+  margin-right: auto;
+  padding: 0 20px;
+}
+
+.team-page .about-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.team-page .about-section p {
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.team-page .about-section ul {
+  padding-left: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.team-page .about-section li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* Keep team intro styling consistent */
+.team-intro {
+  text-align: left;
+  max-width: 800px;
+  margin: 0 0 20px 0;
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* Add some spacing between about and team sections */
+.team-page .about-section + .team-container {
+  margin-top: 60px;
 }
