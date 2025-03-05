@@ -98,7 +98,8 @@ const createProjectsWithTeamColors = (): Project[] => {
                 highlightColor: '#00AAFF',       // Lab blue
                 mixColors: true,                 // Mix team colors with lab blue
                 mixRatio: 0.3,                   // 30% blend with lab blue
-                angle: 135                       // Diagonal gradient
+                type: 'radial',                  // Use radial gradients
+                position: 'circle at center'     // Center position
             })
         };
     });

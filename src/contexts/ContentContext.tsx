@@ -60,17 +60,18 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       if (teamColors.length === 0) {
         return {
           ...project,
-          color: 'linear-gradient(120deg, #FF5733, #00AAFF)'
+          color: 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)'
         };
       }
       
       // Generate a new gradient based on team members' colors
       const gradient = createGradient(teamColors, {
         includeHighlight: true,
-        highlightColor: '#00AAFF', // Lab blue
+        highlightColor: '#00AAFF', // Lab blue always at outer edge
         mixColors: true,
         mixRatio: 0.3,
-        angle: 135
+        type: 'radial',
+        position: 'circle at center'
       });
       
       return {
@@ -186,7 +187,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         highlightColor: '#00AAFF', // Lab blue
         mixColors: true,
         mixRatio: 0.3,
-        angle: 135
+        type: 'radial',
+        position: 'circle at center'
       })
     };
     
@@ -219,9 +221,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
             highlightColor: '#00AAFF', // Lab blue
             mixColors: true,
             mixRatio: 0.3,
-            angle: 135
+            type: 'radial',
+            position: 'circle at center'
           })
-        : projectWithId.color // Keep the existing color if no team members
+        : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)' // Default radial gradient
     };
     
     saveProjects([...projects, projectWithColor]);
@@ -273,7 +276,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
               highlightColor: '#00AAFF',
               mixColors: true,
               mixRatio: 0.3,
-              angle: 135
+              type: 'radial',
+              position: 'circle at center'
             })
           };
         }
@@ -322,9 +326,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
                 highlightColor: '#00AAFF',
                 mixColors: true,
                 mixRatio: 0.3,
-                angle: 135
+                type: 'radial',
+                position: 'circle at center'
               })
-            : 'linear-gradient(120deg, #FF5733, #00AAFF)'; // Default gradient if no members left
+            : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)'; // Default gradient if no members left
           
           return {
             ...project,

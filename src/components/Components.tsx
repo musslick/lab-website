@@ -234,33 +234,75 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
     // Generate dynamic gradient based on mouse position
     const generateDynamicGradient = () => {
-        // Extract colors from the gradient string
-        const colorMatch = project.color.match(/linear-gradient\(\d+deg,\s*(.*)\)/);
-        if (!colorMatch) return project.color;
+        // Check if the project color is already defined as a radial gradient
+        if (project.color.includes('radial-gradient')) {
+            // Extract colors from the gradient string
+            const colorMatch = project.color.match(/radial-gradient\(.*?,\s*(.*)\)/);
+            if (!colorMatch) return project.color;
+            
+            const colorStops = colorMatch[1].split(',').map(stop => {
+                // Extract the color part (ignoring percentages)
+                const color = stop.trim().split(' ')[0];
+                return color;
+            });
+            
+            // Get mouse position as percentage of card dimension
+            const { x, y } = mousePosition;
+            
+            // Create a dynamic position based on mouse
+            const position = `circle at ${x}% ${y}%`;
+            
+            // Generate gradient stops with percentages
+            // Make sure last color (blue) always extends to the edge
+            const stops = colorStops.map((color, index) => {
+                if (index === colorStops.length - 1) {
+                    return `${color} 100%`;
+                }
+                // Adjust distribution to make the gradient more dynamic and responsive to mouse
+                const percentage = Math.round(Math.pow(index / (colorStops.length - 1), 0.8) * 85);
+                return `${color} ${percentage}%`;
+            }).join(', ');
+            
+            return `radial-gradient(${position}, ${stops})`;
+        } 
         
-        const colorStops = colorMatch[1].split(',').map(stop => {
-            // Extract the color part (ignoring percentages)
-            const color = stop.trim().split(' ')[0];
-            return color;
-        });
-        
-        // Calculate angle based on mouse position
-        const { x, y } = mousePosition;
-        const angle = Math.atan2(y - 50, x - 50) * (180 / Math.PI);
-        
-        // Ensure #00AAFF is included
-        const highlightColor = '#00AAFF';
-        if (!colorStops.includes(highlightColor)) {
-            colorStops.splice(1, 0, highlightColor);
+        // If not a radial gradient already, convert from linear
+        else if (project.color.includes('linear-gradient')) {
+            const colorMatch = project.color.match(/linear-gradient\(\d+deg,\s*(.*)\)/);
+            if (!colorMatch) return project.color;
+            
+            const colorStops = colorMatch[1].split(',').map(stop => {
+                const color = stop.trim().split(' ')[0];
+                return color;
+            });
+            
+            // Get the lab blue color (should be the first in linear gradient)
+            const labBlue = colorStops[0] === '#00AAFF' ? colorStops[0] : '#00AAFF';
+            
+            // Move lab blue to the end for radial gradient (outer edge)
+            let rearrangedColors = colorStops.filter(c => c !== labBlue);
+            rearrangedColors.push(labBlue);
+            
+            // Get mouse position as percentage of card dimension
+            const { x, y } = mousePosition;
+            
+            // Create a dynamic position based on mouse
+            const position = `circle at ${x}% ${y}%`;
+            
+            // Generate gradient stops with percentages
+            const stops = rearrangedColors.map((color, index) => {
+                if (index === rearrangedColors.length - 1) {
+                    return `${color} 100%`;
+                }
+                const percentage = Math.round(Math.pow(index / (rearrangedColors.length - 1), 0.8) * 85);
+                return `${color} ${percentage}%`;
+            }).join(', ');
+            
+            return `radial-gradient(${position}, ${stops})`;
         }
         
-        // Generate gradient stops with percentages
-        const stops = colorStops.map((color, index) => {
-            const percentage = (index / (colorStops.length - 1)) * 100;
-            return `${color} ${percentage}%`;
-        }).join(', ');
-        
-        return `linear-gradient(${angle}deg, ${stops})`;
+        // Default fallback
+        return project.color;
     };
 
     return (

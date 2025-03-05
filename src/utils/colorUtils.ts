@@ -51,69 +51,75 @@ export const mixWithLabColor = (color: string, mixRatio: number = 0.3): string =
 };
 
 interface GradientOptions {
-  direction?: string;
   includeHighlight?: boolean;
   highlightColor?: string;
   mixColors?: boolean;
   mixRatio?: number;
   angle?: number;
+  direction?: string;
+  type?: 'linear' | 'radial';
+  position?: string;
 }
 
 /**
- * Creates a CSS gradient string from an array of colors
- * @param colors - Array of color strings (hex)
- * @param options - Configuration options for the gradient
+ * Create a CSS gradient string from an array of colors
+ * @param colors Array of color strings (hex, rgb, etc.)
+ * @param options Configuration options for the gradient
  * @returns CSS gradient string
  */
-export const createGradient = (
-  colors: string[],
-  options: GradientOptions = {}
-): string => {
-  // Default options
+export const createGradient = (colors: string[], options: GradientOptions = {}): string => {
   const {
-    direction = 'to right',
     includeHighlight = false,
-    highlightColor = '#00AAFF',
+    highlightColor = '#00AAFF', // Default lab blue
     mixColors = false,
     mixRatio = 0.2,
-    angle = 120
+    angle = 135,
+    direction = '',
+    type = 'radial', // Changed default to radial
+    position = 'circle at center' // Default position for radial gradient
   } = options;
-  
-  // If we don't have any colors, return a default gradient
-  if (!colors.length) {
-    return `linear-gradient(${angle}deg, #FF5733, ${highlightColor})`;
+
+  // Ensure we have at least one color
+  if (!colors || colors.length === 0) {
+    return `${type === 'linear' ? 'linear' : 'radial'}-gradient(${direction || `${angle}deg`}, #FF5733, ${highlightColor})`;
   }
+
+  // Add the highlight color if requested
+  let gradientColors = [...colors];
+  if (includeHighlight && !colors.includes(highlightColor)) {
+    gradientColors = type === 'radial' ? 
+      [...gradientColors, highlightColor] : // For radial, add highlight at the end (outside)
+      [highlightColor, ...gradientColors];   // For linear, add at beginning
+  }
+
+  // Create the gradient stops
+  let gradientStops;
   
-  // If we only have one color, create a subtle gradient with the same color
-  if (colors.length === 1) {
-    const baseColor = colors[0];
-    // If we should include a highlight color, mix it with the base color
-    if (includeHighlight) {
-      return `linear-gradient(${angle}deg, ${baseColor}, ${highlightColor}, ${baseColor})`;
+  if (type === 'linear') {
+    gradientStops = gradientColors.map((color, index) => {
+      const percentage = Math.round((index / (gradientColors.length - 1)) * 100);
+      return `${color} ${percentage}%`;
+    }).join(', ');
+    
+    return `linear-gradient(${direction || `${angle}deg`}, ${gradientStops})`;
+  } else {
+    // For radial gradients, we want to make sure the lab blue is always the outermost color
+    const labBlueIndex = gradientColors.indexOf(highlightColor);
+    
+    // If lab blue is included and not already at the end, move it there
+    if (labBlueIndex !== -1 && labBlueIndex !== gradientColors.length - 1) {
+      const blueColor = gradientColors.splice(labBlueIndex, 1)[0];
+      gradientColors.push(blueColor);
     }
-    // Otherwise make a subtle gradient by adjusting lightness
-    return `linear-gradient(${angle}deg, ${baseColor}, ${adjustBrightness(baseColor, 15)})`;
+    
+    gradientStops = gradientColors.map((color, index) => {
+      // For radial, inner colors cover less area, outer colors cover more
+      const percentage = Math.round(Math.pow(index / (gradientColors.length - 1), 0.8) * 100);
+      return `${color} ${percentage}%`;
+    }).join(', ');
+    
+    return `radial-gradient(${position}, ${gradientStops})`;
   }
-  
-  // If we have multiple colors
-  let gradientColors = [...colors]; // Clone the array
-  
-  // Mix colors with highlight if requested
-  if (mixColors && includeHighlight) {
-    gradientColors = gradientColors.map(color => 
-      mixColorWithRatio(color, highlightColor, mixRatio)
-    );
-  }
-  
-  // Add highlight color in the middle if requested but not mixed
-  if (includeHighlight && !mixColors) {
-    // Insert highlight in the middle
-    const middleIndex = Math.floor(gradientColors.length / 2);
-    gradientColors.splice(middleIndex, 0, highlightColor);
-  }
-  
-  // Create the gradient string
-  return `linear-gradient(${angle}deg, ${gradientColors.join(', ')})`;
 };
 
 /**
@@ -179,4 +185,33 @@ export const isLightColor = (color: string): boolean => {
   const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
   
   return yiq >= 128; // 128 is the threshold between light and dark
+};
+
+/**
+ * Lighten or darken a color
+ * @param color The base color (hex)
+ * @param amount Amount to lighten (positive) or darken (negative). Range: -1 to 1
+ * @returns Modified color (hex)
+ */
+export const adjustColor = (color: string, amount: number): string => {
+  // Remove hash if present
+  color = color.replace('#', '');
+  
+  // Convert hex to RGB
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+  
+  // Adjust RGB values
+  const adjustComponent = (value: number): number => {
+    const newValue = value + Math.round(value * amount);
+    return Math.min(255, Math.max(0, newValue));
+  };
+  
+  const newR = adjustComponent(r);
+  const newG = adjustComponent(g);
+  const newB = adjustComponent(b);
+  
+  // Convert back to hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
 };
