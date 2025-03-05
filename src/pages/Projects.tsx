@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { ProjectCard } from '../components/Components';
-import { Project, projects } from '../data/projects';
+import { Project } from '../data/projects';
 import '../styles/styles.css';
+import { useContent } from '../contexts/ContentContext';
 
 const Projects: React.FC = () => {
+    const { projects } = useContent();
     const [selectedCategory, setSelectedCategory] = useState('All');
     
     // Get unique categories

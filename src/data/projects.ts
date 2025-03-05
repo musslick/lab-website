@@ -10,6 +10,10 @@ export interface Project {
   category: string;
   team: string[];
   publications?: string[];
+  image?: string;
+  status?: 'ongoing' | 'completed';
+  startDate?: string;
+  endDate?: string;
 }
 
 // Helper function to get team member colors
@@ -22,7 +26,8 @@ const getTeamMemberColors = (teamNames: string[]): string[] => {
 
 // Create projects with team colors and lab blue
 const createProjectsWithTeamColors = (): Project[] => {
-    const projectData = [
+    // Define project data with the correct status type
+    const projectData: Omit<Project, 'color'>[] = [
         {
             id: "neural-mapping",
             title: "Neural Network Mapping",
@@ -32,7 +37,9 @@ const createProjectsWithTeamColors = (): Project[] => {
             publications: [
               "Johnson, S. et al. (2022). Advanced techniques in neural mapping. Journal of Neuroscience, 45(3), 112-128.",
               "Chen, M. & Johnson, S. (2021). Computational approaches to neural network visualization. Brain Research, 33(2), 45-67."
-            ]
+            ],
+            status: "ongoing" as const,
+            startDate: "2022-06-01"
         },
         {
             id: "cognitive-ai",
@@ -42,7 +49,9 @@ const createProjectsWithTeamColors = (): Project[] => {
             team: ["Robert Smith", "Emily Wong"],
             publications: [
               "Smith, R. & Wong, E. (2023). Cognitive frameworks in machine learning. AI Journal, 12(4), 89-105."
-            ]
+            ],
+            status: "ongoing" as const,
+            startDate: "2022-01-10"
         },
         {
             id: "memory-enhancement",
@@ -50,7 +59,9 @@ const createProjectsWithTeamColors = (): Project[] => {
             description: "Investigating techniques to enhance memory formation and recall through targeted stimulation of neural pathways.",
             category: "Cognitive Enhancement",
             team: ["David Patel", "Sarah Johnson"],
-            publications: []
+            publications: [],
+            status: "ongoing" as const,
+            startDate: "2021-03-15"
         },
         {
             id: "brain-computer",
@@ -60,7 +71,9 @@ const createProjectsWithTeamColors = (): Project[] => {
             team: ["Michael Chen", "Emily Wong"],
             publications: [
               "Chen, M. et al. (2022). Non-invasive BCI advancements. Tech & Brain Journal, 8(2), 34-49."
-            ]
+            ],
+            status: "ongoing" as const,
+            startDate: "2021-03-15"
         },
         {
             id: "consciousness-study",
@@ -68,7 +81,9 @@ const createProjectsWithTeamColors = (): Project[] => {
             description: "Exploring the neural correlates of consciousness through multidisciplinary approaches and advanced neuroimaging.",
             category: "Neuroscience",
             team: ["Robert Smith", "David Patel"],
-            publications: []
+            publications: [],
+            status: "ongoing" as const,
+            startDate: "2022-01-10"
         }
     ];
 

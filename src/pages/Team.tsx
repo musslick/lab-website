@@ -1,9 +1,11 @@
 import React from 'react';
-import { teamMembers } from '../data/team';
 import { Link } from 'react-router-dom';
 import '../styles/styles.css';
+import { useContent } from '../contexts/ContentContext';
 
 const Team: React.FC = () => {
+  const { teamMembers, projects } = useContent();
+  
   return (
     <div className="team-page">
       <div className="team-gradient-banner">
@@ -47,8 +49,8 @@ const Team: React.FC = () => {
       </div>
 
       <div className="team-container">
-        {teamMembers.map((member, index) => (
-          <div key={index} className="team-member-card">
+        {teamMembers.map((member) => (
+          <div key={member.id} className="team-member-card">
             <div 
               className="team-member-color-header" 
               style={{ backgroundColor: member.color }}
@@ -68,9 +70,7 @@ const Team: React.FC = () => {
                   <h4>Projects:</h4>
                   <div className="member-project-list">
                     {member.projects.map((projectId, idx) => {
-                      const matchingProject = require('../data/projects').projects.find(
-                        (p: any) => p.id === projectId
-                      );
+                      const matchingProject = projects.find(p => p.id === projectId);
                       
                       return matchingProject ? (
                         <Link 

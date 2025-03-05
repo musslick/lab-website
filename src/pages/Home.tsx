@@ -1,11 +1,12 @@
 import React from 'react';
 import { ProjectCard } from '../components/Components';
-import { projects } from '../data/projects';
 import '../styles/styles.css';
+import { useContent } from '../contexts/ContentContext';
 // Import the SVG directly when using Create React App or similar bundler
 import { ReactComponent as BrainLogo } from '../assets/logo.svg';
 
 const Home: React.FC = () => {
+    const { projects } = useContent();
     // Select featured projects (first 3)
     const featuredProjects = projects.slice(0, 3);
     

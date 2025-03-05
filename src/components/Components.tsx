@@ -4,6 +4,8 @@ import { teamMembers } from '../data/team';
 import { TeamMember as TeamMemberType } from '../data/team';
 import { Project } from '../data/projects';
 import { createGradient } from '../utils/colorUtils'; // Changed from createTransparentGradient
+import { useContent } from '../contexts/ContentContext';
+import { useAuth } from '../contexts/AuthContext';
 
 // Import the combined styles file
 import '../styles/styles.css';
@@ -13,6 +15,7 @@ import '../styles/styles.css';
 // ===============================
 const TopNav: React.FC = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { isAuthenticated } = useAuth();
     
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen);
@@ -64,6 +67,19 @@ const TopNav: React.FC = () => {
                             News
                         </NavLink>
                     </li>
+                    {isAuthenticated ? (
+                        <li>
+                            <NavLink to="/admin" className={({isActive}) => isActive ? 'active' : ''}>
+                                Admin
+                            </NavLink>
+                        </li>
+                    ) : (
+                        <li>
+                            <NavLink to="/admin/login" className={({isActive}) => isActive ? 'active' : ''}>
+                                Login
+                            </NavLink>
+                        </li>
+                    )}
                 </ul>
             </div>
         </nav>
@@ -181,6 +197,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     
     const colorBlockRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLAnchorElement>(null);
+    
+    // Get team members from context
+    const { teamMembers } = useContent();
     
     // Find team members' colors
     const teamData = project.team.map((name: string) => {

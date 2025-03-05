@@ -1,16 +1,20 @@
 // src/data/team.ts
 
 export interface TeamMember {
+    id: string;
     name: string;
     role: string;
     bio: string;
     imageUrl: string;
     color: string;
     projects?: string[];
+    email?: string;
+    publications?: string[];
 }
 
 export const teamMembers: TeamMember[] = [
     {
+        id: "sarah-johnson",
         name: "Sarah Johnson",
         role: "Principal Investigator",
         bio: "Dr. Johnson specializes in neural network mapping with a background in computational neuroscience and machine learning.",
@@ -19,6 +23,7 @@ export const teamMembers: TeamMember[] = [
         projects: ["neural-mapping", "memory-enhancement"]
     },
     {
+        id: "michael-chen",
         name: "Michael Chen",
         role: "Research Scientist",
         bio: "Dr. Chen focuses on brain-computer interfaces and has extensive experience in signal processing and neural engineering.",
@@ -27,6 +32,7 @@ export const teamMembers: TeamMember[] = [
         projects: ["neural-mapping", "brain-computer"]
     },
     {
+        id: "robert-smith",
         name: "Robert Smith",
         role: "Computational Neuroscientist",
         bio: "Dr. Smith works on cognitive modeling and AI, bridging the gap between artificial intelligence and human cognition.",
@@ -35,6 +41,7 @@ export const teamMembers: TeamMember[] = [
         projects: ["cognitive-ai", "consciousness-study"]
     },
     {
+        id: "emily-wong",
         name: "Emily Wong",
         role: "Data Scientist",
         bio: "Dr. Wong specializes in analyzing complex neural data patterns and developing algorithms for brain-computer interfaces.",
@@ -43,6 +50,7 @@ export const teamMembers: TeamMember[] = [
         projects: ["cognitive-ai", "brain-computer"]
     },
     {
+        id: "david-patel",
         name: "David Patel",
         role: "Cognitive Psychologist",
         bio: "Dr. Patel studies human memory and consciousness, with particular interest in enhancement techniques and theoretical models.",

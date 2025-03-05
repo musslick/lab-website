@@ -50,89 +50,123 @@ export const mixWithLabColor = (color: string, mixRatio: number = 0.3): string =
   return blendColors(color, labBlue, mixRatio);
 };
 
+interface GradientOptions {
+  direction?: string;
+  includeHighlight?: boolean;
+  highlightColor?: string;
+  mixColors?: boolean;
+  mixRatio?: number;
+  angle?: number;
+}
+
 /**
- * Creates a CSS gradient using the provided colors
- * 
- * @param colors Array of color strings
- * @param options Configuration options
+ * Creates a CSS gradient string from an array of colors
+ * @param colors - Array of color strings (hex)
+ * @param options - Configuration options for the gradient
  * @returns CSS gradient string
  */
 export const createGradient = (
-  colors: string[], 
-  options: {
-    direction?: string;
-    angle?: number;
-    includeHighlight?: boolean;
-    highlightColor?: string;
-    highlightPosition?: number;
-    mixColors?: boolean;
-    mixRatio?: number;
-    opacity?: number;
-  } = {}
+  colors: string[],
+  options: GradientOptions = {}
 ): string => {
   // Default options
   const {
-    direction = undefined,
-    angle = 135,
-    includeHighlight = true,
+    direction = 'to right',
+    includeHighlight = false,
     highlightColor = '#00AAFF',
-    highlightPosition = 0.5, // Position in the gradient (0-1)
-    mixColors = true, // Whether to blend each color with the highlight color
-    mixRatio = 0.3, // How much to blend (0-1)
-    opacity = 1
+    mixColors = false,
+    mixRatio = 0.2,
+    angle = 120
   } = options;
   
-  // Handle empty colors array
-  if (colors.length === 0) return '#f0f0f0';
+  // If we don't have any colors, return a default gradient
+  if (!colors.length) {
+    return `linear-gradient(${angle}deg, #FF5733, ${highlightColor})`;
+  }
   
-  // If only one color, create a pleasing gradient with that color + lab blue
+  // If we only have one color, create a subtle gradient with the same color
   if (colors.length === 1) {
     const baseColor = colors[0];
-    const mixedColor1 = mixColors ? mixWithLabColor(baseColor, mixRatio * 0.7) : baseColor;
-    const mixedColor2 = mixColors ? mixWithLabColor(baseColor, mixRatio * 1.3) : baseColor;
-    
-    // Create gradient with the base color, its mixed variant, and highlight color
+    // If we should include a highlight color, mix it with the base color
     if (includeHighlight) {
-      return `linear-gradient(${angle}deg, ${mixedColor1}, ${highlightColor}, ${mixedColor2})`;
-    } else {
-      return `linear-gradient(${angle}deg, ${mixedColor1}, ${mixedColor2})`;
+      return `linear-gradient(${angle}deg, ${baseColor}, ${highlightColor}, ${baseColor})`;
     }
+    // Otherwise make a subtle gradient by adjusting lightness
+    return `linear-gradient(${angle}deg, ${baseColor}, ${adjustBrightness(baseColor, 15)})`;
   }
   
-  // Process the colors - mix them with lab blue if mixColors is true
-  let processedColors = [...colors];
-  if (mixColors) {
-    processedColors = processedColors.map(color => mixWithLabColor(color, mixRatio));
+  // If we have multiple colors
+  let gradientColors = [...colors]; // Clone the array
+  
+  // Mix colors with highlight if requested
+  if (mixColors && includeHighlight) {
+    gradientColors = gradientColors.map(color => 
+      mixColorWithRatio(color, highlightColor, mixRatio)
+    );
   }
   
-  // Add highlight color if requested
-  let gradientColors = [...processedColors];
-  if (includeHighlight) {
-    // Calculate position to insert the highlight color
-    const insertIndex = Math.floor(highlightPosition * gradientColors.length);
-    gradientColors.splice(insertIndex, 0, highlightColor);
+  // Add highlight color in the middle if requested but not mixed
+  if (includeHighlight && !mixColors) {
+    // Insert highlight in the middle
+    const middleIndex = Math.floor(gradientColors.length / 2);
+    gradientColors.splice(middleIndex, 0, highlightColor);
   }
   
-  // Apply opacity if < 1
-  if (opacity < 1) {
-    gradientColors = gradientColors.map(color => {
-      const [r, g, b] = hexToRgb(color);
-      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-    });
-  }
+  // Create the gradient string
+  return `linear-gradient(${angle}deg, ${gradientColors.join(', ')})`;
+};
+
+/**
+ * Adjusts the brightness of a hex color
+ * @param color - Hex color string
+ * @param percent - Percent to adjust (positive = lighter, negative = darker)
+ * @returns Adjusted hex color
+ */
+const adjustBrightness = (color: string, percent: number): string => {
+  const num = parseInt(color.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = ((num >> 8) & 0x00ff) + amt;
+  const B = (num & 0x0000ff) + amt;
   
-  // Create gradient stops
-  const colorStops = gradientColors.map((color, index) => {
-    const percentage = (index / (gradientColors.length - 1)) * 100;
-    return `${color} ${percentage}%`;
-  }).join(', ');
+  return `#${(
+    0x1000000 +
+    (R < 255 ? (R < 0 ? 0 : R) : 255) * 0x10000 +
+    (G < 255 ? (G < 0 ? 0 : G) : 255) * 0x100 +
+    (B < 255 ? (B < 0 ? 0 : B) : 255)
+  )
+    .toString(16)
+    .slice(1)}`;
+};
+
+/**
+ * Mix two colors with a given ratio
+ * @param color1 - First hex color
+ * @param color2 - Second hex color
+ * @param ratio - Ratio of second color (0-1)
+ * @returns Mixed hex color
+ */
+const mixColorWithRatio = (
+  color1: string,
+  color2: string,
+  ratio: number
+): string => {
+  // Convert hex to RGB
+  const r1 = parseInt(color1.substring(1, 3), 16);
+  const g1 = parseInt(color1.substring(3, 5), 16);
+  const b1 = parseInt(color1.substring(5, 7), 16);
   
-  // Return the gradient string in the appropriate format
-  if (direction) {
-    return `linear-gradient(${direction}, ${colorStops})`;
-  } else {
-    return `linear-gradient(${angle}deg, ${colorStops})`;
-  }
+  const r2 = parseInt(color2.substring(1, 3), 16);
+  const g2 = parseInt(color2.substring(3, 5), 16);
+  const b2 = parseInt(color2.substring(5, 7), 16);
+  
+  // Mix the colors based on ratio
+  const r = Math.round(r1 * (1 - ratio) + r2 * ratio);
+  const g = Math.round(g1 * (1 - ratio) + g2 * ratio);
+  const b = Math.round(b1 * (1 - ratio) + b2 * ratio);
+  
+  // Convert back to hex
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 };
 
 /**
