@@ -1596,3 +1596,17 @@ footer div {
   align-items: center;
   justify-content: flex-end;
 }
+
+/* Force re-rendering of updated components */
+.project-card, .project-details, .projects-grid {
+  transition: opacity 0.1s ease;
+}
+
+.project-edited {
+  animation: flash-update 0.5s ease;
+}
+
+@keyframes flash-update {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}

@@ -12,7 +12,6 @@ const NewsForm: React.FC = () => {
   
   // Create refs to track form state
   const formRef = useRef<HTMLFormElement>(null);
-  const initialLoadCompleted = useRef(false);
   
   // Form state
   const [title, setTitle] = useState('');
@@ -23,54 +22,47 @@ const NewsForm: React.FC = () => {
   const [featured, setFeatured] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
+  const [newsId, setNewsId] = useState('');
   
   // UI state
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [currentId, setCurrentId] = useState<string | null>(null);
   
-  const isEditMode = id !== 'new';
+  // Determine if we're in create mode or edit mode
+  const isNewNewsItem = id === 'new';
   const today = new Date().toISOString().split('T')[0];
   
-  // Load news item data when component mounts
+  // Initialize a new news ID only once when creating a new news item
   useEffect(() => {
-    const loadNewsItem = () => {
-      try {
-        if (isEditMode) {
-          const itemToEdit = newsItems.find(item => item.id === id);
-          
-          if (itemToEdit) {
-            console.log("Loading news item:", itemToEdit);
-            setCurrentId(itemToEdit.id);
-            setTitle(itemToEdit.title || '');
-            setContent(itemToEdit.content || '');
-            setDate(itemToEdit.date || today);
-            setAuthor(itemToEdit.author || '');
-            setImageUrl(itemToEdit.imageUrl || '');
-            setFeatured(itemToEdit.featured || false);
-            setTags(itemToEdit.tags || []);
-            initialLoadCompleted.current = true;
-          } else {
-            console.error("Could not find news item with ID:", id);
-            setErrorMessage(`Could not find news item with ID: ${id}`);
-            setTimeout(() => navigate('/admin'), 2000);
-          }
-        } else {
-          // For new items, set defaults
-          const newId = `news-${Date.now()}`;
-          setCurrentId(newId);
-          setDate(today);
-          initialLoadCompleted.current = true;
-        }
-      } catch (error) {
-        console.error("Error loading news item:", error);
-        setErrorMessage("An error occurred while loading the news item.");
+    if (isNewNewsItem && !newsId) {
+      const newId = `news-${Date.now()}`;
+      setNewsId(newId);
+      setDate(today);
+      console.log("Created new news item ID:", newId);
+    }
+  }, [isNewNewsItem, newsId, today]);
+  
+  useEffect(() => {
+    if (!isNewNewsItem) {
+      // Only load existing data for edit mode
+      const itemToEdit = newsItems.find(item => item.id === id);
+      if (itemToEdit) {
+        console.log("Editing existing news item:", itemToEdit.title);
+        setNewsId(itemToEdit.id);
+        setTitle(itemToEdit.title || '');
+        setContent(itemToEdit.content || '');
+        setDate(itemToEdit.date || today);
+        setAuthor(itemToEdit.author || '');
+        setImageUrl(itemToEdit.imageUrl || '');
+        setFeatured(itemToEdit.featured || false);
+        setTags(itemToEdit.tags || []);
+      } else {
+        setErrorMessage(`Could not find news item with ID: ${id}`);
+        console.error(`Could not find news item with ID: ${id}`);
       }
-    };
-    
-    loadNewsItem();
-  }, [id, newsItems, isEditMode, navigate, today]);
+    }
+  }, [id, isNewNewsItem, newsItems, today]);
   
   // Tag management
   const handleAddTag = () => {
@@ -107,7 +99,7 @@ const NewsForm: React.FC = () => {
     try {
       // Construct the news item object
       const newsItem: NewsItem = {
-        id: currentId || `news-${Date.now()}`,
+        id: newsId,
         title,
         content,
         date,
@@ -121,14 +113,14 @@ const NewsForm: React.FC = () => {
         newsItem.imageUrl = imageUrl;
       }
       
-      console.log("Submitting news item:", newsItem);
+      console.log("Saving news item:", newsItem);
       
-      if (isEditMode) {
-        updateNewsItem(newsItem);
-        console.log("Updated news item with ID:", newsItem.id);
+      if (isNewNewsItem) {
+        const addedNewsItem = addNewsItem(newsItem);
+        console.log("Added new news item with ID:", addedNewsItem.id);
       } else {
-        addNewsItem(newsItem);
-        console.log("Added new news item with ID:", newsItem.id);
+        updateNewsItem(newsItem);
+        console.log("Updated existing news item:", newsItem.id);
       }
       
       // Show success message and redirect
@@ -145,14 +137,14 @@ const NewsForm: React.FC = () => {
   // Handle deletion
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this news item?')) {
-      if (!currentId) {
+      if (!newsId) {
         setErrorMessage("Cannot delete: no item ID found");
         return;
       }
       
       setIsDeleting(true);
       try {
-        deleteNewsItem(currentId);
+        deleteNewsItem(newsId);
         setTimeout(() => {
           navigate('/admin');
         }, 1000);
@@ -180,12 +172,12 @@ const NewsForm: React.FC = () => {
   return (
     <Layout>
       <div className="admin-form-container">
-        <h1>{isEditMode ? 'Edit News Item' : 'Add News Item'}</h1>
+        <h1>{isNewNewsItem ? 'Add News Item' : 'Edit News Item'}</h1>
         
         {/* Success message */}
         {formSubmitted && (
           <div className="success-message">
-            News item successfully {isEditMode ? 'updated' : 'added'}! Redirecting...
+            News item successfully {isNewNewsItem ? 'added' : 'updated'}! Redirecting...
           </div>
         )}
         
@@ -198,8 +190,8 @@ const NewsForm: React.FC = () => {
         
         {/* Debug info */}
         <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
-          <strong>ID:</strong> {currentId || 'Not set'}<br/>
-          <strong>Mode:</strong> {isEditMode ? 'Edit' : 'New'}<br/>
+          <strong>ID:</strong> {newsId}<br/>
+          <strong>Mode:</strong> {isNewNewsItem ? 'New' : 'Edit'}<br/>
           <strong>Title:</strong> {title}
         </div>
         
@@ -325,7 +317,7 @@ const NewsForm: React.FC = () => {
           </div>
           
           <div className="form-actions">
-            {isEditMode && (
+            {!isNewNewsItem && (
               <button 
                 type="button" 
                 onClick={handleDelete} 
@@ -343,7 +335,7 @@ const NewsForm: React.FC = () => {
                 Cancel
               </button>
               <button type="submit" className="save-button">
-                {isEditMode ? 'Update News Item' : 'Add News Item'}
+                {isNewNewsItem ? 'Add News Item' : 'Update News Item'}
               </button>
             </div>
           </div>

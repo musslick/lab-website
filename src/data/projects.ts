@@ -14,6 +14,7 @@ export interface Project {
   status?: 'ongoing' | 'completed';
   startDate?: string;
   endDate?: string;
+  _lastUpdated?: number; // Added for cache busting
 }
 
 // Helper function to get team member colors

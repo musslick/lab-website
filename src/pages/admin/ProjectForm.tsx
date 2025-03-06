@@ -12,51 +12,57 @@ const ProjectForm: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Create separate state variables for each field
+  // Form fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [team, setTeam] = useState<string[]>([]);
   const [projectId, setProjectId] = useState('');
   const [color, setColor] = useState('');
+  const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
   
-  // State for available options
+  // Available options
   const [availableTeamMembers, setAvailableTeamMembers] = useState<{ name: string }[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   
-  const isEditMode = id !== 'new';
+  // Determine if we're in create mode or edit mode
+  const isNewProject = id === 'new';
+  
+  // Initialize a new project ID only once when creating a new project
+  useEffect(() => {
+    if (isNewProject && !projectId) {
+      const newId = `project-${Date.now()}`;
+      setProjectId(newId);
+      setColor('linear-gradient(135deg, #FF5733, #00AAFF)');
+      console.log("Created new project ID:", newId);
+    }
+  }, [isNewProject, projectId]);
   
   useEffect(() => {
-    // Extract unique categories from existing projects
-    const uniqueCategories = Array.from(new Set(projects.map(p => p.category)));
-    setCategories(uniqueCategories);
-    
-    // Get team member names
+    // Always load available team members and categories
     const teamMemberNames = teamMembers.map(member => ({ name: member.name }));
     setAvailableTeamMembers(teamMemberNames);
     
-    if (isEditMode) {
+    const uniqueCategories = Array.from(new Set(projects.map(p => p.category)));
+    setCategories(uniqueCategories);
+    
+    if (!isNewProject) {
+      // Only load existing data for edit mode
       const projectToEdit = projects.find(p => p.id === id);
       if (projectToEdit) {
-        console.log("Loading project for editing:", projectToEdit);
-        // Set individual field values
+        console.log("Editing existing project:", projectToEdit.title);
+        setProjectId(projectToEdit.id);
         setTitle(projectToEdit.title || '');
         setDescription(projectToEdit.description || '');
         setCategory(projectToEdit.category || '');
         setTeam(projectToEdit.team || []);
-        setProjectId(projectToEdit.id);
         setColor(projectToEdit.color || '');
       } else {
         setError(`Could not find project with ID: ${id}`);
-        setTimeout(() => navigate('/admin'), 2000);
+        console.error(`Could not find project with ID: ${id}`);
       }
-    } else {
-      // Set up a new project with a generated ID
-      const newId = `project-${Date.now()}`;
-      setProjectId(newId);
-      setColor('linear-gradient(135deg, #FF5733, #00AAFF)');
     }
-  }, [id, isEditMode, projects, teamMembers, navigate]);
+  }, [id, isNewProject, projects, teamMembers]);
   
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
@@ -75,26 +81,33 @@ const ProjectForm: React.FC = () => {
     // Clear any previous errors
     setError(null);
     
-    // Construct the project object
-    const projectData: Project = {
-      id: projectId,
-      title,
-      description,
-      category,
-      team,
-      color
-    };
-    
-    console.log("Submitting project data:", projectData);
-    
     try {
-      if (isEditMode) {
-        updateProject(projectData);
+      // Construct the project object
+      const projectData: Project = {
+        id: projectId,
+        title,
+        description,
+        category,
+        team,
+        color,
+        _lastUpdated: Date.now() // For cache busting
+      };
+      
+      console.log("Saving project:", projectData);
+      
+      if (isNewProject) {
+        const addedProject = addProject(projectData);
+        console.log("Added new project with ID:", addedProject.id);
       } else {
-        addProject(projectData);
+        updateProject(projectData);
+        console.log("Updated existing project:", projectData.title);
+        // Add cache busting for edited projects
+        localStorage.setItem(`project_cache_${projectId}`, Date.now().toString());
       }
       
       setFormSubmitted(true);
+      setLastUpdated(Date.now());
+      
       setTimeout(() => {
         navigate('/admin');
       }, 1500);
@@ -137,11 +150,11 @@ const ProjectForm: React.FC = () => {
   return (
     <Layout>
       <div className="admin-form-container">
-        <h1>{isEditMode ? 'Edit Project' : 'Add Project'}</h1>
+        <h1>{isNewProject ? 'Add Project' : 'Edit Project'}</h1>
         
         {formSubmitted && (
           <div className="success-message">
-            Project successfully {isEditMode ? 'updated' : 'added'}! Redirecting...
+            Project successfully {isNewProject ? 'added' : 'updated'}! Redirecting...
           </div>
         )}
         
@@ -151,11 +164,14 @@ const ProjectForm: React.FC = () => {
           </div>
         )}
         
-        {/* Debug info */}
+        {/* Debug info with more details */}
         <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
           <strong>ID:</strong> {projectId}<br/>
-          <strong>Mode:</strong> {isEditMode ? 'Edit' : 'New'}<br/>
-          <strong>Title:</strong> {title}
+          <strong>Mode:</strong> {isNewProject ? 'New' : 'Edit'}<br/>
+          <strong>Title:</strong> {title}<br/>
+          <strong>Last Updated:</strong> {new Date(lastUpdated).toLocaleTimeString()}<br/>
+          <strong>Team Members:</strong> {team.length > 0 ? team.join(', ') : 'None selected'}<br/>
+          <strong>Category:</strong> {category || 'Not set'}
         </div>
         
         <form onSubmit={handleSubmit} className="admin-form">
@@ -224,7 +240,7 @@ const ProjectForm: React.FC = () => {
           </div>
           
           <div className="form-actions">
-            {isEditMode && (
+            {!isNewProject && (
               <button 
                 type="button" 
                 onClick={handleDelete} 
@@ -242,7 +258,7 @@ const ProjectForm: React.FC = () => {
                 Cancel
               </button>
               <button type="submit" className="save-button">
-                {isEditMode ? 'Update Project' : 'Add Project'}
+                {isNewProject ? 'Add Project' : 'Update Project'}
               </button>
             </div>
           </div>

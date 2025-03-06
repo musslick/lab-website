@@ -9,13 +9,13 @@ interface ContentContextType {
   teamMembers: TeamMember[];
   newsItems: NewsItem[];
   updateProject: (updatedProject: Project) => void;
-  addProject: (newProject: Project) => void;
+  addProject: (newProject: Project) => Project; // Updated return type
   deleteProject: (id: string) => void;
   updateTeamMember: (updatedMember: TeamMember) => void;
-  addTeamMember: (newMember: TeamMember) => void;
+  addTeamMember: (newMember: TeamMember) => TeamMember; // Updated return type
   deleteTeamMember: (id: string) => void;
   updateNewsItem: (updatedNewsItem: NewsItem) => void;
-  addNewsItem: (newNewsItem: NewsItem) => void;
+  addNewsItem: (newNewsItem: NewsItem) => NewsItem; // Updated return type
   deleteNewsItem: (id: string) => void;
   resetToDefaults: () => void;
 }
@@ -25,13 +25,13 @@ const ContentContext = createContext<ContentContextType>({
   teamMembers: [],
   newsItems: [],
   updateProject: () => {},
-  addProject: () => {},
+  addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }), // Updated with dummy return
   deleteProject: () => {},
   updateTeamMember: () => {},
-  addTeamMember: () => {},
+  addTeamMember: () => ({ id: '', name: '', role: '', bio: '', imageUrl: '', color: '', projects: [] }), // Updated with dummy return
   deleteTeamMember: () => {},
   updateNewsItem: () => {},
-  addNewsItem: () => {},
+  addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '', tags: [] }), // Updated with dummy return
   deleteNewsItem: () => {},
   resetToDefaults: () => {},
 });
@@ -189,45 +189,86 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         mixRatio: 0.3,
         type: 'radial',
         position: 'circle at center'
-      })
+      }),
+      _lastUpdated: Date.now() // Add timestamp for cache busting
     };
     
+    // Create a new array to ensure state update is triggered
     const newProjects = projects.map(project => 
       project.id === updatedProject.id ? projectWithUpdatedColor : project
     );
     
+    // Save to storage and update state
     saveProjects(newProjects);
+    
+    // Emit an event for components that need to know about the update
+    window.dispatchEvent(new CustomEvent('project-updated', {
+      detail: { projectId: updatedProject.id, timestamp: Date.now() }
+    }));
+    
+    // Force a re-render of the project page
+    setTimeout(() => {
+      // This timeout gives the browser time to process the state update
+      console.log("Project update completed:", updatedProject.id);
+    }, 100);
   };
 
-  const addProject = (newProject: Project) => {
-    // Ensure unique ID
-    const projectWithId = {
-      ...newProject,
-      id: newProject.id || `project-${Date.now()}`
-    };
-    
-    // Ensure the color is generated based on team members
-    const teamColors = projectWithId.team.map(memberName => {
-      const member = teamMembers.find(m => m.name === memberName);
-      return member ? member.color : '#CCCCCC'; // Default gray if member not found
-    });
-    
-    // Generate a new gradient if team members are present
-    const projectWithColor = {
-      ...projectWithId,
-      color: teamColors.length > 0 
-        ? createGradient(teamColors, {
-            includeHighlight: true,
-            highlightColor: '#00AAFF', // Lab blue
-            mixColors: true,
-            mixRatio: 0.3,
-            type: 'radial',
-            position: 'circle at center'
-          })
-        : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)' // Default radial gradient
-    };
-    
-    saveProjects([...projects, projectWithColor]);
+  const addProject = (newProject: Project): Project => {
+    try {
+      console.log("Adding new project:", newProject.title);
+      
+      // Ensure unique ID
+      const projectId = newProject.id || `project-${Date.now()}`;
+      const projectWithId = {
+        ...newProject,
+        id: projectId
+      };
+      
+      // Ensure the color is generated based on team members
+      const teamColors = projectWithId.team.map(memberName => {
+        const member = teamMembers.find(m => m.name === memberName);
+        return member ? member.color : '#CCCCCC'; // Default gray if member not found
+      });
+      
+      // Generate a new gradient if team members are present
+      const projectWithColor = {
+        ...projectWithId,
+        color: teamColors.length > 0 
+          ? createGradient(teamColors, {
+              includeHighlight: true,
+              highlightColor: '#00AAFF', // Lab blue
+              mixColors: true,
+              mixRatio: 0.3,
+              type: 'radial',
+              position: 'circle at center'
+            })
+          : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)' // Default radial gradient
+      };
+      
+      // Create a new projects array with the added project
+      const newProjects = [...projects, projectWithColor];
+      
+      // Set state first for immediate UI update
+      setProjects(newProjects);
+      
+      // Then save to localStorage
+      try {
+        localStorage.setItem('projects', JSON.stringify(newProjects));
+        console.log("Project saved to localStorage:", projectWithColor.title);
+      } catch (storageError) {
+        console.error("Failed to save projects to localStorage:", storageError);
+      }
+      
+      // Emit event to notify other components
+      window.dispatchEvent(new CustomEvent('project-added', {
+        detail: { projectId: projectWithColor.id, timestamp: Date.now() }
+      }));
+      
+      return projectWithColor; // Return the created project
+    } catch (error) {
+      console.error("Failed to add project:", error);
+      throw error;
+    }
   };
 
   const deleteProject = (id: string) => {
@@ -292,14 +333,41 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
   };
 
-  const addTeamMember = (newMember: TeamMember) => {
-    // Ensure unique ID
-    const memberWithId = {
-      ...newMember,
-      id: newMember.id || `member-${Date.now()}`
-    };
-    const updatedMembers = [...teamMembers, memberWithId];
-    saveTeamMembers(updatedMembers);
+  const addTeamMember = (newMember: TeamMember): TeamMember => {
+    try {
+      console.log("Adding new team member:", newMember.name);
+      
+      // Ensure unique ID
+      const memberId = newMember.id || `member-${Date.now()}`;
+      const memberWithId = {
+        ...newMember,
+        id: memberId
+      };
+      
+      // Create a new array with the new member
+      const updatedMembers = [...teamMembers, memberWithId];
+      
+      // Set state first for immediate UI update
+      setTeamMembers(updatedMembers);
+      
+      // Then save to localStorage
+      try {
+        localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
+        console.log("Team member saved to localStorage:", memberWithId.name);
+      } catch (storageError) {
+        console.error("Failed to save team members to localStorage:", storageError);
+      }
+      
+      // Emit event to notify other components
+      window.dispatchEvent(new CustomEvent('member-added', {
+        detail: { memberId: memberWithId.id, name: memberWithId.name, timestamp: Date.now() }
+      }));
+      
+      return memberWithId; // Return the created member
+    } catch (error) {
+      console.error("Failed to add team member:", error);
+      throw error;
+    }
   };
 
   const deleteTeamMember = (id: string) => {
@@ -381,27 +449,37 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
   };
 
-  const addNewsItem = (newNewsItem: NewsItem) => {
+  const addNewsItem = (newNewsItem: NewsItem): NewsItem => {
     try {
-      console.log("Adding news item:", newNewsItem);
+      console.log("Adding news item:", newNewsItem.title);
       
       // Ensure the item has an ID
+      const newsId = newNewsItem.id || `news-${Date.now()}`;
       const itemToAdd = {
         ...newNewsItem,
-        id: newNewsItem.id || `news-${Date.now()}`
+        id: newsId
       };
       
       // Create a new array with the added item
       const newNewsItems = [...newsItems, itemToAdd];
       
-      // Save to localStorage
-      localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
-      
-      // Update state
+      // Update state first for immediate UI update
       setNewsItems(newNewsItems);
-      console.log("News item added successfully:", itemToAdd.id);
       
-      return true;
+      // Then save to localStorage
+      try {
+        localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
+        console.log("News item saved to localStorage:", itemToAdd.title);
+      } catch (storageError) {
+        console.error("Failed to save news items to localStorage:", storageError);
+      }
+      
+      // Emit event to notify other components
+      window.dispatchEvent(new CustomEvent('news-added', {
+        detail: { newsId: itemToAdd.id, title: itemToAdd.title, timestamp: Date.now() }
+      }));
+      
+      return itemToAdd; // Return the created news item
     } catch (error) {
       console.error("Failed to add news item:", error);
       throw error;

@@ -12,7 +12,7 @@ const TeamMemberForm: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Create separate state variables for each field
+  // Form fields
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [bio, setBio] = useState('');
@@ -22,23 +22,36 @@ const TeamMemberForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [memberId, setMemberId] = useState('');
   
+  // Available projects for selection
   const [availableProjects, setAvailableProjects] = useState<{ id: string, title: string }[]>([]);
   
-  const isEditMode = id !== 'new';
+  // Determine if we're in create mode or edit mode
+  const isNewMember = id === 'new';
+  
+  // Initialize a new member ID only once when creating a new member
+  useEffect(() => {
+    if (isNewMember && !memberId) {
+      const newId = `member-${Date.now()}`;
+      setMemberId(newId);
+      setColor('#000000');
+      console.log("Created new team member ID:", newId);
+    }
+  }, [isNewMember, memberId]);
   
   useEffect(() => {
-    // Load project options
+    // Always load available projects for selection
     const projectOptions = projects.map(project => ({
       id: project.id,
       title: project.title
     }));
     setAvailableProjects(projectOptions);
     
-    if (isEditMode) {
+    if (!isNewMember) {
+      // Only load existing data for edit mode
       const memberToEdit = teamMembers.find(m => m.id === id);
       if (memberToEdit) {
-        console.log("Loading team member for editing:", memberToEdit);
-        // Set individual field values
+        console.log("Editing existing team member:", memberToEdit.name);
+        setMemberId(memberToEdit.id);
         setName(memberToEdit.name || '');
         setRole(memberToEdit.role || '');
         setBio(memberToEdit.bio || '');
@@ -46,18 +59,12 @@ const TeamMemberForm: React.FC = () => {
         setColor(memberToEdit.color || '#000000');
         setMemberProjects(memberToEdit.projects || []);
         setEmail(memberToEdit.email || '');
-        setMemberId(memberToEdit.id);
       } else {
         setError(`Could not find team member with ID: ${id}`);
-        setTimeout(() => navigate('/admin'), 2000);
+        console.error(`Could not find team member with ID: ${id}`);
       }
-    } else {
-      // Set up a new team member with a generated ID
-      const newId = `member-${Date.now()}`;
-      setMemberId(newId);
-      setColor('#000000');
     }
-  }, [id, isEditMode, teamMembers, projects, navigate]);
+  }, [id, isNewMember, projects, teamMembers, navigate]);
   
   const handleProjectsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
@@ -76,29 +83,31 @@ const TeamMemberForm: React.FC = () => {
     // Clear any previous errors
     setError(null);
     
-    // Construct the team member object
-    const memberData: TeamMember = {
-      id: memberId,
-      name,
-      role,
-      bio,
-      imageUrl,
-      color,
-      projects: memberProjects
-    };
-    
-    // Add email if provided
-    if (email) {
-      memberData.email = email;
-    }
-    
-    console.log("Submitting team member data:", memberData);
-    
     try {
-      if (isEditMode) {
-        updateTeamMember(memberData);
+      // Construct the team member object
+      const memberData: TeamMember = {
+        id: memberId,
+        name,
+        role,
+        bio,
+        imageUrl,
+        color,
+        projects: memberProjects
+      };
+      
+      // Add email if provided
+      if (email) {
+        memberData.email = email;
+      }
+      
+      console.log("Submitting team member data:", memberData);
+      
+      if (isNewMember) {
+        const addedMember = addTeamMember(memberData);
+        console.log("Added new team member with ID:", addedMember.id);
       } else {
-        addTeamMember(memberData);
+        updateTeamMember(memberData);
+        console.log("Updated existing team member:", memberData.name);
       }
       
       setFormSubmitted(true);
@@ -136,11 +145,11 @@ const TeamMemberForm: React.FC = () => {
   return (
     <Layout>
       <div className="admin-form-container">
-        <h1>{isEditMode ? 'Edit Team Member' : 'Add Team Member'}</h1>
+        <h1>{isNewMember ? 'Add Team Member' : 'Edit Team Member'}</h1>
         
         {formSubmitted && (
           <div className="success-message">
-            Team member successfully {isEditMode ? 'updated' : 'added'}! Redirecting...
+            Team member successfully {isNewMember ? 'added' : 'updated'}! Redirecting...
           </div>
         )}
         
@@ -153,7 +162,7 @@ const TeamMemberForm: React.FC = () => {
         {/* Debug info */}
         <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
           <strong>ID:</strong> {memberId}<br/>
-          <strong>Mode:</strong> {isEditMode ? 'Edit' : 'New'}<br/>
+          <strong>Mode:</strong> {isNewMember ? 'New' : 'Edit'}<br/>
           <strong>Name:</strong> {name}
         </div>
         
@@ -265,7 +274,7 @@ const TeamMemberForm: React.FC = () => {
           </div>
           
           <div className="form-actions">
-            {isEditMode && (
+            {!isNewMember && (
               <button 
                 type="button" 
                 onClick={handleDelete} 
@@ -283,7 +292,7 @@ const TeamMemberForm: React.FC = () => {
                 Cancel
               </button>
               <button type="submit" className="save-button">
-                {isEditMode ? 'Update Team Member' : 'Add Team Member'}
+                {isNewMember ? 'Add Team Member' : 'Update Team Member'}
               </button>
             </div>
           </div>
