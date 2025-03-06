@@ -97,20 +97,48 @@ interface TeamMemberProps {
 }
 
 const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color }) => {
+    // State to track if image failed to load or is invalid
+    const [imageError, setImageError] = useState(false);
+    
+    // Check if we have a valid image URL
+    const hasValidImage = imageUrl && 
+                       imageUrl.trim() !== '' && 
+                       !imageUrl.endsWith('undefined') && 
+                       !imageUrl.endsWith('null') &&
+                       !imageError;
+    
     return (
         <div className="team-member">
             <div 
                 className="team-member-color" 
                 style={{ backgroundColor: color }}
             ></div>
-            <img src={imageUrl} alt={name} className="team-member-image" />
+            
+            {hasValidImage ? (
+                <img 
+                    src={imageUrl} 
+                    alt={name} 
+                    className="team-member-image"
+                    onError={() => {
+                        // Track that this image failed to load
+                        setImageError(true);
+                    }}
+                />
+            ) : (
+                <div 
+                    className="team-member-image team-member-color-circle"
+                    style={{ backgroundColor: color }}
+                    aria-label={`${name}'s profile color`}
+                />
+            )}
+            
             <div className="team-member-info">
                 <h3 className="team-member-name">{name}</h3>
                 <p className="team-member-bio">{bio}</p>
             </div>
         </div>
     );
-};
+}
 
 // ===============================
 // TeamGradientBanner Component

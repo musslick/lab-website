@@ -474,3 +474,90 @@
   font-family: monospace;
   font-size: 12px;
 }
+
+/* Image upload styles */
+.image-upload-container {
+  margin: 10px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border: 1px dashed #ccc;
+}
+
+.image-upload-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.upload-option {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-label {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #00AAFF;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.upload-label:hover {
+  background-color: #0088cc;
+}
+
+.file-input {
+  display: none;
+}
+
+.uploading-indicator {
+  color: #666;
+  font-style: italic;
+  margin-left: 10px;
+}
+
+.uploaded-image-preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.uploaded-image-preview img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px;
+  background-color: white;
+}
+
+.clear-upload-button {
+  margin-top: 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.clear-upload-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Make sure the form row properly aligns the image and color sections */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

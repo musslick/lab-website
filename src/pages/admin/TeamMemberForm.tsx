@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
@@ -21,6 +21,11 @@ const TeamMemberForm: React.FC = () => {
   const [memberProjects, setMemberProjects] = useState<string[]>([]);
   const [email, setEmail] = useState('');
   const [memberId, setMemberId] = useState('');
+  
+  // New image upload states
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Available projects for selection
   const [availableProjects, setAvailableProjects] = useState<{ id: string, title: string }[]>([]);
@@ -59,6 +64,11 @@ const TeamMemberForm: React.FC = () => {
         setColor(memberToEdit.color || '#000000');
         setMemberProjects(memberToEdit.projects || []);
         setEmail(memberToEdit.email || '');
+        
+        // If there's an existing image URL and it's a base64 image, set it as uploaded
+        if (memberToEdit.imageUrl && memberToEdit.imageUrl.startsWith('data:image/')) {
+          setUploadedImage(memberToEdit.imageUrl);
+        }
       } else {
         setError(`Could not find team member with ID: ${id}`);
         console.error(`Could not find team member with ID: ${id}`);
@@ -69,6 +79,62 @@ const TeamMemberForm: React.FC = () => {
   const handleProjectsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
     setMemberProjects(selected);
+  };
+  
+  // Handle image file upload
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Check file type
+    if (!file.type.match('image.*')) {
+      setError('Please select an image file (jpeg, png, gif, etc)');
+      return;
+    }
+    
+    // Check file size (max 1MB)
+    if (file.size > 1024 * 1024) {
+      setError('Image file size should be less than 1MB');
+      return;
+    }
+    
+    setIsUploading(true);
+    
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setUploadedImage(base64);
+      setImageUrl(base64); // Also update the imageUrl field
+      setIsUploading(false);
+    };
+    
+    reader.onerror = () => {
+      setError('Failed to read the image file');
+      setIsUploading(false);
+    };
+    
+    reader.readAsDataURL(file);
+  };
+  
+  // Clear uploaded image
+  const handleClearUpload = () => {
+    setUploadedImage(null);
+    setImageUrl('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+  
+  // Handle external URL input
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setImageUrl(url);
+    
+    // Clear uploaded image if we're using an external URL
+    if (url && !url.startsWith('data:image/')) {
+      setUploadedImage(null);
+    }
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -201,26 +267,69 @@ const TeamMemberForm: React.FC = () => {
           </div>
           
           <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="imageUrl">Image URL</label>
-              <input
-                type="text"
-                id="imageUrl"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="/assets/team/default.jpg"
-              />
-              {imageUrl && (
-                <div className="image-preview">
-                  <img 
-                    src={imageUrl} 
-                    alt="Member preview" 
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
+            <div className="form-group" style={{ flex: '1' }}>
+              <label>Profile Image</label>
+              
+              <div className="image-upload-container">
+                <div className="image-upload-options">
+                  <div className="upload-option">
+                    <label htmlFor="imageUpload" className="upload-label">
+                      Upload Image
+                    </label>
+                    <input
+                      type="file"
+                      id="imageUpload"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      accept="image/*"
+                      className="file-input"
+                    />
+                    {isUploading && <span className="uploading-indicator">Uploading...</span>}
+                  </div>
+                  
+                  <div className="upload-option">
+                    <label htmlFor="imageUrl">or Enter Image URL</label>
+                    <input
+                      type="text"
+                      id="imageUrl"
+                      value={imageUrl}
+                      onChange={handleUrlChange}
+                      placeholder="http://example.com/image.jpg"
+                      disabled={!!uploadedImage}
+                    />
+                  </div>
                 </div>
-              )}
+                
+                {uploadedImage && (
+                  <div className="uploaded-image-preview">
+                    <img
+                      src={uploadedImage}
+                      alt="Uploaded preview"
+                      style={{ maxHeight: '150px', maxWidth: '100%' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleClearUpload}
+                      className="clear-upload-button"
+                    >
+                      Clear Uploaded Image
+                    </button>
+                  </div>
+                )}
+                
+                {imageUrl && !uploadedImage && (
+                  <div className="image-preview">
+                    <img 
+                      src={imageUrl} 
+                      alt="Member preview" 
+                      style={{ maxHeight: '150px', maxWidth: '100%' }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             
             <div className="form-group">

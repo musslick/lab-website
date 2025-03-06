@@ -491,6 +491,16 @@ header {
   margin-top: 0;
 }
 
+/* Team member color circle styling for profile images */
+.team-member-color-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 20px auto;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* =========================================
    PROJECTS STYLES
    ========================================= */
