@@ -18,20 +18,28 @@ const TeamMemberDetail: React.FC = () => {
       if (foundMember) {
         setMember(foundMember);
         
-        // Find projects this member is involved in
-        // Fix: Use optional chaining and nullish coalescing to safely access projects
-        const memberProjectIds = foundMember.projects ?? [];
-        if (memberProjectIds.length > 0) {
-          const relatedProjects = projects.filter(p => 
-            memberProjectIds.includes(p.id)
-          );
-          setMemberProjects(relatedProjects);
-        } else {
-          // Alternatively, find by name in project.team arrays
-          const relatedProjects = projects.filter(p => 
-            p.team.includes(foundMember.name)
-          );
-          setMemberProjects(relatedProjects);
+        // Projects can be found in two ways:
+        // 1. By checking if the member's name is in project.team array (most reliable)
+        // 2. By checking if project.id is in member.projects array (if it exists)
+        
+        // First look for projects that include this member in their team
+        const relatedProjectsByName = projects.filter(p => 
+          p.team.includes(foundMember.name)
+        );
+        
+        // If we found projects by name, use those
+        if (relatedProjectsByName.length > 0) {
+          setMemberProjects(relatedProjectsByName);
+        }
+        // Otherwise, fall back to the member.projects array if it exists
+        else {
+          const memberProjectIds = foundMember.projects ?? [];
+          if (memberProjectIds.length > 0) {
+            const relatedProjectsById = projects.filter(p => 
+              memberProjectIds.includes(p.id)
+            );
+            setMemberProjects(relatedProjectsById);
+          }
         }
       }
       
