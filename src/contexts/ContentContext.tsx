@@ -18,6 +18,7 @@ interface ContentContextType {
   addNewsItem: (newNewsItem: NewsItem) => NewsItem; // Updated return type
   deleteNewsItem: (id: string) => void;
   resetToDefaults: () => void;
+  getTeamMemberById: (id: string) => TeamMember | undefined; // Add this method
 }
 
 const ContentContext = createContext<ContentContextType>({
@@ -34,6 +35,7 @@ const ContentContext = createContext<ContentContextType>({
   addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '', tags: [] }), // Updated with dummy return
   deleteNewsItem: () => {},
   resetToDefaults: () => {},
+  getTeamMemberById: () => undefined, // Add this method
 });
 
 export const useContent = () => useContext(ContentContext);
@@ -530,6 +532,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
   };
 
+  // Add function to get team member by ID
+  const getTeamMemberById = (id: string): TeamMember | undefined => {
+    return teamMembers.find(member => member.id === id);
+  };
+
   return (
     <ContentContext.Provider value={{
       projects,
@@ -544,7 +551,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       updateNewsItem,
       addNewsItem,
       deleteNewsItem,
-      resetToDefaults
+      resetToDefaults,
+      getTeamMemberById // Include the new method
     }}>
       {children}
     </ContentContext.Provider>

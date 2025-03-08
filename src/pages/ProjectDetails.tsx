@@ -81,8 +81,11 @@ const ProjectDetails: React.FC = () => {
         className="project-color-header"
         style={{ background: project.color }}
       >
-        <h1>{project.title}</h1>
+        {/* No heading in the banner */}
       </div>
+
+      {/* Project title as h1, using the standardized class */}
+      <h1 className="project-title-standalone">{project.title}</h1>
 
       <div className="project-section">
         <h2>About This Project</h2>
@@ -93,13 +96,17 @@ const ProjectDetails: React.FC = () => {
         <h2>Team</h2>
         <div className="project-team-grid">
           {projectTeamMembers.map(member => (
-            <div key={member.id} className="project-team-member">
+            <Link 
+              key={member.id} 
+              to={`/team/${member.id}`}
+              className="project-team-member"
+            >
               <div 
                 className="team-color-indicator"
                 style={{ backgroundColor: member.color }}
               ></div>
               <span>{member.name}</span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

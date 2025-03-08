@@ -24,6 +24,7 @@ const Team: React.FC = () => {
         {teamMembers.map((member) => (
           <TeamMember
             key={member.id}
+            id={member.id}
             name={member.name}
             bio={member.bio}
             imageUrl={member.imageUrl}

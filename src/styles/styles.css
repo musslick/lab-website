@@ -266,9 +266,11 @@ header {
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
+  font-size: 2.2rem;
   font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.2;
+  color: #000000;
   text-align: left;
 }
 
@@ -282,7 +284,7 @@ header {
 
 @media (max-width: 768px) {
   .page-header h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   
   .page-header p {
@@ -402,7 +404,10 @@ header {
 
 .team-member-name {
   margin: 0 0 10px;
-  /* color: #333; - Use default body text color */
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #000000;
   text-align: left;
 }
 
@@ -439,8 +444,11 @@ header {
 
 .member-projects h4 {
   font-size: 1rem;
-  color: #555; /* Keep this muted color for section headers */
+  font-weight: 600;
   margin-bottom: 8px;
+  line-height: 1.3;
+  color: #555; /* Keep this muted color for section headers */
+  text-align: left;
 }
 
 .member-project-list {
@@ -472,8 +480,12 @@ header {
 }
 
 .team-page .projects-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
   margin-bottom: 10px;
-  border-bottom: none;
+  line-height: 1.2;
+  color: #000000;
+  text-align: left;
 }
 
 .team-page .projects-header p {
@@ -502,6 +514,167 @@ header {
 }
 
 /* =========================================
+   TEAM MEMBER DETAIL STYLES
+   ========================================= */
+
+.team-member-detail-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 10px;
+}
+
+.team-member-color-header {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  background-size: cover !important;
+}
+
+.team-member-profile {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.team-member-profile-image {
+  flex: 0 0 250px;
+}
+
+.team-member-large-image {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.team-member-large-color-circle {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.team-member-profile-info {
+  flex: 1;
+}
+
+.team-member-profile-info h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.team-member-role {
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.team-member-contact {
+  margin-bottom: 20px;
+}
+
+.team-member-email {
+  color: #00AAFF;
+  text-decoration: none;
+}
+
+.team-member-email:hover {
+  text-decoration: underline;
+}
+
+.team-member-bio-extended {
+  line-height: 1.6;
+}
+
+.team-member-projects-section {
+  margin-top: 40px;
+}
+
+.team-member-projects-section h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #000000;
+}
+
+.team-member-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.team-member-project-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: #000000;
+}
+
+.team-member-project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.project-color-indicator {
+  height: 100px;
+  width: 100%;
+}
+
+.project-info {
+  padding: 15px;
+}
+
+.project-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #000000;
+}
+
+.project-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .team-member-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .team-member-profile-info {
+    text-align: center;
+  }
+  
+  .team-member-profile-info h1,
+  .team-member-role,
+  .team-member-bio-extended p {
+    text-align: center;
+  }
+  
+  .team-member-projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
    PROJECTS STYLES
    ========================================= */
 
@@ -515,9 +688,12 @@ header {
 }
 
 .projects-header h1 {
-  /* color: #007acc; - Remove specific color */
+  font-size: 2.2rem;
+  font-weight: 700;
   margin-bottom: 10px;
-  border-bottom: none;
+  line-height: 1.2;
+  color: #000000;
+  text-align: left;
 }
 
 .projects-header p {
@@ -645,9 +821,12 @@ header {
 }
 
 .project-title {
-  font-size: 1.4rem; /* Increased font size from 1.3rem */
-  margin: 0 0 12px 0; /* Increased bottom margin for spacing */
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 12px; /* Increased bottom margin for spacing */
+  line-height: 1.3;
   color: #000000; /* Added pure black color */
+  text-align: left;
 }
 
 .project-excerpt {
@@ -791,9 +970,14 @@ header {
 }
 
 .project-section h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  line-height: 1.3;
+  color: #000000;
+  text-align: left;
   border-bottom: none; /* Remove bottom border */
   padding-bottom: 10px;
-  margin-bottom: 20px;
 }
 
 .project-section ul {
@@ -824,17 +1008,26 @@ header {
   margin-bottom: 30px;
   border-radius: 8px;
   background-size: cover !important;
-  text-align: center;
+  /* Removed text-align: center; since we don't have heading here anymore */
 }
 
+/* Remove the h1 styling from color header since we moved it */
 .project-color-header h1 {
-  color: white; /* Keep this for contrast on colored backgrounds */
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-  margin: 0;
-  padding: 0 20px;
-  text-align: center;
+  display: none;
 }
 
+/* New standalone project title styling */
+.project-title-standalone {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0 0 30px 0;
+  padding: 0;
+  line-height: 1.2;
+  color: #000000;
+  text-align: left;
+}
+
+/* Project team grid */
 .project-team-grid {
   display: flex;
   flex-wrap: wrap;
@@ -995,8 +1188,12 @@ header {
 }
 
 .featured-projects h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  line-height: 1.3;
+  color: #000000;
   text-align: left;
-  margin-bottom: 30px;
   position: relative;
   padding-bottom: 15px;
   font-weight: 400;
@@ -1023,6 +1220,15 @@ header {
   margin: 80px 0;
   text-align: left;
   padding: 0 5px; /* Add minimal horizontal padding */
+}
+
+.collaborators h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  line-height: 1.3;
+  color: #000000;
+  text-align: left;
 }
 
 /* Make sure media queries don't affect project cards */
@@ -1105,9 +1311,12 @@ header {
 }
 
 .about-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 2.2rem;
   font-weight: 700;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  color: #000000;
+  text-align: left;
 }
 
 .about-header p {
@@ -1121,8 +1330,11 @@ header {
 
 .about-section h2 {
   font-size: 1.8rem;
-  margin-bottom: 15px;
   font-weight: 600;
+  margin-bottom: 15px;
+  line-height: 1.3;
+  color: #000000;
+  text-align: left;
 }
 
 .about-section p {
@@ -1163,7 +1375,11 @@ header {
 }
 
 .feed-item h2 {
-  margin: 0 0 0.5rem 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  color: #000000;
   text-align: left;
 }
 
@@ -1333,8 +1549,10 @@ footer div {
 
 .team-page .about-section h2 {
   font-size: 1.8rem;
-  margin-bottom: 15px;
   font-weight: 600;
+  margin-bottom: 15px;
+  line-height: 1.3;
+  color: #000000;
   text-align: left;
 }
 
@@ -1384,8 +1602,12 @@ footer div {
 }
 
 .feed-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
   margin-bottom: 10px;
-  color: #333;
+  line-height: 1.2;
+  color: #000000;
+  text-align: left;
 }
 
 .feed-header p {
@@ -1463,9 +1685,13 @@ footer div {
 }
 
 .news-content h3 {
-  margin-top: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
   margin-bottom: 10px;
-  color: #333;
+  line-height: 1.3;
+  color: #000000;
+  text-align: left;
+  margin-top: 0;
 }
 
 .news-meta {
@@ -1619,4 +1845,79 @@ footer div {
 @keyframes flash-update {
   0% { opacity: 0.6; }
   100% { opacity: 1; }
+}
+
+/* =========================================
+   STANDARDIZED HEADING STYLES
+   ========================================= */
+
+/* Primary page headings - h1 */
+.page-header h1,
+.projects-header h1, 
+.feed-header h1,
+.about-header h1,
+.team-page .projects-header h1,
+.project-title-standalone {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  color: #000000;
+  text-align: left;
+}
+
+/* Section headings - h2 */
+.featured-projects h2,
+.collaborators h2,
+.about-section h2,
+.project-section h2,
+.team-page .about-section h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  line-height: 1.3;
+  color: #000000;
+  text-align: left;
+}
+
+/* Subsection headings - h3 */
+.project-title,
+.team-member-name,
+.news-content h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.3;
+  color: #000000;
+  text-align: left;
+}
+
+/* Smaller headings - h4 */
+.member-projects h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  color: #555;
+  text-align: left;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-header h1,
+  .projects-header h1,
+  .feed-header h1,
+  .about-header h1,
+  .team-page .projects-header h1,
+  .project-title-standalone {
+    font-size: 1.8rem;
+  }
+  
+  .featured-projects h2,
+  .collaborators h2,
+  .about-section h2,
+  .project-section h2,
+  .team-page .about-section h2 {
+    font-size: 1.5rem;
+  }
 }

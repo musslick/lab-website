@@ -94,9 +94,10 @@ interface TeamMemberProps {
     bio: string;
     imageUrl: string;
     color: string;
+    id: string; // Add id property
 }
 
-const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color }) => {
+const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color, id }) => {
     // State to track if image failed to load or is invalid
     const [imageError, setImageError] = useState(false);
     
@@ -108,7 +109,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color }) =
                        !imageError;
     
     return (
-        <div className="team-member">
+        <Link to={`/team/${id}`} className="team-member">
             <div 
                 className="team-member-color" 
                 style={{ backgroundColor: color }}
@@ -136,7 +137,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color }) =
                 <h3 className="team-member-name">{name}</h3>
                 <p className="team-member-bio">{bio}</p>
             </div>
-        </div>
+        </Link>
     );
 }
 

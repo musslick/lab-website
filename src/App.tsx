@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Team from './pages/Team';
+import TeamMemberDetail from './pages/TeamMemberDetail';
 import Feed from './pages/Feed';
 import ProjectDetails from './pages/ProjectDetails';
 import Login from './pages/admin/Login';
@@ -32,6 +33,11 @@ const App: React.FC = () => {
               <Route path="/team" element={
                 <Layout>
                   <Team />
+                </Layout>
+              } />
+              <Route path="/team/:id" element={
+                <Layout>
+                  <TeamMemberDetail />
                 </Layout>
               } />
               <Route path="/feed" element={
