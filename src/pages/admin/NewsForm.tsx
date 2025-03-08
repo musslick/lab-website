@@ -30,7 +30,7 @@ const NewsForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   // Determine if we're in create mode or edit mode
-  const isNewNewsItem = id === 'new';
+  const isNewNewsItem = !id || id === 'new';
   const today = new Date().toISOString().split('T')[0];
   
   // Initialize a new news ID only once when creating a new news item

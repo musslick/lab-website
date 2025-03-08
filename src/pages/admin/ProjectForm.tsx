@@ -26,7 +26,7 @@ const ProjectForm: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   
   // Determine if we're in create mode or edit mode
-  const isNewProject = id === 'new';
+  const isNewProject = !id || id === 'new';
   
   // Initialize a new project ID only once when creating a new project
   useEffect(() => {

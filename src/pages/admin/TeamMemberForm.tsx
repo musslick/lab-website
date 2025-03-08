@@ -31,7 +31,7 @@ const TeamMemberForm: React.FC = () => {
   const [availableProjects, setAvailableProjects] = useState<{ id: string, title: string }[]>([]);
   
   // Determine if we're in create mode or edit mode
-  const isNewMember = id === 'new';
+  const isNewMember = !id || id === 'new';
   
   // Initialize a new member ID only once when creating a new member
   useEffect(() => {
