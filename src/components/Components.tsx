@@ -101,12 +101,14 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color, id 
     // State to track if image failed to load or is invalid
     const [imageError, setImageError] = useState(false);
     
-    // Check if we have a valid image URL
-    const hasValidImage = imageUrl && 
-                       imageUrl.trim() !== '' && 
-                       !imageUrl.endsWith('undefined') && 
-                       !imageUrl.endsWith('null') &&
-                       !imageError;
+    // More robust check for valid image URL
+    const hasValidImage = Boolean(
+        imageUrl && 
+        imageUrl.trim() !== '' && 
+        !imageUrl.endsWith('undefined') && 
+        !imageUrl.endsWith('null') &&
+        !imageError
+    );
     
     return (
         <Link to={`/team/${id}`} className="team-member">
@@ -121,7 +123,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color, id 
                     alt={name} 
                     className="team-member-image"
                     onError={() => {
-                        // Track that this image failed to load
+                        console.log(`Image failed to load for ${name}`);
                         setImageError(true);
                     }}
                 />

@@ -9,6 +9,7 @@ const TeamMemberDetail: React.FC = () => {
   const [member, setMember] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [memberProjects, setMemberProjects] = useState<any[]>([]);
+  const [imageError, setImageError] = useState(false);
   
   useEffect(() => {
     if (id) {
@@ -35,6 +36,8 @@ const TeamMemberDetail: React.FC = () => {
       }
       
       setLoading(false);
+      // Reset the image error state when loading a new member
+      setImageError(false);
     }
   }, [id, getTeamMemberById, projects]);
 
@@ -46,11 +49,14 @@ const TeamMemberDetail: React.FC = () => {
     return <div>Team member not found</div>;
   }
 
-  // Check if we have a valid image URL
-  const hasValidImage = member.imageUrl && 
-                    member.imageUrl.trim() !== '' && 
-                    !member.imageUrl.endsWith('undefined') && 
-                    !member.imageUrl.endsWith('null');
+  // More robust check for valid image URL
+  const hasValidImage = Boolean(
+    member.imageUrl && 
+    member.imageUrl.trim() !== '' && 
+    !member.imageUrl.endsWith('undefined') && 
+    !member.imageUrl.endsWith('null') &&
+    !imageError
+  );
 
   return (
     <div className="team-member-detail-page">
@@ -68,6 +74,10 @@ const TeamMemberDetail: React.FC = () => {
               src={member.imageUrl} 
               alt={member.name}
               className="team-member-large-image"
+              onError={() => {
+                console.log(`Image failed to load for ${member.name} detail page`);
+                setImageError(true);
+              }}
             />
           ) : (
             <div 
