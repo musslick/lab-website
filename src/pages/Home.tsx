@@ -48,18 +48,30 @@ const Home: React.FC = () => {
                     )}
                 </div>
                 
-                <div className="collaborator-list tag-list">
+                <div className="collaborator-list">
                     {collaborators.map(collaborator => (
                         <a 
                             href={collaborator.url} 
                             key={collaborator.id} 
-                            className="collaborator-tag tag-button"
+                            className="collaborator-tag"
                             target="_blank" 
                             rel="noopener noreferrer"
                         >
-                            {collaborator.name}
+                            {collaborator.logo && (
+                                <img 
+                                    src={collaborator.logo} 
+                                    alt={`${collaborator.name} logo`}
+                                    className="collaborator-logo"
+                                />
+                            )}
+                            <span>{collaborator.name}</span>
                         </a>
                     ))}
+                    
+                    {/* "Become a Collaborator" card with plus sign in the text */}
+                    <Link to="/contact" className="collaborator-tag collaborate-cta">
+                        <span>+ Become a Collaborator</span>
+                    </Link>
                 </div>
             </section>
         </div>

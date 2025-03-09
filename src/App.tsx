@@ -7,6 +7,7 @@ import Team from './pages/Team';
 import TeamMemberDetail from './pages/TeamMemberDetail';
 import Feed from './pages/Feed';
 import ProjectDetails from './pages/ProjectDetails';
+import Contact from './pages/Contact'; // Import the new Contact component
 import Login from './pages/admin/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProjectForm from './pages/admin/ProjectForm';
@@ -57,6 +58,7 @@ const App: React.FC = () => {
                   <ProjectDetails />
                 </Layout>
               } />
+              <Route path="/contact" element={<Contact />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminDashboard />} />

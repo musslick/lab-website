@@ -31,6 +31,20 @@ const CollaboratorsList: React.FC = () => {
           ) : (
             collaborators.map(collaborator => (
               <div key={collaborator.id} className="admin-list-item">
+                <div className="admin-item-logo">
+                  {collaborator.logo ? (
+                    <img 
+                      src={collaborator.logo} 
+                      alt={`${collaborator.name} logo`}
+                      className="collaborator-logo-preview" 
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <div className="no-logo-placeholder">No Logo</div>
+                  )}
+                </div>
                 <div className="admin-item-title">{collaborator.name}</div>
                 <div className="admin-item-category">
                   <a 

@@ -166,14 +166,20 @@ const CollaboratorForm: React.FC = () => {
               onChange={(e) => setLogo(e.target.value)}
               placeholder="https://www.example.com/logo.png"
             />
+            <p className="form-help-text">For best results, use a square image (max size: 100x100px)</p>
+            
             {logo && (
-              <div className="image-preview">
+              <div className="image-preview logo-preview">
                 <img 
                   src={logo} 
                   alt={`${name} logo`} 
                   style={{ maxHeight: '100px', maxWidth: '100%' }}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
+                    const errorMsg = document.createElement('p');
+                    errorMsg.textContent = 'Unable to load image. Please check URL.';
+                    errorMsg.className = 'error-text';
+                    (e.target as HTMLImageElement).parentNode?.appendChild(errorMsg);
                   }}
                 />
               </div>

@@ -277,6 +277,34 @@
   border-bottom: none;
 }
 
+.admin-item-logo {
+  margin-right: 20px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collaborator-logo-preview {
+  max-width: 80px;
+  max-height: 80px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.no-logo-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #999;
+}
+
 .admin-item-title {
   font-weight: 600;
   flex: 1;
