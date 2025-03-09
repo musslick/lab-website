@@ -403,7 +403,7 @@ header {
 }
 
 .team-member-name {
-  margin: 0 0 10px;
+  margin: 0 0 10px; /* Changed from margin: 0 0 10px to explicitly set top margin to 0 */
   font-size: 1.3rem;
   font-weight: 600;
   line-height: 1.3;
@@ -823,7 +823,7 @@ header {
 .project-title {
   font-size: 1.3rem;
   font-weight: 600;
-  margin-bottom: 12px; /* Increased bottom margin for spacing */
+  margin: 0 0 12px; /* Changed from margin-bottom: 12px to remove any implicit top margin */
   line-height: 1.3;
   color: #000000; /* Added pure black color */
   text-align: left;
@@ -1183,20 +1183,8 @@ header {
 
 /* Use Projects.css grid styling for featured projects */
 .featured-projects {
-  margin: 60px 0; /* Increased margin for better spacing */
+  margin: 30px 0; /* Changed from 60px 0 to reduce top margin */
   padding: 0 5px; /* Add minimal horizontal padding */
-}
-
-.featured-projects h2 {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-  line-height: 1.3;
-  color: #000000;
-  text-align: left;
-  position: relative;
-  padding-bottom: 15px;
-  font-weight: 400;
 }
 
 .home-page .projects-grid {
@@ -1479,7 +1467,7 @@ footer .nav-link.active {
 }
 
 .featured-projects {
-  margin: 60px 0; /* Vertical margin only */
+  margin: 30px 0; /* Vertical margin only */
   padding: 0 5px; /* Add minimal horizontal padding */
 }
 
@@ -1720,7 +1708,7 @@ footer .nav-link.active {
 .news-content h3 {
   font-size: 1.3rem;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin: 0 0 10px; /* Changed from margin-bottom: 10px to explicitly set top margin to 0 */
   line-height: 1.3;
   color: #000000;
   text-align: left;
@@ -2191,12 +2179,23 @@ footer .nav-link.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 40px; /* Keeping the larger size */
   font-weight: bold;
   color: #00AAFF;
-  width: 40px;
-  height: 40px;
   margin-right: 16px;
-  border-radius: 50%;
-  border: 2px solid #00AAFF;
+  line-height: 0.7; /* Adding line-height adjustment to vertically center the plus */
+  margin-top: -5px; /* Slight negative margin to move it up */
+}
+
+/* Add plus icon to add buttons for better UX */
+.add-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.add-button::before {
+  content: '+';
+  margin-right: 5px;
+  font-weight: bold;
+  font-size: 18px;
 }

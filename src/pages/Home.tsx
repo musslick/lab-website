@@ -57,7 +57,7 @@ const Home: React.FC = () => {
                                 className="project-color-block"
                                 style={{ background: '#00AAFF' }}
                             >
-                                {featuredNewsItem.featured && <span className="featured-banner">Featured</span>}
+                                {/* Removed the featured banner from here */}
                             </div>
                             <div className="project-content">
                                 <h3 className="project-title">{featuredNewsItem.title}</h3>
