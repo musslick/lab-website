@@ -2,12 +2,14 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import { Project, projects as initialProjects } from '../data/projects';
 import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
 import { NewsItem, newsItems as initialNewsItems } from '../data/news';
+import { Collaborator, collaborators as initialCollaborators } from '../data/collaborators';
 import { createGradient } from '../utils/colorUtils';
 
 interface ContentContextType {
   projects: Project[];
   teamMembers: TeamMember[];
   newsItems: NewsItem[];
+  collaborators: Collaborator[];
   updateProject: (updatedProject: Project) => void;
   addProject: (newProject: Project) => Project; // Updated return type
   deleteProject: (id: string) => void;
@@ -17,6 +19,9 @@ interface ContentContextType {
   updateNewsItem: (updatedNewsItem: NewsItem) => void;
   addNewsItem: (newNewsItem: NewsItem) => NewsItem; // Updated return type
   deleteNewsItem: (id: string) => void;
+  updateCollaborator: (updatedCollaborator: Collaborator) => void;
+  addCollaborator: (newCollaborator: Collaborator) => Collaborator;
+  deleteCollaborator: (id: string) => void;
   resetToDefaults: () => void;
   getTeamMemberById: (id: string) => TeamMember | undefined; // Add this method
 }
@@ -25,6 +30,7 @@ const ContentContext = createContext<ContentContextType>({
   projects: [],
   teamMembers: [],
   newsItems: [],
+  collaborators: [],
   updateProject: () => {},
   addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }), // Updated with dummy return
   deleteProject: () => {},
@@ -34,6 +40,9 @@ const ContentContext = createContext<ContentContextType>({
   updateNewsItem: () => {},
   addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '', tags: [] }), // Updated with dummy return
   deleteNewsItem: () => {},
+  updateCollaborator: () => {},
+  addCollaborator: () => ({ id: '', name: '', url: '' }),
+  deleteCollaborator: () => {},
   resetToDefaults: () => {},
   getTeamMemberById: () => undefined, // Add this method
 });
@@ -48,6 +57,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [projects, setProjects] = useState<Project[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+  const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
 
   // Helper function to generate color gradients for projects based on team members
   const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
@@ -90,6 +100,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedProjects = localStorage.getItem('projects');
         const savedTeamMembers = localStorage.getItem('teamMembers');
         const savedNewsItems = localStorage.getItem('newsItems');
+        const savedCollaborators = localStorage.getItem('collaborators');
   
         let projectsData: Project[];
         let teamData: TeamMember[];
@@ -119,6 +130,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         }
         setNewsItems(newsData);
         
+        if (savedCollaborators) {
+          setCollaborators(JSON.parse(savedCollaborators));
+        } else {
+          setCollaborators(initialCollaborators);
+        }
+        
         // Save the updated projects if necessary
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
           localStorage.setItem('projects', JSON.stringify(updatedProjects));
@@ -128,6 +145,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         setProjects(initialProjects);
         setTeamMembers(initialTeamMembers);
         setNewsItems(initialNewsItems);
+        setCollaborators(initialCollaborators);
       }
     };
 
@@ -169,6 +187,48 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       console.error("Error saving news items to localStorage:", error);
       alert("Failed to save news. LocalStorage might be full or unavailable.");
     }
+  };
+
+  // Collaborator management functions
+  const saveCollaborators = (updatedCollaborators: Collaborator[]) => {
+    try {
+      localStorage.setItem('collaborators', JSON.stringify(updatedCollaborators));
+      setCollaborators(updatedCollaborators);
+    } catch (error) {
+      console.error("Error saving collaborators to localStorage:", error);
+      alert("Failed to save collaborators. LocalStorage might be full or unavailable.");
+    }
+  };
+
+  const updateCollaborator = (updatedCollaborator: Collaborator) => {
+    const newCollaborators = collaborators.map(collab => 
+      collab.id === updatedCollaborator.id ? updatedCollaborator : collab
+    );
+    saveCollaborators(newCollaborators);
+  };
+
+  const addCollaborator = (newCollaborator: Collaborator): Collaborator => {
+    try {
+      // Ensure unique ID
+      const collabId = newCollaborator.id || `collab-${Date.now()}`;
+      const collabWithId = {
+        ...newCollaborator,
+        id: collabId
+      };
+      
+      const newCollaborators = [...collaborators, collabWithId];
+      saveCollaborators(newCollaborators);
+      
+      return collabWithId;
+    } catch (error) {
+      console.error("Failed to add collaborator:", error);
+      throw error;
+    }
+  };
+
+  const deleteCollaborator = (id: string) => {
+    const newCollaborators = collaborators.filter(collab => collab.id !== id);
+    saveCollaborators(newCollaborators);
   };
 
   // Project management functions
@@ -638,12 +698,14 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('projects');
       localStorage.removeItem('teamMembers');
       localStorage.removeItem('newsItems');
+      localStorage.removeItem('collaborators');
       setTeamMembers(initialTeamMembers);
       
       // Update projects with default gradients based on default team members
       const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
       setProjects(projectsWithGradients);
       setNewsItems(initialNewsItems);
+      setCollaborators(initialCollaborators);
       
       alert('Data has been reset to defaults.');
     }
@@ -659,6 +721,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       projects,
       teamMembers,
       newsItems,
+      collaborators,
       updateProject,
       addProject,
       deleteProject,
@@ -668,6 +731,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       updateNewsItem,
       addNewsItem,
       deleteNewsItem,
+      updateCollaborator,
+      addCollaborator,
+      deleteCollaborator,
       resetToDefaults,
       getTeamMemberById // Include the new method
     }}>

@@ -7,8 +7,8 @@ import { cleanupStorage, resetNewsItems, repairTeamProjectAssociations } from '.
 
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { projects, teamMembers, newsItems, resetToDefaults } = useContent();
-  const [activePage, setActivePage] = useState<'overview' | 'projects' | 'team' | 'news'>('overview');
+  const { projects, teamMembers, newsItems, collaborators, resetToDefaults } = useContent();
+  const [activePage, setActivePage] = useState<'overview' | 'projects' | 'team' | 'news' | 'collaborators'>('overview');
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
   
@@ -124,6 +124,12 @@ const AdminDashboard: React.FC = () => {
           >
             Manage News
           </button>
+          <button 
+            className={activePage === 'collaborators' ? 'active' : ''}
+            onClick={() => setActivePage('collaborators')}
+          >
+            Collaborators
+          </button>
         </div>
 
         {showDebugInfo && (
@@ -193,6 +199,13 @@ const AdminDashboard: React.FC = () => {
               <p className="stats-number">{newsItems.length}</p>
               <Link to="/admin/news/new" className="action-link">
                 Add News Item
+              </Link>
+            </div>
+            <div className="stats-card">
+              <h3>Collaborators</h3>
+              <p className="stats-number">{collaborators.length}</p>
+              <Link to="/admin/collaborators" className="action-link">
+                Manage Collaborators
               </Link>
             </div>
           </div>
@@ -318,6 +331,53 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {activePage === 'collaborators' && (
+          <div className="admin-collaborators">
+            <div className="admin-action-header">
+              <h2>Collaborators</h2>
+              <Link to="/admin/collaborators/new" className="add-button">
+                Add New Collaborator
+              </Link>
+            </div>
+            <div className="admin-list">
+              {collaborators.length === 0 ? (
+                <div className="empty-state">
+                  <p>No collaborators yet. Add your first collaborator to get started!</p>
+                </div>
+              ) : (
+                collaborators.map(collaborator => (
+                  <div key={collaborator.id} className="admin-list-item">
+                    <div className="admin-item-title">{collaborator.name}</div>
+                    <div className="admin-item-category">
+                      <a 
+                        href={collaborator.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="collaborator-link"
+                      >
+                        {collaborator.url}
+                      </a>
+                    </div>
+                    <div className="admin-item-actions">
+                      <Link to={`/admin/collaborators/edit/${collaborator.id}`} className="edit-button">
+                        Edit
+                      </Link>
+                      <a 
+                        href={collaborator.url} 
+                        className="view-button" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Visit
+                      </a>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         )}
       </div>

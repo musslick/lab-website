@@ -2,11 +2,14 @@ import React from 'react';
 import { ProjectCard } from '../components/Components';
 import '../styles/styles.css';
 import { useContent } from '../contexts/ContentContext';
+import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 // Import the SVG directly when using Create React App or similar bundler
 import { ReactComponent as BrainLogo } from '../assets/logo.svg';
 
 const Home: React.FC = () => {
-    const { projects } = useContent();
+    const { projects, collaborators } = useContent();
+    const { isAuthenticated } = useAuth();
     // Select featured projects (first 3)
     const featuredProjects = projects.slice(0, 3);
     
@@ -26,6 +29,7 @@ const Home: React.FC = () => {
             </section>
             
             <section className="featured-projects">
+                <h2>Featured Projects</h2>
                 {/* Use the same projects-grid class as in Projects.tsx */}
                 <div className="projects-grid">
                     {featuredProjects.map(project => (
@@ -35,11 +39,27 @@ const Home: React.FC = () => {
             </section>
             
             <section className="collaborators">
-                <h2 style={{ textAlign: 'left' }}>Our Collaborators</h2>
-                <div className="collaborator-logos" style={{ textAlign: 'left' }}>
-                    <div className="collaborator-logo">University of Science</div>
-                    <div className="collaborator-logo">National Research Lab</div>
-                    <div className="collaborator-logo">Tech Institute</div>
+                <div className="collaborators-header">
+                    <h2>Our Collaborators</h2>
+                    {isAuthenticated && (
+                        <Link to="/admin/collaborators" className="add-button">
+                            Manage Collaborators
+                        </Link>
+                    )}
+                </div>
+                
+                <div className="collaborator-list tag-list">
+                    {collaborators.map(collaborator => (
+                        <a 
+                            href={collaborator.url} 
+                            key={collaborator.id} 
+                            className="collaborator-tag tag-button"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
+                            {collaborator.name}
+                        </a>
+                    ))}
                 </div>
             </section>
         </div>

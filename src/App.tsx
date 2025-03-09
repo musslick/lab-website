@@ -12,6 +12,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import ProjectForm from './pages/admin/ProjectForm';
 import TeamMemberForm from './pages/admin/TeamMemberForm';
 import NewsForm from './pages/admin/NewsForm';
+import CollaboratorsList from './pages/admin/CollaboratorsList';
+import CollaboratorForm from './pages/admin/CollaboratorForm';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
 import './styles/styles.css';
@@ -65,6 +67,9 @@ const App: React.FC = () => {
               <Route path="/admin/team/edit/:id" element={<TeamMemberForm />} />
               <Route path="/admin/news/new" element={<NewsForm />} />
               <Route path="/admin/news/edit/:id" element={<NewsForm />} />
+              <Route path="/admin/collaborators" element={<CollaboratorsList />} />
+              <Route path="/admin/collaborators/new" element={<CollaboratorForm />} />
+              <Route path="/admin/collaborators/edit/:id" element={<CollaboratorForm />} />
             </Routes>
           </div>
         </Router>

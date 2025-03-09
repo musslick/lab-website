@@ -1954,3 +1954,71 @@ footer .nav-link.active {
     font-size: 1.5rem;
   }
 }
+
+/* Collaborator styles */
+.collaborators-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.collaborator-list {
+  margin-top: 15px;
+}
+
+.collaborator-tag {
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: #000000;
+  display: inline-block;
+  margin: 0 8px 8px 0;
+}
+
+.collaborator-tag:hover {
+  background-color: #00AAFF;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.collaborator-link {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.collaborator-link:hover {
+  color: #00AAFF;
+  text-decoration: underline;
+}
+
+.back-link {
+  display: inline-block;
+  color: #00AAFF;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.back-link:hover {
+  transform: translateX(-3px);
+}
+
+/* Add plus icon to add buttons for better UX */
+.add-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.add-button::before {
+  content: '+';
+  margin-right: 5px;
+  font-weight: bold;
+  font-size: 18px;
+}
