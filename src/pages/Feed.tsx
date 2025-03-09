@@ -36,8 +36,8 @@ const Feed: React.FC = () => {
   };
 
   return (
-    <div className="feed-page">
-      <div className="feed-header">
+    <div className="projects-page">
+      <div className="projects-header">
         <h1>Latest News</h1>
         <p>Stay updated with the latest news from our lab</p>
       </div>
@@ -57,7 +57,7 @@ const Feed: React.FC = () => {
         </div>
       </div>
       
-      <div className="news-grid">
+      <div className="news-grid" style={{ marginTop: '30px' }}>
         {sortedNews.length > 0 ? (
           sortedNews.map(item => (
             <div key={item.id} className={`news-card ${item.featured ? 'featured' : ''}`}>

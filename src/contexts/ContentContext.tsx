@@ -301,9 +301,28 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     // First update team members
     setTeamMembers(newTeamMembers);
     
-    // If color changed, update all projects that include this team member
-    if (previousMember && previousMember.color !== updatedMember.color) {
-      const updatedProjects = projects.map(project => {
+    // Track if we need to update projects
+    let projectsNeedUpdate = false;
+    let updatedProjects = [...projects];
+    
+    // If name changed, update all projects that include this team member
+    if (previousMember && previousMember.name !== updatedMember.name) {
+      updatedProjects = projects.map(project => {
+        if (project.team.includes(previousMember.name)) {
+          // Replace old name with new name in the team array
+          const updatedTeam = project.team.map(name => 
+            name === previousMember.name ? updatedMember.name : name
+          );
+          projectsNeedUpdate = true;
+          return { ...project, team: updatedTeam };
+        }
+        return project;
+      });
+    }
+    
+    // If color changed or projects were updated due to name change, update project colors
+    if ((previousMember && previousMember.color !== updatedMember.color) || projectsNeedUpdate) {
+      updatedProjects = updatedProjects.map(project => {
         if (project.team.includes(updatedMember.name)) {
           // Get the updated team colors
           const teamColors = project.team.map(memberName => {
@@ -333,6 +352,54 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       // Otherwise just save team members
       localStorage.setItem('teamMembers', JSON.stringify(newTeamMembers));
     }
+    
+    // If the member has project IDs, ensure this member is part of those projects' teams
+    if (updatedMember.projects && updatedMember.projects.length > 0) {
+      const projectsToUpdate = [...updatedProjects];
+      let hasChanges = false;
+      
+      updatedMember.projects.forEach(projectId => {
+        const projectIndex = projectsToUpdate.findIndex(p => p.id === projectId);
+        if (projectIndex >= 0) {
+          const project = projectsToUpdate[projectIndex];
+          if (!project.team.includes(updatedMember.name)) {
+            // Add member to project team if not already there
+            projectsToUpdate[projectIndex] = {
+              ...project,
+              team: [...project.team, updatedMember.name]
+            };
+            hasChanges = true;
+          }
+        }
+      });
+      
+      if (hasChanges) {
+        // Update project colors based on new team composition
+        const finalProjects = projectsToUpdate.map(project => {
+          if (updatedMember.projects?.includes(project.id)) {
+            const teamColors = project.team.map(memberName => {
+              const member = newTeamMembers.find(m => m.name === memberName);
+              return member ? member.color : '#CCCCCC';
+            });
+            
+            return {
+              ...project,
+              color: createGradient(teamColors, {
+                includeHighlight: true,
+                highlightColor: '#00AAFF',
+                mixColors: true,
+                mixRatio: 0.3,
+                type: 'radial',
+                position: 'circle at center'
+              })
+            };
+          }
+          return project;
+        });
+        
+        saveProjects(finalProjects);
+      }
+    }
   };
 
   const addTeamMember = (newMember: TeamMember): TeamMember => {
@@ -358,6 +425,56 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         console.log("Team member saved to localStorage:", memberWithId.name);
       } catch (storageError) {
         console.error("Failed to save team members to localStorage:", storageError);
+      }
+      
+      // If the member has project IDs, ensure this member is part of those projects' teams
+      if (memberWithId.projects && memberWithId.projects.length > 0) {
+        const projectsToUpdate = [...projects];
+        let hasChanges = false;
+        
+        memberWithId.projects.forEach(projectId => {
+          const projectIndex = projectsToUpdate.findIndex(p => p.id === projectId);
+          if (projectIndex >= 0) {
+            const project = projectsToUpdate[projectIndex];
+            if (!project.team.includes(memberWithId.name)) {
+              // Add member to project team if not already there
+              projectsToUpdate[projectIndex] = {
+                ...project,
+                team: [...project.team, memberWithId.name]
+              };
+              hasChanges = true;
+            }
+          }
+        });
+        
+        if (hasChanges) {
+          // Update project colors based on new team composition
+          const updatedProjects = projectsToUpdate.map(project => {
+            if (memberWithId.projects?.includes(project.id)) {
+              const teamColors = project.team.map(memberName => {
+                // Get color for the new member or other team members
+                if (memberName === memberWithId.name) return memberWithId.color;
+                const member = updatedMembers.find(m => m.name === memberName);
+                return member ? member.color : '#CCCCCC';
+              });
+              
+              return {
+                ...project,
+                color: createGradient(teamColors, {
+                  includeHighlight: true,
+                  highlightColor: '#00AAFF',
+                  mixColors: true,
+                  mixRatio: 0.3,
+                  type: 'radial',
+                  position: 'circle at center'
+                })
+              };
+            }
+            return project;
+          });
+          
+          saveProjects(updatedProjects);
+        }
       }
       
       // Emit event to notify other components

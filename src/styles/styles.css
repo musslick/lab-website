@@ -573,11 +573,11 @@ header {
 }
 
 .team-member-role {
-  font-size: 1.3rem;
-  font-weight: 400;
-  color: #555;
+  color: #666;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  font-weight: 500;
   margin-top: 0;
-  margin-bottom: 20px;
 }
 
 .team-member-contact {
@@ -1647,8 +1647,22 @@ footer div {
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  /* marginTop is handled inline in the component */
+}
+
+/* Make sure news grid has the same responsive behavior as projects grid */
+@media (max-width: 1100px) {
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .news-card {

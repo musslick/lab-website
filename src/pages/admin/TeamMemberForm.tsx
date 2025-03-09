@@ -136,7 +136,14 @@ const TeamMemberForm: React.FC = () => {
       setUploadedImage(null);
     }
   };
+
+  // Show associated project titles for better UX
+  const getProjectTitleById = (projectId: string): string => {
+    const project = projects.find(p => p.id === projectId);
+    return project ? project.title : `Unknown Project (${projectId})`;
+  };
   
+  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -229,7 +236,10 @@ const TeamMemberForm: React.FC = () => {
         <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
           <strong>ID:</strong> {memberId}<br/>
           <strong>Mode:</strong> {isNewMember ? 'New' : 'Edit'}<br/>
-          <strong>Name:</strong> {name}
+          <strong>Name:</strong> {name}<br/>
+          <strong>Selected Projects:</strong> {memberProjects.length > 0 ? 
+            memberProjects.map(id => getProjectTitleById(id)).join(', ') : 
+            'None'}
         </div>
         
         <form onSubmit={handleSubmit} className="admin-form">

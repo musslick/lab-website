@@ -26,7 +26,7 @@ const Team: React.FC = () => {
             key={member.id}
             id={member.id}
             name={member.name}
-            bio={member.bio}
+            bio={member.role} // Changed from bio to role
             imageUrl={member.imageUrl}
             color={member.color}
           />

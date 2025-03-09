@@ -3,7 +3,7 @@ import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
-import { cleanupStorage, resetNewsItems } from '../../utils/debugStorage';
+import { cleanupStorage, resetNewsItems, repairTeamProjectAssociations } from '../../utils/debugStorage';
 
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -48,6 +48,18 @@ const AdminDashboard: React.FC = () => {
         window.location.reload();
       } else {
         alert('Failed to clean up news items.');
+      }
+    }
+  };
+
+  const handleRepairAssociations = () => {
+    if (window.confirm('Repair team-project associations? This will ensure consistency between teams and projects.')) {
+      const changesApplied = repairTeamProjectAssociations();
+      if (changesApplied) {
+        alert('Team-project associations repaired. Please reload the page to see the changes.');
+        window.location.reload();
+      } else {
+        alert('No issues found or couldn\'t repair associations.');
       }
     }
   };
@@ -123,6 +135,9 @@ const AdminDashboard: React.FC = () => {
               </button>
               <button onClick={clearStorage} className="clear-button">
                 Clear All Storage
+              </button>
+              <button onClick={handleRepairAssociations} className="repair-button">
+                Fix Team-Project Links
               </button>
               <button onClick={() => window.location.reload()} className="reload-button">
                 Reload Page

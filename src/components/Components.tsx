@@ -91,10 +91,10 @@ const TopNav: React.FC = () => {
 // ===============================
 interface TeamMemberProps {
     name: string;
-    bio: string;
+    bio: string; // We'll keep this as bio but use it for role
     imageUrl: string;
     color: string;
-    id: string; // Add id property
+    id: string; 
 }
 
 const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color, id }) => {
@@ -137,7 +137,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, bio, imageUrl, color, id 
             
             <div className="team-member-info">
                 <h3 className="team-member-name">{name}</h3>
-                <p className="team-member-bio">{bio}</p>
+                <p className="team-member-role">{bio}</p> {/* Changed class name from team-member-bio to team-member-role */}
             </div>
         </Link>
     );
