@@ -67,19 +67,6 @@ const TopNav: React.FC = () => {
                             News
                         </NavLink>
                     </li>
-                    {isAuthenticated ? (
-                        <li>
-                            <NavLink to="/admin" className={({isActive}) => isActive ? 'active' : ''}>
-                                Admin
-                            </NavLink>
-                        </li>
-                    ) : (
-                        <li>
-                            <NavLink to="/admin/login" className={({isActive}) => isActive ? 'active' : ''}>
-                                Login
-                            </NavLink>
-                        </li>
-                    )}
                 </ul>
             </div>
         </nav>
@@ -444,6 +431,8 @@ const Filter: React.FC<FilterProps> = ({ categories, onFilterChange }) => {
 // Footer Component
 // ===============================
 const Footer: React.FC = () => {
+    const { isAuthenticated } = useAuth();
+    
     return (
         <footer>
             <div>
@@ -452,6 +441,11 @@ const Footer: React.FC = () => {
                     <a href="https://twitter.com/yourlab" target="_blank" rel="noopener noreferrer">Twitter</a>
                     <a href="https://facebook.com/yourlab" target="_blank" rel="noopener noreferrer">Facebook</a>
                     <a href="https://linkedin.com/company/yourlab" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    {isAuthenticated ? (
+                        <NavLink to="/admin">Admin Dashboard</NavLink>
+                    ) : (
+                        <NavLink to="/admin/login">Admin Login</NavLink>
+                    )}
                 </div>
             </div>
         </footer>

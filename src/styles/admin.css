@@ -146,7 +146,7 @@
 
 /* Admin Dashboard */
 .admin-dashboard {
-  padding: 20px 10px;
+  padding: 20px 10px; /* Match the standard page padding of the site */
   max-width: 1200px;
   margin: 0 auto;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -156,9 +156,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+  margin-top: 0; /* Ensure no extra top margin */
+  padding-bottom: 0;
+  border-bottom: none; /* Removed the border line */
 }
 
 .admin-header h1 {
@@ -170,7 +171,7 @@
 
 .admin-nav {
   display: flex;
-  margin-bottom: 30px;
+  margin-bottom: 20px; /* Changed from 30px to match site spacing */
   border-bottom: 1px solid #eee;
 }
 
@@ -199,7 +200,8 @@
 .admin-overview {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 15px; /* Changed from 20px to 15px to match projects grid */
+  margin-top: 20px; /* Added top margin to match other sections */
 }
 
 .stats-card {
@@ -241,7 +243,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px; /* Changed from 20px to 15px to match site spacing */
+  margin-top: 20px; /* Added to ensure consistent spacing after sections */
 }
 
 .admin-action-header h2 {
@@ -322,7 +325,7 @@
 .admin-form-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px 10px;
+  padding: 20px 10px; /* Match main content padding */
 }
 
 .admin-form-container h1 {
@@ -342,10 +345,6 @@
 .form-row {
   display: flex;
   gap: 20px;
-}
-
-.form-row .form-group {
-  flex: 1;
 }
 
 .form-actions {
@@ -405,7 +404,7 @@
 .debug-info {
   background: #f8f9fa;
   padding: 15px;
-  margin: 15px 0;
+  margin: 20px 0; /* Changed from 15px to 20px to match section spacing */
   border-radius: 8px;
   border: 1px solid #ddd;
   font-family: 'Inter', sans-serif;
@@ -607,6 +606,22 @@
     flex-wrap: wrap;
     gap: 8px;
   }
+
+  .admin-dashboard {
+    padding: 20px 5px; /* Match the mobile padding from main styles */
+  }
+  
+  .action-buttons {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-dashboard {
+    padding: 20px 3px; /* Match the smallest screen padding from main styles */
+  }
 }
 
 /* Improved transitions for better UX */
@@ -630,4 +645,24 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* Ensure consistent button spacing in action headers */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Override any inline styles for buttons */
+.cleanup-button,
+.reset-button,
+.debug-button {
+  margin-right: 0; /* Remove any inline margin */
+}
+
+.admin-projects, 
+.admin-team, 
+.admin-news {
+  margin-top: 20px; /* Added to ensure consistent spacing between sections */
 }

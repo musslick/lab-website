@@ -1438,6 +1438,25 @@ footer div {
   }
 }
 
+/* Adjusted footer link styles to ensure admin link looks consistent */
+footer a, 
+footer .nav-link {
+  color: #000000; /* Changed from white to black */
+  margin: 0 10px;
+  text-decoration: none;
+  display: inline-block; /* Ensure consistent display */
+}
+
+footer a:hover,
+footer .nav-link:hover {
+  text-decoration: underline;
+}
+
+footer a.active,
+footer .nav-link.active {
+  font-weight: 600;
+}
+
 /* =========================================
    PAGE SPECIFIC STYLES - Standardize margins
    ========================================= */

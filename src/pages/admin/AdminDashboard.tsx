@@ -265,17 +265,15 @@ const AdminDashboard: React.FC = () => {
           <div className="admin-news">
             <div className="admin-action-header">
               <h2>News Items</h2>
-              <div>
+              <div className="action-buttons">
                 <button 
                   onClick={handleCleanupNewsItems} 
-                  style={{marginRight: '10px'}}
                   className="cleanup-button"
                 >
                   Cleanup News Items
                 </button>
                 <button 
                   onClick={handleResetNewsItems}
-                  style={{marginRight: '10px'}}
                   className="reset-button"
                 >
                   Reset News Items
