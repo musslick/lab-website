@@ -43,14 +43,9 @@ const Home: React.FC = () => {
             
             <section className="featured-projects">
                 <h2>Featured Content</h2>
-                {/* Display one project, one news, and one team member */}
+                {/* Reordered to display: News, Project, Team Member */}
                 <div className="projects-grid">
-                    {/* Project Card */}
-                    {featuredProject && (
-                        <ProjectCard key={featuredProject.id} project={featuredProject} />
-                    )}
-                    
-                    {/* News Card - styled like project card */}
+                    {/* News Card - now first */}
                     {featuredNewsItem && (
                         <Link to="/feed" className="project-card">
                             <div 
@@ -81,7 +76,12 @@ const Home: React.FC = () => {
                         </Link>
                     )}
                     
-                    {/* Team Member Card - Styled like project card */}
+                    {/* Project Card - now second */}
+                    {featuredProject && (
+                        <ProjectCard key={featuredProject.id} project={featuredProject} />
+                    )}
+                    
+                    {/* Team Member Card - now third */}
                     {featuredTeamMember && (
                         <Link to={`/team/${featuredTeamMember.id}`} className="project-card">
                             <div 
@@ -103,6 +103,19 @@ const Home: React.FC = () => {
                             </div>
                         </Link>
                     )}
+                </div>
+                
+                {/* See all links container */}
+                <div className="see-all-links-container">
+                    <Link to="/feed" className="see-more-link">
+                        See all news <span className="arrow-icon">→</span>
+                    </Link>
+                    <Link to="/projects" className="see-more-link">
+                        See all projects <span className="arrow-icon">→</span>
+                    </Link>
+                    <Link to="/team" className="see-more-link">
+                        See all team members <span className="arrow-icon">→</span>
+                    </Link>
                 </div>
             </section>
             

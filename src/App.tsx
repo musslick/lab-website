@@ -17,6 +17,7 @@ import CollaboratorsList from './pages/admin/CollaboratorsList';
 import CollaboratorForm from './pages/admin/CollaboratorForm';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
+import ScrollToTop from './components/ScrollToTop';
 import './styles/styles.css';
 import './styles/admin.css';
 
@@ -25,6 +26,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <ContentProvider>
         <Router>
+          <ScrollToTop />
           <div className="app">
             <Routes>
               {/* Public Routes */}

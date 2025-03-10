@@ -2199,3 +2199,92 @@ footer .nav-link.active {
   font-weight: bold;
   font-size: 18px;
 }
+
+/* See More and See All Links Styling */
+.see-more-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  padding: 0 5px;
+}
+
+.see-more-link {
+  color: #00AAFF;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+  font-size: 1rem;
+}
+
+.see-more-link:hover {
+  transform: translateX(5px);
+}
+
+.arrow-icon {
+  margin-left: 5px;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.see-more-link:hover .arrow-icon {
+  transform: translateX(3px);
+}
+
+/* See All Links Container - for multiple links in a row */
+.see-all-links-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Change to space-between to align with cards */
+  gap: 20px;
+  margin-top: 20px;
+  padding: 0 5px;
+  width: 100%; /* Ensure the container takes full width */
+}
+
+.see-all-links-container .see-more-link {
+  flex: 1; /* Make each link take equal width */
+  max-width: calc(33.333% - 14px); /* Match the 3-column grid with gap adjustment */
+  min-width: 100px; /* Set minimum width */
+  text-align: center; /* Center the text within each link */
+}
+
+/* Responsive styles */
+@media (max-width: 1100px) {
+  .see-all-links-container .see-more-link {
+    max-width: calc(50% - 10px); /* Match the 2-column grid on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .see-all-links-container {
+    flex-direction: column;
+    align-items: flex-start; /* Left-align on mobile */
+    gap: 15px;
+  }
+  
+  .see-all-links-container .see-more-link {
+    max-width: 100%; /* Full width on smaller screens */
+    text-align: left; /* Left-align text on mobile */
+  }
+  
+  .see-more-container,
+  .see-all-links-container {
+    padding: 0 5px;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .see-all-links-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .see-more-container,
+  .see-all-links-container {
+    padding: 0 5px;
+  }
+}
