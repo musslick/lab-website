@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (password: string): Promise<boolean> => {
     // In a real app, this would validate against a backend
     // For demo purposes, we're using a hardcoded password
-    const adminPassword = 'alessandra'; // Would be environment variable in production
+    const adminPassword = 'password'; // Would be environment variable in production
     
     if (password === adminPassword) {
       setIsAuthenticated(true);
@@ -46,7 +46,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(false);
     localStorage.removeItem('isAuthenticated');
   };
-
+  
+  // Return context value
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}

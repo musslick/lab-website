@@ -353,25 +353,41 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   // Team member management functions
   const updateTeamMember = (updatedMember: TeamMember) => {
+    // Make sure we have the latest data
     const previousMember = teamMembers.find(m => m.id === updatedMember.id);
+    
+    // Ensure color is properly set
+    const memberWithColor = {
+      ...updatedMember,
+      color: updatedMember.color || previousMember?.color || '#000000'
+    };
+    
     const newTeamMembers = teamMembers.map(member => 
-      member.id === updatedMember.id ? updatedMember : member
+      member.id === memberWithColor.id ? memberWithColor : member
     );
     
     // First update team members
     setTeamMembers(newTeamMembers);
+    
+    // Save to localStorage immediately to ensure colors are persisted
+    try {
+      localStorage.setItem('teamMembers', JSON.stringify(newTeamMembers));
+      console.log("Team member updated with color:", memberWithColor.color);
+    } catch (error) {
+      console.error("Error saving team members to localStorage:", error);
+    }
     
     // Track if we need to update projects
     let projectsNeedUpdate = false;
     let updatedProjects = [...projects];
     
     // If name changed, update all projects that include this team member
-    if (previousMember && previousMember.name !== updatedMember.name) {
+    if (previousMember && previousMember.name !== memberWithColor.name) {
       updatedProjects = projects.map(project => {
         if (project.team.includes(previousMember.name)) {
           // Replace old name with new name in the team array
           const updatedTeam = project.team.map(name => 
-            name === previousMember.name ? updatedMember.name : name
+            name === previousMember.name ? memberWithColor.name : name
           );
           projectsNeedUpdate = true;
           return { ...project, team: updatedTeam };
@@ -381,12 +397,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
     
     // If color changed or projects were updated due to name change, update project colors
-    if ((previousMember && previousMember.color !== updatedMember.color) || projectsNeedUpdate) {
+    if ((previousMember && previousMember.color !== memberWithColor.color) || projectsNeedUpdate) {
       updatedProjects = updatedProjects.map(project => {
-        if (project.team.includes(updatedMember.name)) {
+        if (project.team.includes(memberWithColor.name)) {
           // Get the updated team colors
           const teamColors = project.team.map(memberName => {
-            if (memberName === updatedMember.name) return updatedMember.color;
+            if (memberName === memberWithColor.name) return memberWithColor.color;
             const member = newTeamMembers.find(m => m.name === memberName);
             return member ? member.color : '#CCCCCC';
           });
@@ -468,10 +484,15 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       
       // Ensure unique ID
       const memberId = newMember.id || `member-${Date.now()}`;
+      
+      // Ensure color is set, use default if not provided
       const memberWithId = {
         ...newMember,
-        id: memberId
+        id: memberId,
+        color: newMember.color || '#000000'
       };
+      
+      console.log("Team member color being saved:", memberWithId.color);
       
       // Create a new array with the new member
       const updatedMembers = [...teamMembers, memberWithId];

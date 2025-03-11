@@ -22,6 +22,16 @@ const TeamMemberForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [memberId, setMemberId] = useState('');
   
+  // New function to validate color
+  const validateHexColor = (color: string): string => {
+    // If missing or invalid, return default black
+    if (!color || color === '#' || !color.startsWith('#') || color.length !== 7) {
+      console.log("Invalid color detected, using default:", color);
+      return '#000000'; // Default to black
+    }
+    return color;
+  };
+  
   // New image upload states
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -61,7 +71,8 @@ const TeamMemberForm: React.FC = () => {
         setRole(memberToEdit.role || '');
         setBio(memberToEdit.bio || '');
         setImageUrl(memberToEdit.imageUrl || '');
-        setColor(memberToEdit.color || '#000000');
+        // Ensure we have a valid color
+        setColor(validateHexColor(memberToEdit.color || '#000000'));
         setMemberProjects(memberToEdit.projects || []);
         setEmail(memberToEdit.email || '');
         
@@ -157,6 +168,9 @@ const TeamMemberForm: React.FC = () => {
     setError(null);
     
     try {
+      // Ensure valid color
+      const validatedColor = validateHexColor(color);
+      
       // Construct the team member object
       const memberData: TeamMember = {
         id: memberId,
@@ -164,7 +178,7 @@ const TeamMemberForm: React.FC = () => {
         role,
         bio,
         imageUrl,
-        color,
+        color: validatedColor, // Use validated color
         projects: memberProjects
       };
       
@@ -173,7 +187,7 @@ const TeamMemberForm: React.FC = () => {
         memberData.email = email;
       }
       
-      console.log("Submitting team member data:", memberData);
+      console.log("Submitting team member data with color:", memberData.color);
       
       if (isNewMember) {
         const addedMember = addTeamMember(memberData);
