@@ -237,6 +237,32 @@ const AdminDashboard: React.FC = () => {
                         View
                       </Link>
                     </div>
+                    {project.topics && project.topics.length > 0 && (
+                      <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '3px' }}>
+                        <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                          {project.topics.slice(0, 3).map(topic => (
+                            <span key={topic} style={{ 
+                              background: '#f1f1f1',
+                              padding: '2px 8px',
+                              borderRadius: '10px',
+                              fontSize: '0.7rem'
+                            }}>
+                              {topic}
+                            </span>
+                          ))}
+                          {project.topics.length > 3 && (
+                            <span style={{ fontSize: '0.7rem' }}>
+                              +{project.topics.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {!project.topics || project.topics.length === 0 && (
+                      <div style={{ fontSize: '0.8rem', color: '#999', marginTop: '3px' }}>
+                        No topics
+                      </div>
+                    )}
                   </div>
                 ))
               )}

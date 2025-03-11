@@ -1,116 +1,147 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
-import { PageHeader } from '../components/Components';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { generateTopicColor } from '../utils/colorUtils';
+import '../styles/styles.css';
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { projects, teamMembers } = useContent();
-  const { isAuthenticated } = useAuth();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  // Add event listener for project updates
+  const [projectTeam, setProjectTeam] = useState<any[]>([]);
+  
+  // Add state for mouse position to create dynamic gradient effect
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const [isFrozen, setIsFrozen] = useState(false);
+  const colorHeaderRef = useRef<HTMLDivElement>(null);
+  
+  // Lab blue color for reference
+  const LAB_COLOR = '#00AAFF';
+  
   useEffect(() => {
-    const handleProjectUpdate = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      if (customEvent.detail && customEvent.detail.projectId === id) {
-        console.log("Project update detected, refreshing...");
-        setRefreshKey(prev => prev + 1); // Force refresh
-      }
-    };
-
-    window.addEventListener('project-updated', handleProjectUpdate);
-    
-    return () => {
-      window.removeEventListener('project-updated', handleProjectUpdate);
-    };
-  }, [id]);
-
-  // Load project data with cache busting
-  useEffect(() => {
-    const loadProject = () => {
-      setLoading(true);
+    if (id) {
+      const foundProject = projects.find(p => p.id === id);
       
-      // Add small delay to ensure we get latest data
-      setTimeout(() => {
-        const foundProject = projects.find(p => p.id === id);
+      if (foundProject) {
+        setProject(foundProject);
         
-        if (foundProject) {
-          console.log("Project loaded:", foundProject.title);
-          
-          // Add class for animation if this is a refresh
-          if (refreshKey > 0) {
-            setProject({...foundProject, isRefreshed: true});
-          } else {
-            setProject(foundProject);
-          }
-        } else {
-          console.error("Project not found:", id);
-        }
+        // Find team members for this project
+        const team = foundProject.team
+          .map(name => teamMembers.find(member => member.name === name))
+          .filter(member => member !== undefined);
         
-        setLoading(false);
-      }, 50);
-    };
+        setProjectTeam(team as any[]);
+      }
+      
+      setLoading(false);
+    }
+  }, [id, projects, teamMembers]);
+  
+  // Handle mouse movement for gradient effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (colorHeaderRef.current && !isFrozen) {
+      const rect = colorHeaderRef.current.getBoundingClientRect();
+      // Calculate relative position in percentage
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setMousePosition({ x, y });
+    }
+  };
+  
+  const handleMouseEnter = () => {
+    setIsFrozen(false);
+  };
+  
+  const handleMouseLeave = () => {
+    setIsFrozen(true);
+  };
+  
+  // Generate dynamic gradient based on project topics
+  const generateDynamicGradient = () => {
+    if (!project || !project.topics) {
+      return 'radial-gradient(circle at 50% 50%, #FF5733 0%, #00AAFF 100%)';
+    }
     
-    loadProject();
+    // Generate colors based on project topics
+    const topicColors = project.topics.map((topic: string, index: number) => 
+      generateTopicColor(LAB_COLOR, index, project.topics.length)
+    );
     
-  }, [id, projects, refreshKey]);
-
+    // Always include lab blue in the gradient
+    if (!topicColors.includes(LAB_COLOR)) {
+      topicColors.push(LAB_COLOR);
+    }
+    
+    // Get mouse position
+    const { x, y } = mousePosition;
+    
+    // Create a dynamic position based on mouse
+    const position = `circle at ${x}% ${y}%`;
+    
+    // Generate gradient stops with percentages
+    const stops = topicColors.map((color: string, index: number) => {
+      if (index === topicColors.length - 1) {
+        return `${color} 100%`;
+      }
+      // Adjust distribution for dynamic gradient
+      const percentage = Math.round(Math.pow(index / (topicColors.length - 1), 0.8) * 85);
+      return `${color} ${percentage}%`;
+    }).join(', ');
+    
+    return `radial-gradient(${position}, ${stops})`;
+  };
+  
   if (loading) {
     return <div>Loading project details...</div>;
   }
-
+  
   if (!project) {
     return <div>Project not found</div>;
   }
-
-  // Find team members for this project
-  const projectTeamMembers = teamMembers.filter(member => 
-    project.team.includes(member.name)
-  );
-
-  const projectClass = project.isRefreshed ? 'project-details project-edited' : 'project-details';
-
+  
   return (
-    <div className={projectClass}>
+    <div className="project-details">
       <div 
+        ref={colorHeaderRef}
         className="project-color-header"
-        style={{ background: project.color }}
-      >
-        {/* No heading in the banner */}
-      </div>
-
-      {/* Project title as h1, using the standardized class */}
+        style={{ 
+          background: generateDynamicGradient(),
+          cursor: 'default'
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      ></div>
+      
       <h1 className="project-title-standalone">{project.title}</h1>
-
-      <div className="project-section">
-        <h2>About This Project</h2>
-        <p>{project.description}</p>
-      </div>
-
-      <div className="project-section">
-        <h2>Team</h2>
-        <div className="project-team-grid">
-          {projectTeamMembers.map(member => (
-            <Link 
-              key={member.id} 
-              to={`/team/${member.id}`}
-              className="project-team-member"
-            >
-              <div 
-                className="team-color-indicator"
-                style={{ backgroundColor: member.color }}
-              ></div>
-              <span>{member.name}</span>
-            </Link>
-          ))}
+      
+      <p className="project-description">{project.description}</p>
+      
+      {/* Topic tags display */}
+      {project.topics && project.topics.length > 0 && (
+        <div className="project-detail-topics">
+          {project.topics.map((topic: string, index: number) => {
+            const topicColor = generateTopicColor(LAB_COLOR, index, project.topics.length);
+            return (
+              <div key={topic} className="project-detail-topic">
+                <div 
+                  className="project-detail-topic-color" 
+                  style={{ backgroundColor: topicColor }}
+                />
+                <span className="project-detail-topic-name">{topic}</span>
+              </div>
+            );
+          })}
         </div>
+      )}
+      
+      {/* Other project details */}
+      <div className="project-section">
+        <h2>Category</h2>
+        <p>{project.category}</p>
       </div>
-
+      
       {project.publications && project.publications.length > 0 && (
         <div className="project-section">
           <h2>Publications</h2>
@@ -122,21 +153,42 @@ const ProjectDetails: React.FC = () => {
         </div>
       )}
       
-      {isAuthenticated && (
-        <div className="admin-actions" style={{marginTop: "40px", borderTop: "1px solid #eee", paddingTop: "20px"}}>
-          <Link 
-            to={`/admin/projects/edit/${project.id}`}
-            style={{
-              display: "inline-block",
-              padding: "10px 20px",
-              backgroundColor: "#00AAFF",
-              color: "#fff",
-              borderRadius: "5px",
-              textDecoration: "none"
-            }}
-          >
-            Edit this project
-          </Link>
+      {projectTeam.length > 0 && (
+        <div className="project-section">
+          <h2>Team Members</h2>
+          <div className="project-team-list">
+            {projectTeam.map((member: any) => (
+              <Link 
+                to={`/team/${member.id}`} 
+                key={member.id}
+                className="project-team-member"
+              >
+                <div 
+                  className="team-color-indicator" 
+                  style={{ backgroundColor: member.color }}
+                ></div>
+                {member.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {project.startDate && (
+        <div className="project-section">
+          <h2>Timeline</h2>
+          <p>
+            <strong>Started:</strong> {new Date(project.startDate).toLocaleDateString()}
+            {project.endDate && (
+              <>
+                <br />
+                <strong>Completed:</strong> {new Date(project.endDate).toLocaleDateString()}
+              </>
+            )}
+            {!project.endDate && project.status === 'ongoing' && (
+              <span> (Ongoing)</span>
+            )}
+          </p>
         </div>
       )}
     </div>

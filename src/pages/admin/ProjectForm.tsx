@@ -3,27 +3,48 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { Project } from '../../data/projects';
+import { generateTopicColor } from '../../utils/colorUtils';
 
 const ProjectForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { projects, teamMembers, updateProject, addProject, deleteProject } = useContent();
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
+
   // Form fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [team, setTeam] = useState<string[]>([]);
+  const [image, setImage] = useState('');
+  const [topics, setTopics] = useState<string[]>([]);
+  const [topicInput, setTopicInput] = useState('');
+  const [status, setStatus] = useState<'ongoing' | 'completed'>('ongoing');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [publications, setPublications] = useState<string[]>([]);
+  const [publicationInput, setPublicationInput] = useState('');
   const [projectId, setProjectId] = useState('');
-  const [color, setColor] = useState('');
-  const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
   
-  // Available options
-  const [availableTeamMembers, setAvailableTeamMembers] = useState<{ name: string }[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  // Extract all unique topics from existing projects
+  const existingTopics = React.useMemo(() => {
+    const allTopics = projects.flatMap(project => project.topics || []);
+    return Array.from(new Set(allTopics)).sort();
+  }, [projects]);
+  
+  // UI state
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Constants for dropdown options
+  const categories = ['Neuroscience', 'Artificial Intelligence', 'Cognitive Enhancement', 'Interface Technology', 'Data Science', 'Other'];
+  const statusOptions = [
+    { value: 'ongoing', label: 'Ongoing' },
+    { value: 'completed', label: 'Completed' }
+  ];
+  
+  // Lab color (blue) - constant for reference with topic colors
+  const LAB_COLOR = '#00AAFF';
   
   // Determine if we're in create mode or edit mode
   const isNewProject = !id || id === 'new';
@@ -33,42 +54,88 @@ const ProjectForm: React.FC = () => {
     if (isNewProject && !projectId) {
       const newId = `project-${Date.now()}`;
       setProjectId(newId);
-      setColor('linear-gradient(135deg, #FF5733, #00AAFF)');
-      console.log("Created new project ID:", newId);
     }
   }, [isNewProject, projectId]);
   
   useEffect(() => {
-    // Always load available team members and categories
-    const teamMemberNames = teamMembers.map(member => ({ name: member.name }));
-    setAvailableTeamMembers(teamMemberNames);
-    
-    const uniqueCategories = Array.from(new Set(projects.map(p => p.category)));
-    setCategories(uniqueCategories);
-    
     if (!isNewProject) {
-      // Only load existing data for edit mode
+      // Load existing data for edit mode
       const projectToEdit = projects.find(p => p.id === id);
       if (projectToEdit) {
-        console.log("Editing existing project:", projectToEdit.title);
         setProjectId(projectToEdit.id);
         setTitle(projectToEdit.title || '');
         setDescription(projectToEdit.description || '');
         setCategory(projectToEdit.category || '');
         setTeam(projectToEdit.team || []);
-        setColor(projectToEdit.color || '');
+        setImage(projectToEdit.image || '');
+        setTopics(projectToEdit.topics || []);
+        setStatus(projectToEdit.status || 'ongoing');
+        setStartDate(projectToEdit.startDate || '');
+        setEndDate(projectToEdit.endDate || '');
+        setPublications(projectToEdit.publications || []);
       } else {
         setError(`Could not find project with ID: ${id}`);
-        console.error(`Could not find project with ID: ${id}`);
       }
     }
-  }, [id, isNewProject, projects, teamMembers]);
+  }, [id, isNewProject, projects]);
   
+  // Team members selection
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
     setTeam(selected);
   };
+
+  // Topic management
+  const handleAddTopic = () => {
+    if (topicInput.trim() && !topics.includes(topicInput.trim())) {
+      setTopics(prevTopics => [...prevTopics, topicInput.trim()]);
+      setTopicInput('');
+    }
+  };
   
+  const handleRemoveTopic = (topicToRemove: string) => {
+    setTopics(prevTopics => prevTopics.filter(topic => topic !== topicToRemove));
+  };
+
+  // Handle selecting an existing topic from the dropdown
+  const handleSelectExistingTopic = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedTopic = e.target.value;
+    if (selectedTopic && !topics.includes(selectedTopic)) {
+      setTopics(prevTopics => [...prevTopics, selectedTopic]);
+      // Reset the select dropdown after selection
+      e.target.value = '';
+    }
+  };
+  
+  const handleTopicKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTopic();
+    }
+  };
+
+  // Publication management
+  const handleAddPublication = () => {
+    if (publicationInput.trim() && !publications.includes(publicationInput.trim())) {
+      setPublications(prevPublications => [...prevPublications, publicationInput.trim()]);
+      setPublicationInput('');
+    }
+  };
+  
+  const handleRemovePublication = (publicationToRemove: string) => {
+    setPublications(prevPublications => 
+      prevPublications.filter(publication => publication !== publicationToRemove)
+    );
+  };
+  
+  const handlePublicationKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddPublication();
+    }
+  };
+  
+  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -89,9 +156,16 @@ const ProjectForm: React.FC = () => {
         description,
         category,
         team,
-        color,
-        _lastUpdated: Date.now() // For cache busting
+        color: '', // This will be generated based on team members in the context
+        topics,
+        status,
+        publications
       };
+      
+      // Only add fields if they have values
+      if (image) projectData.image = image;
+      if (startDate) projectData.startDate = startDate;
+      if (endDate) projectData.endDate = endDate;
       
       console.log("Saving project:", projectData);
       
@@ -100,14 +174,10 @@ const ProjectForm: React.FC = () => {
         console.log("Added new project with ID:", addedProject.id);
       } else {
         updateProject(projectData);
-        console.log("Updated existing project:", projectData.title);
-        // Add cache busting for edited projects
-        localStorage.setItem(`project_cache_${projectId}`, Date.now().toString());
+        console.log("Updated existing project:", projectData.id);
       }
       
       setFormSubmitted(true);
-      setLastUpdated(Date.now());
-      
       setTimeout(() => {
         navigate('/admin');
       }, 1500);
@@ -138,13 +208,10 @@ const ProjectForm: React.FC = () => {
       </Layout>
     );
   }
-  
-  // Preview the project's color gradient
-  const colorPreviewStyle = {
-    height: '100px',
-    borderRadius: '8px',
-    marginTop: '15px',
-    background: color
+
+  // Function to generate a color for a topic based on index
+  const getTopicColor = (topic: string, index: number) => {
+    return generateTopicColor(LAB_COLOR, index, topics.length);
   };
   
   return (
@@ -163,16 +230,6 @@ const ProjectForm: React.FC = () => {
             {error}
           </div>
         )}
-        
-        {/* Debug info with more details */}
-        <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
-          <strong>ID:</strong> {projectId}<br/>
-          <strong>Mode:</strong> {isNewProject ? 'New' : 'Edit'}<br/>
-          <strong>Title:</strong> {title}<br/>
-          <strong>Last Updated:</strong> {new Date(lastUpdated).toLocaleTimeString()}<br/>
-          <strong>Team Members:</strong> {team.length > 0 ? team.join(', ') : 'None selected'}<br/>
-          <strong>Category:</strong> {category || 'Not set'}
-        </div>
         
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
@@ -197,22 +254,62 @@ const ProjectForm: React.FC = () => {
             />
           </div>
           
-          <div className="form-group">
-            <label htmlFor="category">Category*</label>
-            <input
-              type="text"
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              list="categories"
-              required
-            />
-            <datalist id="categories">
-              {categories.map((cat, index) => (
-                <option key={index} value={cat} />
-              ))}
-            </datalist>
-            <p className="form-help-text">Type to select an existing category or enter a new one</p>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="category">Category*</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="">Select a Category</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="status">Status</label>
+              <select
+                id="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value as 'ongoing' | 'completed')}
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="startDate">Start Date</label>
+              <input
+                type="date"
+                id="startDate"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="endDate">End Date</label>
+              <input
+                type="date"
+                id="endDate"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                disabled={status === 'ongoing'}
+              />
+              {status === 'ongoing' && (
+                <p className="form-help-text">End date only available for completed projects</p>
+              )}
+            </div>
           </div>
           
           <div className="form-group">
@@ -222,11 +319,11 @@ const ProjectForm: React.FC = () => {
               multiple
               value={team}
               onChange={handleTeamChange}
-              style={{ height: '150px' }}
+              style={{ height: '120px' }}
             >
-              {availableTeamMembers.map((member, index) => (
-                <option key={index} value={member.name}>
-                  {member.name}
+              {teamMembers.map(member => (
+                <option key={member.id} value={member.name}>
+                  {member.name} - {member.role}
                 </option>
               ))}
             </select>
@@ -234,9 +331,117 @@ const ProjectForm: React.FC = () => {
           </div>
           
           <div className="form-group">
-            <label>Color Preview</label>
-            <div style={colorPreviewStyle}></div>
-            <p className="form-help-text">Color is automatically generated based on team members</p>
+            <label htmlFor="image">Image URL (optional)</label>
+            <input
+              type="text"
+              id="image"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+            />
+            {image && (
+              <div className="image-preview">
+                <img 
+                  src={image} 
+                  alt="Project preview" 
+                  style={{ maxHeight: '150px' }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          
+          <div className="form-group">
+            <label>Topics</label>
+            <div className="topic-selection-container">
+              {/* Dropdown for selecting existing topics */}
+              <div className="existing-topics-dropdown">
+                <select 
+                  onChange={handleSelectExistingTopic}
+                  defaultValue=""
+                >
+                  <option value="" disabled>Select existing topic</option>
+                  {existingTopics.map(topic => (
+                    <option key={topic} value={topic}>
+                      {topic}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Input for adding new topics */}
+              <div className="tag-input-container">
+                <input
+                  type="text"
+                  value={topicInput}
+                  onChange={(e) => setTopicInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTopic();
+                    }
+                  }}
+                  placeholder="Type a new topic and press Enter"
+                />
+                <button 
+                  type="button" 
+                  onClick={handleAddTopic}
+                  className="tag-add-button"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+            
+            <div className="topics-container">
+              {topics.map((topic, index) => (
+                <div key={topic} className="tag-badge">
+                  {topic}
+                  <button 
+                    type="button" 
+                    className="tag-remove" 
+                    onClick={() => handleRemoveTopic(topic)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="publications">Publications</label>
+            <div className="topic-input-container">
+              <input
+                type="text"
+                value={publicationInput}
+                onChange={(e) => setPublicationInput(e.target.value)}
+                onKeyDown={handlePublicationKeyDown}
+                placeholder="Add a publication reference"
+              />
+              <button 
+                type="button" 
+                onClick={handleAddPublication}
+                className="topic-add-button"
+              >
+                Add
+              </button>
+            </div>
+            <div className="topics-container">
+              {publications.map((publication, index) => (
+                <div key={index} className="topic-badge">
+                  {publication}
+                  <button 
+                    type="button" 
+                    className="topic-remove" 
+                    onClick={() => handleRemovePublication(publication)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
           
           <div className="form-actions">

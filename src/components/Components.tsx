@@ -3,7 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { teamMembers } from '../data/team';
 import { TeamMember as TeamMemberType } from '../data/team';
 import { Project } from '../data/projects';
-import { createGradient } from '../utils/colorUtils'; // Changed from createTransparentGradient
+import { createGradient, generateTopicColor } from '../utils/colorUtils'; // Added generateTopicColor import
 import { useContent } from '../contexts/ContentContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -202,12 +202,6 @@ interface ProjectCardProps {
     project: Project;
 }
 
-interface TeamMemberData {
-    fullName: string;
-    lastName: string;
-    color: string;
-}
-
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     // Track mouse position for gradient effect
     const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
@@ -216,18 +210,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     const colorBlockRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLAnchorElement>(null);
     
-    // Get team members from context
-    const { teamMembers } = useContent();
-    
-    // Find team members' colors
-    const teamData = project.team.map((name: string) => {
-        const member = teamMembers.find(m => m.name === name);
-        return member ? { 
-            fullName: name,
-            lastName: name.split(' ')[1], 
-            color: member.color 
-        } : null;
-    }).filter(Boolean) as TeamMemberData[];
+    // Lab blue color for reference
+    const LAB_COLOR = '#00AAFF';
 
     // Handle mouse movement over the entire card
     const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -250,77 +234,53 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         setIsFrozen(true);
     };
 
-    // Generate dynamic gradient based on mouse position
+    // Generate dynamic gradient based on mouse position and project topics
     const generateDynamicGradient = () => {
-        // Check if the project color is already defined as a radial gradient
-        if (project.color.includes('radial-gradient')) {
-            // Extract colors from the gradient string
-            const colorMatch = project.color.match(/radial-gradient\(.*?,\s*(.*)\)/);
-            if (!colorMatch) return project.color;
-            
-            const colorStops = colorMatch[1].split(',').map(stop => {
-                // Extract the color part (ignoring percentages)
-                const color = stop.trim().split(' ')[0];
-                return color;
-            });
-            
-            // Get mouse position as percentage of card dimension
-            const { x, y } = mousePosition;
-            
-            // Create a dynamic position based on mouse
-            const position = `circle at ${x}% ${y}%`;
-            
-            // Generate gradient stops with percentages
-            // Make sure last color (blue) always extends to the edge
-            const stops = colorStops.map((color, index) => {
-                if (index === colorStops.length - 1) {
-                    return `${color} 100%`;
-                }
-                // Adjust distribution to make the gradient more dynamic and responsive to mouse
-                const percentage = Math.round(Math.pow(index / (colorStops.length - 1), 0.8) * 85);
-                return `${color} ${percentage}%`;
-            }).join(', ');
-            
-            return `radial-gradient(${position}, ${stops})`;
-        } 
+        // Generate colors based on project topics or use default color
+        const topicColors = project.topics?.map((topic, index) => 
+            generateTopicColor(LAB_COLOR, index, project.topics?.length || 1)
+        ) || [LAB_COLOR];
         
-        // If not a radial gradient already, convert from linear
-        else if (project.color.includes('linear-gradient')) {
-            const colorMatch = project.color.match(/linear-gradient\(\d+deg,\s*(.*)\)/);
-            if (!colorMatch) return project.color;
-            
-            const colorStops = colorMatch[1].split(',').map(stop => {
-                const color = stop.trim().split(' ')[0];
-                return color;
-            });
-            
-            // Get the lab blue color (should be the first in linear gradient)
-            const labBlue = colorStops[0] === '#00AAFF' ? colorStops[0] : '#00AAFF';
-            
-            // Move lab blue to the end for radial gradient (outer edge)
-            let rearrangedColors = colorStops.filter(c => c !== labBlue);
-            rearrangedColors.push(labBlue);
-            
-            // Get mouse position as percentage of card dimension
-            const { x, y } = mousePosition;
-            
-            // Create a dynamic position based on mouse
-            const position = `circle at ${x}% ${y}%`;
-            
-            // Generate gradient stops with percentages
-            const stops = rearrangedColors.map((color, index) => {
-                if (index === rearrangedColors.length - 1) {
-                    return `${color} 100%`;
-                }
-                const percentage = Math.round(Math.pow(index / (rearrangedColors.length - 1), 0.8) * 85);
-                return `${color} ${percentage}%`;
-            }).join(', ');
-            
-            return `radial-gradient(${position}, ${stops})`;
+        // Always include lab blue in the gradient
+        if (!topicColors.includes(LAB_COLOR)) {
+            topicColors.push(LAB_COLOR);
         }
         
-        // Default fallback
-        return project.color;
+        // Get mouse position as percentage of card dimension
+        const { x, y } = mousePosition;
+        
+        // Create a dynamic position based on mouse
+        const position = `circle at ${x}% ${y}%`;
+        
+        // Generate gradient stops with percentages
+        // Make sure lab blue always extends to the edge
+        const stops = topicColors.map((color, index) => {
+            if (index === topicColors.length - 1) {
+                return `${color} 100%`;
+            }
+            // Adjust distribution to make the gradient more dynamic and responsive to mouse
+            const percentage = Math.round(Math.pow(index / (topicColors.length - 1), 0.8) * 85);
+            return `${color} ${percentage}%`;
+        }).join(', ');
+        
+        return `radial-gradient(${position}, ${stops})`;
+    };
+
+    // Generate topic colors from the lab blue color
+    const generateTopicTag = (topic: string, index: number) => {
+        const totalTopics = project.topics?.length || 1;
+        const topicColor = generateTopicColor(LAB_COLOR, index, totalTopics);
+        
+        return (
+            <div key={topic} className="topic-tag">
+                <div 
+                    className="topic-color-dot" 
+                    style={{ backgroundColor: topicColor }}
+                    title={topic}
+                />
+                <span className="topic-name">{topic}</span>
+            </div>
+        );
     };
 
     return (
@@ -349,21 +309,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                         : project.description}
                 </p>
                 
-                {/* Wrap category and team info in a metadata div */}
+                {/* Wrap category and topic info in a metadata div */}
                 <div className="project-metadata">
                     <span className="project-category">{project.category}</span>
                     
-                    <div className="project-team">
-                        {teamData.map((member: TeamMemberData, index: number) => (
-                            <div key={index} className="team-member-tag">
-                                <div 
-                                    className="team-color-dot" 
-                                    style={{ backgroundColor: member.color }}
-                                    title={member.fullName}
-                                />
-                                <span className="team-name">{member.lastName}</span>
-                            </div>
-                        ))}
+                    {/* Display topics instead of team members */}
+                    <div className="project-topics">
+                        {project.topics?.map((topic, index) => 
+                            generateTopicTag(topic, index)
+                        )}
                     </div>
                 </div>
             </div>

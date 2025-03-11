@@ -9,6 +9,7 @@ export interface Project {
   color: string;
   category: string;
   team: string[];
+  topics?: string[];  // Add topics field
   publications?: string[];
   image?: string;
   status?: 'ongoing' | 'completed';
@@ -17,17 +18,17 @@ export interface Project {
   _lastUpdated?: number; // Added for cache busting
 }
 
-// Helper function to get team member colors
+// Helper function to get team member colors - will be used for project color
 const getTeamMemberColors = (teamNames: string[]): string[] => {
     return teamNames.map(name => {
         const member = teamMembers.find(m => m.name === name);
-        return member ? member.color : '#CCCCCC'; // Default gray if member not found
+        return member ? member.color : '#00AAFF'; // Use lab blue as default
     });
 };
 
 // Create projects with team colors and lab blue
 const createProjectsWithTeamColors = (): Project[] => {
-    // Define project data with the correct status type
+    // Define project data with the correct status type and add topics
     const projectData: Omit<Project, 'color'>[] = [
         {
             id: "neural-mapping",
@@ -35,6 +36,7 @@ const createProjectsWithTeamColors = (): Project[] => {
             description: "Mapping the complex interconnections in neural networks through advanced imaging techniques and computational models.",
             category: "Neuroscience",
             team: ["Sarah Johnson", "Michael Chen"],
+            topics: ["Neural Networks", "Brain Imaging", "Computational Modeling"],
             publications: [
               "Johnson, S. et al. (2022). Advanced techniques in neural mapping. Journal of Neuroscience, 45(3), 112-128.",
               "Chen, M. & Johnson, S. (2021). Computational approaches to neural network visualization. Brain Research, 33(2), 45-67."
@@ -48,6 +50,7 @@ const createProjectsWithTeamColors = (): Project[] => {
             description: "Developing artificial intelligence models that mimic human cognitive processes for better understanding of brain function.",
             category: "Artificial Intelligence",
             team: ["Robert Smith", "Emily Wong"],
+            topics: ["Artificial Intelligence", "Cognitive Science", "Machine Learning"],
             publications: [
               "Smith, R. & Wong, E. (2023). Cognitive frameworks in machine learning. AI Journal, 12(4), 89-105."
             ],
@@ -60,6 +63,7 @@ const createProjectsWithTeamColors = (): Project[] => {
             description: "Investigating techniques to enhance memory formation and recall through targeted stimulation of neural pathways.",
             category: "Cognitive Enhancement",
             team: ["David Patel", "Sarah Johnson"],
+            topics: ["Memory", "Neuroplasticity", "Brain Stimulation"],
             publications: [],
             status: "ongoing" as const,
             startDate: "2021-03-15"
@@ -70,6 +74,7 @@ const createProjectsWithTeamColors = (): Project[] => {
             description: "Creating seamless interfaces between brain activity and computers for assistive technology and research applications.",
             category: "Interface Technology",
             team: ["Michael Chen", "Emily Wong"],
+            topics: ["BCI", "Assistive Technology", "Signal Processing"],
             publications: [
               "Chen, M. et al. (2022). Non-invasive BCI advancements. Tech & Brain Journal, 8(2), 34-49."
             ],
@@ -82,13 +87,14 @@ const createProjectsWithTeamColors = (): Project[] => {
             description: "Exploring the neural correlates of consciousness through multidisciplinary approaches and advanced neuroimaging.",
             category: "Neuroscience",
             team: ["Robert Smith", "David Patel"],
+            topics: ["Consciousness", "Neuroscience", "Neuroimaging"],
             publications: [],
             status: "ongoing" as const,
             startDate: "2022-01-10"
         }
     ];
 
-    // Generate color gradients for projects that blend team colors with lab blue
+    // Generate color gradients for projects
     return projectData.map(project => {
         const teamColors = getTeamMemberColors(project.team);
         

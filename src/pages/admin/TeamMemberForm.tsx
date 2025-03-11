@@ -17,93 +17,14 @@ const TeamMemberForm: React.FC = () => {
   const [role, setRole] = useState('');
   const [bio, setBio] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [hue, setHue] = useState(0); // Changed from color to hue
-  const [color, setColor] = useState('#ff0000'); // Default color from hue 0
+  // Lab color (blue) - fixed for all team members
+  const LAB_COLOR = '#00AAFF';
   const [memberProjects, setMemberProjects] = useState<string[]>([]);
   const [email, setEmail] = useState('');
   const [memberId, setMemberId] = useState('');
   
-  // Convert HSL to hex
-  const hslToHex = (h: number, s: number, l: number): string => {
-    // Keep s and l constants for our case: s=100%, l=80%
-    s /= 100;
-    l /= 100;
-    
-    const c = (1 - Math.abs(2 * l - 1)) * s;
-    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-    const m = l - c / 2;
-    
-    let r, g, b;
-    if (0 <= h && h < 60) {
-      [r, g, b] = [c, x, 0];
-    } else if (60 <= h && h < 120) {
-      [r, g, b] = [x, c, 0];
-    } else if (120 <= h && h < 180) {
-      [r, g, b] = [0, c, x];
-    } else if (180 <= h && h < 240) {
-      [r, g, b] = [0, x, c];
-    } else if (240 <= h && h < 300) {
-      [r, g, b] = [x, 0, c];
-    } else {
-      [r, g, b] = [c, 0, x];
-    }
-    
-    const toHex = (val: number) => {
-      const hex = Math.round((val + m) * 255).toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
-    };
-    
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-  };
-  
-  // Convert hex to HSL to get the hue
-  const hexToHue = (hex: string): number => {
-    // Remove the # if present
-    hex = hex.replace('#', '');
-    
-    // Convert hex to RGB
-    const r = parseInt(hex.substring(0, 2), 16) / 255;
-    const g = parseInt(hex.substring(2, 4), 16) / 255;
-    const b = parseInt(hex.substring(4, 6), 16) / 255;
-    
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    
-    let h = 0;
-    
-    if (max === min) {
-      h = 0; // Achromatic
-    } else {
-      const d = max - min;
-      switch (max) {
-        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-        case g: h = (b - r) / d + 2; break;
-        case b: h = (r - g) / d + 4; break;
-      }
-      h *= 60;
-    }
-    
-    return Math.round(h);
-  };
-  
-  // Handle hue change and update color
-  const handleHueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newHue = parseInt(e.target.value, 10);
-    setHue(newHue);
-    const newColor = hslToHex(newHue, 100, 80);
-    setColor(newColor);
-  };
-  
-  // New function to validate color
-  const validateHexColor = (color: string): string => {
-    // If missing or invalid, return default black
-    if (!color || color === '#' || !color.startsWith('#') || color.length !== 7) {
-      console.log("Invalid color detected, using default:", color);
-      return '#000000'; // Default to black
-    }
-    return color;
-  };
-  
+  // Removed color-related states and functions since we're using a fixed color
+
   // New image upload states
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -120,10 +41,6 @@ const TeamMemberForm: React.FC = () => {
     if (isNewMember && !memberId) {
       const newId = `member-${Date.now()}`;
       setMemberId(newId);
-      // Default hue to a random value between 0-360
-      const randomHue = Math.floor(Math.random() * 360);
-      setHue(randomHue);
-      setColor(hslToHex(randomHue, 100, 80));
       console.log("Created new team member ID:", newId);
     }
   }, [isNewMember, memberId]);
@@ -146,12 +63,6 @@ const TeamMemberForm: React.FC = () => {
         setRole(memberToEdit.role || '');
         setBio(memberToEdit.bio || '');
         setImageUrl(memberToEdit.imageUrl || '');
-        // Ensure we have a valid color
-        const validColor = validateHexColor(memberToEdit.color || '#000000');
-        setColor(validColor);
-        // Extract hue from the hex color
-        setHue(hexToHue(validColor));
-        
         setMemberProjects(memberToEdit.projects || []);
         setEmail(memberToEdit.email || '');
         
@@ -247,9 +158,6 @@ const TeamMemberForm: React.FC = () => {
     setError(null);
     
     try {
-      // Ensure valid color
-      const validatedColor = validateHexColor(color);
-      
       // Construct the team member object
       const memberData: TeamMember = {
         id: memberId,
@@ -257,7 +165,7 @@ const TeamMemberForm: React.FC = () => {
         role,
         bio,
         imageUrl,
-        color: validatedColor, // Use validated color
+        color: LAB_COLOR, // Use fixed lab color
         projects: memberProjects
       };
       
@@ -433,30 +341,6 @@ const TeamMemberForm: React.FC = () => {
                   </div>
                 )}
               </div>
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="hue">Color (Hue)</label>
-              <input
-                type="range"
-                id="hue"
-                min="0"
-                max="360"
-                value={hue}
-                onChange={handleHueChange}
-                className="hue-slider"
-              />
-              <div className="hue-value">{hue}° (H), 100% (S), 80% (L)</div>
-              <div 
-                className="color-preview" 
-                style={{ 
-                  height: '30px', 
-                  width: '100%', 
-                  backgroundColor: color,
-                  marginTop: '10px',
-                  borderRadius: '4px'
-                }}
-              ></div>
             </div>
           </div>
           

@@ -619,6 +619,60 @@
   color: #666;
 }
 
+/* Topic selection styles */
+.topic-selection-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.existing-topics-dropdown select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.existing-topics-dropdown select:focus {
+  border-color: #00AAFF;
+  outline: none;
+}
+
+.tag-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tag-input-container input {
+  flex-grow: 1;
+}
+
+.tag-add-button {
+  background-color: #00AAFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.tag-add-button:hover {
+  background-color: #0089cc;
+}
+
+.topics-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
   .admin-overview {
     grid-template-columns: 1fr;
@@ -693,6 +747,19 @@
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 10px;
+  }
+
+  .topic-selection-container {
+    gap: 8px;
+  }
+  
+  .tag-input-container {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .tag-add-button {
+    align-self: flex-end;
   }
 }
 
