@@ -157,7 +157,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  margin-top: 0; /* Ensure no extra top margin */
+  margin-top: 20px; /* Added top margin to match other page headers */
   padding-bottom: 0;
   border-bottom: none; /* Removed the border line */
 }
