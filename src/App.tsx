@@ -55,11 +55,8 @@ const App: React.FC = () => {
                   <Projects />
                 </Layout>
               } />
-              <Route path="/projects/:id" element={
-                <Layout>
-                  <ProjectDetails />
-                </Layout>
-              } />
+              {/* Remove the nested Layout component for ProjectDetails */}
+              <Route path="/projects/:id" element={<ProjectDetails />} />
               <Route path="/contact" element={<Contact />} />
               
               {/* Admin Routes */}

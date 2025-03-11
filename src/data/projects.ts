@@ -1,7 +1,7 @@
 import { teamMembers } from './team';
 import { createGradient } from '../utils/colorUtils';
 
-// Export the Project interface
+// Update the Project interface to include topicsWithColors
 export interface Project {
   id: string;
   title: string;
@@ -9,7 +9,8 @@ export interface Project {
   color: string;
   category: string;
   team: string[];
-  topics?: string[];  // Add topics field
+  topics?: string[];
+  topicsWithColors?: { name: string; color: string; lightness: number }[]; // Add this new field
   publications?: string[];
   image?: string;
   status?: 'ongoing' | 'completed';

@@ -266,10 +266,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         return `radial-gradient(${position}, ${stops})`;
     };
 
-    // Generate topic colors from the lab blue color
+    // Generate topic colors from the lab blue color or use provided colors
     const generateTopicTag = (topic: string, index: number) => {
-        const totalTopics = project.topics?.length || 1;
-        const topicColor = generateTopicColor(LAB_COLOR, index, totalTopics);
+        // First check if we have color information in topicsWithColors
+        const topicWithColor = project.topicsWithColors?.find(t => t.name === topic);
+        
+        // Use the provided color or generate one
+        const topicColor = topicWithColor?.color || generateTopicColor(LAB_COLOR, index, project.topics?.length || 1);
         
         return (
             <div key={topic} className="topic-tag">

@@ -3,7 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { Project } from '../../data/projects';
-import { generateTopicColor } from '../../utils/colorUtils';
+import { generateTopicColor, hexToHsl, hslToHex } from '../../utils/colorUtils';
+
+// Lab color (blue) - constant for reference with topic colors - MOVED TO TOP
+const LAB_COLOR = '#00AAFF';
+
+interface TopicWithColor {
+  name: string;
+  color: string;
+  lightness: number;
+}
 
 const ProjectForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,8 +25,9 @@ const ProjectForm: React.FC = () => {
   const [category, setCategory] = useState('');
   const [team, setTeam] = useState<string[]>([]);
   const [image, setImage] = useState('');
-  const [topics, setTopics] = useState<string[]>([]);
+  const [topics, setTopics] = useState<TopicWithColor[]>([]);
   const [topicInput, setTopicInput] = useState('');
+  const [topicLightness, setTopicLightness] = useState(50); // Default lightness (0-100)
   const [status, setStatus] = useState<'ongoing' | 'completed'>('ongoing');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -27,8 +37,32 @@ const ProjectForm: React.FC = () => {
   
   // Extract all unique topics from existing projects
   const existingTopics = React.useMemo(() => {
-    const allTopics = projects.flatMap(project => project.topics || []);
-    return Array.from(new Set(allTopics)).sort();
+    const allTopics = projects.flatMap(project => 
+      (project.topics || []).map(topicName => {
+        // Look for this topic in any existing project to get its color
+        const topicWithColor = projects
+          .flatMap(p => p.topicsWithColors || [])
+          .find(t => t && t.name === topicName);
+          
+        return {
+          name: topicName,
+          color: topicWithColor?.color || generateTopicColor(LAB_COLOR, 0, 1),
+          lightness: topicWithColor?.lightness || 50
+        };
+      })
+    );
+    
+    // Remove duplicates by name
+    const uniqueTopics = Array.from(
+      allTopics.reduce((map, topic) => {
+        if (!map.has(topic.name)) {
+          map.set(topic.name, topic);
+        }
+        return map;
+      }, new Map<string, TopicWithColor>())
+    ).map(([_, topic]) => topic);
+    
+    return uniqueTopics.sort((a, b) => a.name.localeCompare(b.name));
   }, [projects]);
   
   // UI state
@@ -42,9 +76,6 @@ const ProjectForm: React.FC = () => {
     { value: 'ongoing', label: 'Ongoing' },
     { value: 'completed', label: 'Completed' }
   ];
-  
-  // Lab color (blue) - constant for reference with topic colors
-  const LAB_COLOR = '#00AAFF';
   
   // Determine if we're in create mode or edit mode
   const isNewProject = !id || id === 'new';
@@ -68,7 +99,21 @@ const ProjectForm: React.FC = () => {
         setCategory(projectToEdit.category || '');
         setTeam(projectToEdit.team || []);
         setImage(projectToEdit.image || '');
-        setTopics(projectToEdit.topics || []);
+        
+        // Handle topics with colors if available, otherwise convert simple topics
+        if (projectToEdit.topicsWithColors && projectToEdit.topicsWithColors.length > 0) {
+          setTopics(projectToEdit.topicsWithColors);
+        } else if (projectToEdit.topics) {
+          // Convert simple topics to topics with colors
+          setTopics(projectToEdit.topics.map((name, index) => ({
+            name,
+            color: generateTopicColor(LAB_COLOR, index, projectToEdit.topics?.length || 1),
+            lightness: 50
+          })));
+        } else {
+          setTopics([]);
+        }
+        
         setStatus(projectToEdit.status || 'ongoing');
         setStartDate(projectToEdit.startDate || '');
         setEndDate(projectToEdit.endDate || '');
@@ -77,7 +122,7 @@ const ProjectForm: React.FC = () => {
         setError(`Could not find project with ID: ${id}`);
       }
     }
-  }, [id, isNewProject, projects]);
+  }, [id, isNewProject, projects, LAB_COLOR]);
   
   // Team members selection
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -85,35 +130,76 @@ const ProjectForm: React.FC = () => {
     setTeam(selected);
   };
 
+  // Generate topic color based on lab color and selected lightness
+  const generateTopicColorWithLightness = (lightness: number): string => {
+    // Extract hue and saturation from lab color, but use the provided lightness
+    const [h, s, _] = hexToHsl(LAB_COLOR);
+    return hslToHex(h, s, lightness);
+  };
+
   // Topic management
   const handleAddTopic = () => {
-    if (topicInput.trim() && !topics.includes(topicInput.trim())) {
-      setTopics(prevTopics => [...prevTopics, topicInput.trim()]);
+    if (topicInput.trim() && !topics.some(t => t.name === topicInput.trim())) {
+      const newColor = generateTopicColorWithLightness(topicLightness);
+      setTopics(prevTopics => [...prevTopics, {
+        name: topicInput.trim(),
+        color: newColor,
+        lightness: topicLightness
+      }]);
       setTopicInput('');
     }
   };
   
-  const handleRemoveTopic = (topicToRemove: string) => {
-    setTopics(prevTopics => prevTopics.filter(topic => topic !== topicToRemove));
+  const handleRemoveTopic = (topicName: string) => {
+    setTopics(prevTopics => prevTopics.filter(topic => topic.name !== topicName));
   };
 
   // Handle selecting an existing topic from the dropdown
   const handleSelectExistingTopic = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedTopic = e.target.value;
-    if (selectedTopic && !topics.includes(selectedTopic)) {
-      setTopics(prevTopics => [...prevTopics, selectedTopic]);
+    const selectedTopicName = e.target.value;
+    if (selectedTopicName && !topics.some(t => t.name === selectedTopicName)) {
+      // Find the selected topic in existing topics
+      const selectedTopic = existingTopics.find(t => t.name === selectedTopicName);
+      
+      if (selectedTopic) {
+        setTopics(prevTopics => [...prevTopics, selectedTopic]);
+      } else {
+        // If not found, create a new one with default color
+        const newColor = generateTopicColorWithLightness(topicLightness);
+        setTopics(prevTopics => [...prevTopics, {
+          name: selectedTopicName,
+          color: newColor,
+          lightness: topicLightness
+        }]);
+      }
+      
       // Reset the select dropdown after selection
       e.target.value = '';
     }
   };
   
-  const handleTopicKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddTopic();
-    }
+  // Handle changing topic lightness
+  const handleTopicLightnessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newLightness = parseInt(e.target.value);
+    setTopicLightness(newLightness);
+    // Update the color preview in real-time
   };
-
+  
+  // Update color for a specific topic
+  const updateTopicColor = (topicName: string, lightness: number) => {
+    setTopics(prevTopics => prevTopics.map(topic => {
+      if (topic.name === topicName) {
+        const newColor = generateTopicColorWithLightness(lightness);
+        return {
+          ...topic,
+          color: newColor,
+          lightness
+        };
+      }
+      return topic;
+    }));
+  };
+  
   // Publication management
   const handleAddPublication = () => {
     if (publicationInput.trim() && !publications.includes(publicationInput.trim())) {
@@ -149,6 +235,9 @@ const ProjectForm: React.FC = () => {
     setError(null);
     
     try {
+      // Extract just the topic names for backward compatibility
+      const topicNames = topics.map(topic => topic.name);
+      
       // Construct the project object
       const projectData: Project = {
         id: projectId,
@@ -157,7 +246,8 @@ const ProjectForm: React.FC = () => {
         category,
         team,
         color: '', // This will be generated based on team members in the context
-        topics,
+        topics: topicNames,
+        topicsWithColors: topics, // New field to store topics with color information
         status,
         publications
       };
@@ -363,15 +453,15 @@ const ProjectForm: React.FC = () => {
                 >
                   <option value="" disabled>Select existing topic</option>
                   {existingTopics.map(topic => (
-                    <option key={topic} value={topic}>
-                      {topic}
+                    <option key={topic.name} value={topic.name}>
+                      {topic.name}
                     </option>
                   ))}
                 </select>
               </div>
               
-              {/* Input for adding new topics */}
-              <div className="tag-input-container">
+              {/* Input for adding new topics with color control */}
+              <div className="topic-input-container">
                 <input
                   type="text"
                   value={topicInput}
@@ -392,19 +482,70 @@ const ProjectForm: React.FC = () => {
                   Add
                 </button>
               </div>
+              
+              {/* Color lightness control */}
+              <div className="topic-color-control">
+                <label>Topic Color Lightness</label>
+                <div className="color-slider-container">
+                  <input
+                    type="range"
+                    min="20"
+                    max="80"
+                    value={topicLightness}
+                    onChange={handleTopicLightnessChange}
+                    className="lightness-slider"
+                  />
+                  <div 
+                    className="color-preview"
+                    style={{
+                      backgroundColor: generateTopicColorWithLightness(topicLightness),
+                      width: '30px',
+                      height: '30px',
+                      borderRadius: '4px',
+                      marginLeft: '10px'
+                    }}
+                  ></div>
+                </div>
+                <span className="lightness-value">{topicLightness}%</span>
+              </div>
             </div>
             
             <div className="topics-container">
-              {topics.map((topic, index) => (
-                <div key={topic} className="tag-badge">
-                  {topic}
-                  <button 
-                    type="button" 
-                    className="tag-remove" 
-                    onClick={() => handleRemoveTopic(topic)}
-                  >
-                    ×
-                  </button>
+              {topics.map((topic) => (
+                <div 
+                  key={topic.name} 
+                  className="topic-badge"
+                  style={{ borderLeft: `4px solid ${topic.color}` }}
+                >
+                  <span style={{ marginRight: '8px' }}>{topic.name}</span>
+                  <div className="topic-controls">
+                    <input 
+                      type="range"
+                      min="20"
+                      max="80"
+                      value={topic.lightness}
+                      onChange={(e) => updateTopicColor(topic.name, parseInt(e.target.value))}
+                      className="topic-lightness-slider"
+                      title="Adjust color lightness"
+                    />
+                    <div 
+                      className="topic-color-preview"
+                      style={{
+                        backgroundColor: topic.color,
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '3px',
+                        marginRight: '6px'
+                      }}
+                    ></div>
+                    <button 
+                      type="button" 
+                      className="tag-remove" 
+                      onClick={() => handleRemoveTopic(topic.name)}
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
