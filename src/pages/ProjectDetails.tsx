@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
 import { TopNav, Footer } from '../components/Components';
@@ -12,19 +12,48 @@ const ProjectDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [projectTeam, setProjectTeam] = useState<any[]>([]);
   
-  // Store the current gradient for consistency
-  const [gradient, setGradient] = useState<string>('');
+  // Store the colors for creating dynamic gradients
+  const [topicColors, setTopicColors] = useState<string[]>([]);
+  const [baseColor] = useState<string>('#00AAFF'); // Lab blue color
+  
+  // Mouse interaction states
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const [isFrozen, setIsFrozen] = useState(false);
+  const colorHeaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Find the project by ID
     const currentProject = projects.find(p => p.id === id);
     
     if (currentProject) {
-      // Generate the gradient when project is loaded to ensure consistency
-      const projectGradient = createProjectGradient(currentProject, '#00AAFF');
-      setGradient(projectGradient);
-      
       setProject(currentProject);
+      
+      // Extract or generate topic colors for the dynamic gradient
+      let colors: string[] = [];
+      
+      // If the project has topicsWithColors, use those
+      if (currentProject.topicsWithColors && currentProject.topicsWithColors.length > 0) {
+        colors = currentProject.topicsWithColors.map((t: any) => t.color);
+      } 
+      // Otherwise, extract colors from the gradient string
+      else if (currentProject.color && typeof currentProject.color === 'string') {
+        const gradientMatch = currentProject.color.match(/rgba?\([\d\s,.]+\)|#[a-f\d]+/gi) || [];
+        if (gradientMatch.length > 0) {
+          colors = gradientMatch;
+        }
+      }
+      
+      // Always make sure we have at least the base color
+      if (colors.length === 0) {
+        colors = [baseColor];
+      }
+      
+      // Add lab blue if not already included
+      if (!colors.includes(baseColor)) {
+        colors.push(baseColor);
+      }
+      
+      setTopicColors(colors);
       
       // Get team member details for this project
       const team = currentProject.team
@@ -36,7 +65,51 @@ const ProjectDetails: React.FC = () => {
     }
     
     setLoading(false);
-  }, [id, projects, teamMembers]);
+  }, [id, projects, teamMembers, baseColor]);
+
+  // Handle mouse movement over the header
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (colorHeaderRef.current && !isFrozen) {
+      const rect = colorHeaderRef.current.getBoundingClientRect();
+      // Calculate relative position in percentage
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setMousePosition({ x, y });
+    }
+  };
+
+  // Reset frozen state when entering the header
+  const handleMouseEnter = () => {
+    setIsFrozen(false);
+  };
+
+  // Freeze gradient when leaving the header
+  const handleMouseLeave = () => {
+    setIsFrozen(true);
+  };
+
+  // Generate dynamic gradient based on mouse position
+  const generateDynamicGradient = () => {
+    if (topicColors.length === 0) return `radial-gradient(circle at center, ${baseColor} 0%, ${baseColor} 100%)`;
+    
+    // Get mouse position as percentage of header dimension
+    const { x, y } = mousePosition;
+    
+    // Create a dynamic position based on mouse
+    const position = `circle at ${x}% ${y}%`;
+    
+    // Generate gradient stops with percentages
+    const stops = topicColors.map((color, index) => {
+      if (index === topicColors.length - 1) {
+        return `${color} 100%`;
+      }
+      // Adjust distribution to make the gradient more dynamic and responsive to mouse
+      const percentage = Math.round(Math.pow(index / (topicColors.length - 1), 0.8) * 85);
+      return `${color} ${percentage}%`;
+    }).join(', ');
+    
+    return `radial-gradient(${position}, ${stops})`;
+  };
 
   if (loading) {
     return <div className="loading">Loading project details...</div>;
@@ -60,8 +133,15 @@ const ProjectDetails: React.FC = () => {
     <>
       <TopNav />
       <div className="project-details">
-        {/* Use the stored gradient for the header to ensure consistency */}
-        <div className="project-color-header" style={{ background: gradient }}></div>
+        {/* Interactive header with dynamic gradient */}
+        <div 
+          ref={colorHeaderRef}
+          className="project-color-header"
+          style={{ background: generateDynamicGradient() }}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        ></div>
         
         <h1 className="project-title-standalone">{project.title}</h1>
         
