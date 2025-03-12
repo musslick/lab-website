@@ -289,30 +289,27 @@ export const hslToHex = (h: number, s: number, l: number): string => {
 };
 
 /**
- * Generate a color with same hue and saturation but different lightness
+ * Generate a color with same hue and fixed saturation and lightness
  * @param baseColor Base color in hex format (e.g. '#00AAFF')
- * @param index Index to use for generating different lightness values
+ * @param index Index to use for generating different hue values
  * @param totalItems Total number of items for distribution
- * @returns Hex color with adjusted lightness
+ * @returns Hex color with fixed saturation and lightness
  */
 export const generateTopicColor = (baseColor: string, index: number, totalItems: number = 10): string => {
   // Convert base color to HSL
-  const [h, s, _] = hexToHsl(baseColor);
+  const [h, _, __] = hexToHsl(baseColor);
   
-  // Generate lightness based on index, range from 35% to 70%
-  // This range provides good visibility on both light and dark backgrounds
-  const minLightness = 35;
-  const maxLightness = 70;
+  // Fixed saturation and lightness values
+  const s = 100; // 100% saturation for vibrant colors
+  const l = 80;  // 80% lightness for bright, visible colors
   
-  // Calculate lightness using a consistent distribution
-  let l = minLightness;
-  if (totalItems > 1) {
-    // Distribute lightness values across the range
-    l = minLightness + ((maxLightness - minLightness) * (index % totalItems)) / (totalItems - 1);
-  }
+  // Generate hue based on index, rotating around the color wheel
+  // Formula: baseHue + (index * (360 / totalItems))
+  const hueStep = 360 / Math.max(1, totalItems);
+  const hue = (h + index * hueStep) % 360;
   
   // Convert back to hex
-  return hslToHex(h, s, l);
+  return hslToHex(hue, s, l);
 };
 
 /**

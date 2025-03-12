@@ -1,7 +1,7 @@
 import { teamMembers } from './team';
 import { createGradient } from '../utils/colorUtils';
 
-// Update the Project interface to include topicsWithColors
+// Update the Project interface to include topicsWithColors with hue instead of lightness
 export interface Project {
   id: string;
   title: string;
@@ -10,7 +10,7 @@ export interface Project {
   category: string;
   team: string[];
   topics?: string[];
-  topicsWithColors?: { name: string; color: string; lightness: number }[]; // Add this new field
+  topicsWithColors?: { name: string; color: string; hue: number }[]; // Changed lightness to hue
   publications?: string[];
   image?: string;
   status?: 'ongoing' | 'completed';

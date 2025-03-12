@@ -8,10 +8,11 @@ import { generateTopicColor, hexToHsl, hslToHex } from '../../utils/colorUtils';
 // Lab color (blue) - constant for reference with topic colors - MOVED TO TOP
 const LAB_COLOR = '#00AAFF';
 
+// Define TopicWithColor interface to match the Project interface
 interface TopicWithColor {
   name: string;
   color: string;
-  lightness: number;
+  hue: number;  // Using hue instead of lightness
 }
 
 const ProjectForm: React.FC = () => {
@@ -27,13 +28,13 @@ const ProjectForm: React.FC = () => {
   const [image, setImage] = useState('');
   const [topics, setTopics] = useState<TopicWithColor[]>([]);
   const [topicInput, setTopicInput] = useState('');
-  const [topicLightness, setTopicLightness] = useState(50); // Default lightness (0-100)
   const [status, setStatus] = useState<'ongoing' | 'completed'>('ongoing');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [publications, setPublications] = useState<string[]>([]);
   const [publicationInput, setPublicationInput] = useState('');
   const [projectId, setProjectId] = useState('');
+  const [previewHue, setPreviewHue] = useState<number>(0);
   
   // Extract all unique topics from existing projects
   const existingTopics = React.useMemo(() => {
@@ -47,7 +48,7 @@ const ProjectForm: React.FC = () => {
         return {
           name: topicName,
           color: topicWithColor?.color || generateTopicColor(LAB_COLOR, 0, 1),
-          lightness: topicWithColor?.lightness || 50
+          hue: topicWithColor?.hue || 0  // Using the hue property
         };
       })
     );
@@ -102,13 +103,19 @@ const ProjectForm: React.FC = () => {
         
         // Handle topics with colors if available, otherwise convert simple topics
         if (projectToEdit.topicsWithColors && projectToEdit.topicsWithColors.length > 0) {
-          setTopics(projectToEdit.topicsWithColors);
+          // Convert topicsWithColors to the correct format if needed
+          const formattedTopics: TopicWithColor[] = projectToEdit.topicsWithColors.map(topic => ({
+            name: topic.name,
+            color: topic.color,
+            hue: topic.hue || 0  // Ensure hue is defined
+          }));
+          setTopics(formattedTopics);
         } else if (projectToEdit.topics) {
           // Convert simple topics to topics with colors
           setTopics(projectToEdit.topics.map((name, index) => ({
             name,
             color: generateTopicColor(LAB_COLOR, index, projectToEdit.topics?.length || 1),
-            lightness: 50
+            hue: 0
           })));
         } else {
           setTopics([]);
@@ -131,22 +138,24 @@ const ProjectForm: React.FC = () => {
   };
 
   // Generate topic color based on lab color and selected lightness
-  const generateTopicColorWithLightness = (lightness: number): string => {
-    // Extract hue and saturation from lab color, but use the provided lightness
-    const [h, s, _] = hexToHsl(LAB_COLOR);
-    return hslToHex(h, s, lightness);
+  const generateTopicColorWithHue = (hue: number): string => {
+    // Use fixed saturation (100) and lightness (80)
+    return hslToHex(hue, 100, 80);
   };
 
   // Topic management
   const handleAddTopic = () => {
     if (topicInput.trim() && !topics.some(t => t.name === topicInput.trim())) {
-      const newColor = generateTopicColorWithLightness(topicLightness);
+      // Use the preview hue value instead of a random hue
+      const newColor = generateTopicColorWithHue(previewHue);
       setTopics(prevTopics => [...prevTopics, {
         name: topicInput.trim(),
         color: newColor,
-        lightness: topicLightness
+        hue: previewHue
       }]);
       setTopicInput('');
+      // Reset preview hue for the next topic
+      setPreviewHue(Math.floor(Math.random() * 360));
     }
   };
   
@@ -165,11 +174,12 @@ const ProjectForm: React.FC = () => {
         setTopics(prevTopics => [...prevTopics, selectedTopic]);
       } else {
         // If not found, create a new one with default color
-        const newColor = generateTopicColorWithLightness(topicLightness);
+        const newHue = Math.floor(Math.random() * 360); // Random hue
+        const newColor = generateTopicColorWithHue(newHue);
         setTopics(prevTopics => [...prevTopics, {
           name: selectedTopicName,
           color: newColor,
-          lightness: topicLightness
+          hue: newHue
         }]);
       }
       
@@ -178,28 +188,44 @@ const ProjectForm: React.FC = () => {
     }
   };
   
-  // Handle changing topic lightness
-  const handleTopicLightnessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newLightness = parseInt(e.target.value);
-    setTopicLightness(newLightness);
-    // Update the color preview in real-time
+  // Handle changing topic hue
+  const handleHueChange = (e: React.ChangeEvent<HTMLInputElement>, topicIndex: number) => {
+    const hue = parseInt(e.target.value);
+    const updatedTopics = [...topics];
+    
+    // Use the fixed saturation (100) and lightness (80) values
+    const color = hslToHex(hue, 100, 80);
+    
+    updatedTopics[topicIndex] = {
+      ...updatedTopics[topicIndex],
+      color: color,
+      hue: hue, // Keep track of the hue value for the slider
+    };
+    
+    setTopics(updatedTopics);
   };
   
   // Update color for a specific topic
-  const updateTopicColor = (topicName: string, lightness: number) => {
+  const updateTopicColor = (topicName: string, hue: number) => {
     setTopics(prevTopics => prevTopics.map(topic => {
       if (topic.name === topicName) {
-        const newColor = generateTopicColorWithLightness(lightness);
+        const newColor = generateTopicColorWithHue(hue);
         return {
           ...topic,
           color: newColor,
-          lightness
+          hue
         };
       }
       return topic;
     }));
   };
   
+  // Handle preview hue slider change
+  const handlePreviewHueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const hue = parseInt(e.target.value);
+    setPreviewHue(hue);
+  };
+
   // Publication management
   const handleAddPublication = () => {
     if (publicationInput.trim() && !publications.includes(publicationInput.trim())) {
@@ -247,7 +273,7 @@ const ProjectForm: React.FC = () => {
         team,
         color: '', // This will be generated based on team members in the context
         topics: topicNames,
-        topicsWithColors: topics, // New field to store topics with color information
+        topicsWithColors: topics, // Now properly typed
         status,
         publications
       };
@@ -483,22 +509,22 @@ const ProjectForm: React.FC = () => {
                 </button>
               </div>
               
-              {/* Color lightness control */}
+              {/* Color hue control - Updated to use previewHue state */}
               <div className="topic-color-control">
-                <label>Topic Color Lightness</label>
+                <label>Topic Color</label>
                 <div className="color-slider-container">
                   <input
                     type="range"
-                    min="20"
-                    max="80"
-                    value={topicLightness}
-                    onChange={handleTopicLightnessChange}
-                    className="lightness-slider"
+                    min="0"
+                    max="359"
+                    value={previewHue}
+                    onChange={handlePreviewHueChange}
+                    className="hue-slider"
                   />
                   <div 
                     className="color-preview"
                     style={{
-                      backgroundColor: generateTopicColorWithLightness(topicLightness),
+                      backgroundColor: generateTopicColorWithHue(previewHue),
                       width: '30px',
                       height: '30px',
                       borderRadius: '4px',
@@ -506,12 +532,12 @@ const ProjectForm: React.FC = () => {
                     }}
                   ></div>
                 </div>
-                <span className="lightness-value">{topicLightness}%</span>
+                <span className="hue-value">Hue: {previewHue}°</span>
               </div>
             </div>
             
             <div className="topics-container">
-              {topics.map((topic) => (
+              {topics.map((topic, index) => (
                 <div 
                   key={topic.name} 
                   className="topic-badge"
@@ -521,12 +547,12 @@ const ProjectForm: React.FC = () => {
                   <div className="topic-controls">
                     <input 
                       type="range"
-                      min="20"
-                      max="80"
-                      value={topic.lightness}
+                      min="0"
+                      max="359"
+                      value={topic.hue}
                       onChange={(e) => updateTopicColor(topic.name, parseInt(e.target.value))}
-                      className="topic-lightness-slider"
-                      title="Adjust color lightness"
+                      className="topic-hue-slider"
+                      title="Adjust color hue"
                     />
                     <div 
                       className="topic-color-preview"
