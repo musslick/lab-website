@@ -3,7 +3,7 @@ import { Project, projects as initialProjects } from '../data/projects';
 import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
 import { NewsItem, newsItems as initialNewsItems } from '../data/news';
 import { Collaborator, collaborators as initialCollaborators } from '../data/collaborators';
-import { createGradient } from '../utils/colorUtils';
+import { createGradient, generateTopicColor, createProjectGradient } from '../utils/colorUtils';
 
 interface ContentContextType {
   projects: Project[];
@@ -235,23 +235,41 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const updateProject = (updatedProject: Project) => {
     console.log("Updating project:", updatedProject);
     
-    // Ensure the color is updated based on team members
-    const teamColors = updatedProject.team.map(memberName => {
-      const member = teamMembers.find(m => m.name === memberName);
-      return member ? member.color : '#CCCCCC'; // Default gray if member not found
-    });
+    // Ensure topics have consistent colors
+    let projectWithConsistentColors = { ...updatedProject };
     
-    // Generate a new gradient if team members have changed
+    // If the project has topics, ensure we have topic colors
+    if (updatedProject.topics && updatedProject.topics.length > 0) {
+      // Generate colors for topics if they don't exist or are inconsistent
+      const topicsWithColors = updatedProject.topics.map((topic, index) => {
+        // Check if we already have this topic with a color
+        const existingTopicWithColor = updatedProject.topicsWithColors?.find(t => t.name === topic);
+        
+        if (existingTopicWithColor) {
+          // Use the existing color
+          return existingTopicWithColor;
+        } else {
+          // Generate a new color for this topic
+          const color = generateTopicColor('#00AAFF', index, updatedProject.topics!.length);
+          const [h, s, l] = hexToHsl(color);
+          return {
+            name: topic,
+            color,
+            hue: h // Store the hue for future reference
+          };
+        }
+      });
+      
+      projectWithConsistentColors = {
+        ...projectWithConsistentColors,
+        topicsWithColors
+      };
+    }
+    
+    // Generate a new gradient based on topic colors
     const projectWithUpdatedColor = {
-      ...updatedProject,
-      color: createGradient(teamColors, {
-        includeHighlight: true,
-        highlightColor: '#00AAFF', // Lab blue
-        mixColors: true,
-        mixRatio: 0.3,
-        type: 'radial',
-        position: 'circle at center'
-      }),
+      ...projectWithConsistentColors,
+      color: createProjectGradient(projectWithConsistentColors, '#00AAFF'),
       _lastUpdated: Date.now() // Add timestamp for cache busting
     };
     
@@ -286,25 +304,30 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         id: projectId
       };
       
-      // Ensure the color is generated based on team members
-      const teamColors = projectWithId.team.map(memberName => {
-        const member = teamMembers.find(m => m.name === memberName);
-        return member ? member.color : '#CCCCCC'; // Default gray if member not found
-      });
+      // If the project has topics, ensure we have topic colors
+      let projectWithTopicColors = { ...projectWithId };
       
-      // Generate a new gradient if team members are present
+      if (newProject.topics && newProject.topics.length > 0) {
+        const topicsWithColors = newProject.topics.map((topic, index) => {
+          const color = generateTopicColor('#00AAFF', index, newProject.topics!.length);
+          const [h, s, l] = hexToHsl(color);
+          return {
+            name: topic,
+            color,
+            hue: h // Store the hue for future reference
+          };
+        });
+        
+        projectWithTopicColors = {
+          ...projectWithTopicColors,
+          topicsWithColors
+        };
+      }
+      
+      // Generate a gradient for the project using topic colors
       const projectWithColor = {
-        ...projectWithId,
-        color: teamColors.length > 0 
-          ? createGradient(teamColors, {
-              includeHighlight: true,
-              highlightColor: '#00AAFF', // Lab blue
-              mixColors: true,
-              mixRatio: 0.3,
-              type: 'radial',
-              position: 'circle at center'
-            })
-          : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)' // Default radial gradient
+        ...projectWithTopicColors,
+        color: createProjectGradient(projectWithTopicColors, '#00AAFF')
       };
       
       // Create a new projects array with the added project

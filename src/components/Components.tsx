@@ -3,7 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { teamMembers } from '../data/team';
 import { TeamMember as TeamMemberType } from '../data/team';
 import { Project } from '../data/projects';
-import { createGradient, generateTopicColor } from '../utils/colorUtils'; // Added generateTopicColor import
+import { createGradient, generateTopicColor, createProjectGradient } from '../utils/colorUtils'; // Updated import
 import { useContent } from '../contexts/ContentContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -236,24 +236,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
     // Generate dynamic gradient based on mouse position and project topics
     const generateDynamicGradient = () => {
-        // Generate colors based on project topics or use default color
-        const topicColors = project.topics?.map((topic, index) => 
-            generateTopicColor(LAB_COLOR, index, project.topics?.length || 1)
-        ) || [LAB_COLOR];
-        
-        // Always include lab blue in the gradient
-        if (!topicColors.includes(LAB_COLOR)) {
-            topicColors.push(LAB_COLOR);
-        }
-        
         // Get mouse position as percentage of card dimension
         const { x, y } = mousePosition;
         
         // Create a dynamic position based on mouse
         const position = `circle at ${x}% ${y}%`;
         
+        // Get the base gradient from project topics
+        const baseGradient = createProjectGradient(project, LAB_COLOR);
+        
+        // Extract just the colors for our dynamic gradient
+        const gradientMatch = baseGradient.match(/rgba?\([\d\s,.]+\)|#[a-f\d]+/gi) || [];
+        const topicColors = gradientMatch.length > 0 ? gradientMatch : [LAB_COLOR];
+        
         // Generate gradient stops with percentages
-        // Make sure lab blue always extends to the edge
         const stops = topicColors.map((color, index) => {
             if (index === topicColors.length - 1) {
                 return `${color} 100%`;

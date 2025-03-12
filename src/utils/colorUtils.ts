@@ -258,34 +258,38 @@ export const hexToHsl = (hex: string): [number, number, number] => {
  * @returns Hex color string
  */
 export const hslToHex = (h: number, s: number, l: number): string => {
-  s /= 100;
-  l /= 100;
-  
-  const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
-  const m = l - c / 2;
-  
-  let r = 0, g = 0, b = 0;
-  
-  if (0 <= h && h < 60) {
-    r = c; g = x; b = 0;
-  } else if (60 <= h && h < 120) {
-    r = x; g = c; b = 0;
-  } else if (120 <= h && h < 180) {
-    r = 0; g = c; b = x;
-  } else if (180 <= h && h < 240) {
-    r = 0; g = x; b = c;
-  } else if (240 <= h && h < 300) {
-    r = x; g = 0; b = c;
-  } else if (300 <= h && h < 360) {
-    r = c; g = 0; b = x;
+  h = h / 360;
+  s = s / 100;
+  l = l / 100;
+
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
   }
-  
-  const rHex = Math.round((r + m) * 255).toString(16).padStart(2, '0');
-  const gHex = Math.round((g + m) * 255).toString(16).padStart(2, '0');
-  const bHex = Math.round((b + m) * 255).toString(16).padStart(2, '0');
-  
-  return `#${rHex}${gHex}${bHex}`;
+
+  // Convert to hex
+  const toHex = (x: number) => {
+    const hex = Math.round(x * 255).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
 /**
@@ -324,4 +328,61 @@ export const generateTopicColors = (baseColor: string, topicCount: number): stri
     colors.push(generateTopicColor(baseColor, i, topicCount));
   }
   return colors;
+};
+
+/**
+ * Ensure project gradient uses topic colors when available
+ * @param project The project object with topics and topicsWithColors
+ * @param baseColor The base color to use when no topics are available
+ * @returns A CSS gradient string
+ */
+export const createProjectGradient = (
+  project: { topics?: string[]; topicsWithColors?: { name: string; color: string }[] },
+  baseColor: string = '#00AAFF'
+): string => {
+  // If we have topics with colors, use those for the gradient
+  if (project.topicsWithColors && project.topicsWithColors.length > 0) {
+    const topicColors = project.topicsWithColors.map(topic => topic.color);
+    
+    // Always include the base color
+    if (!topicColors.includes(baseColor)) {
+      topicColors.push(baseColor);
+    }
+    
+    return createGradient(topicColors, {
+      type: 'radial',
+      position: 'circle at center',
+      includeHighlight: true,
+      highlightColor: baseColor
+    });
+  }
+  
+  // If we just have topics but no colors, generate colors from the topics
+  else if (project.topics && project.topics.length > 0) {
+    const topicColors = project.topics.map((_, index) => 
+      generateTopicColor(baseColor, index, project.topics!.length)
+    );
+    
+    // Always include the base color
+    if (!topicColors.includes(baseColor)) {
+      topicColors.push(baseColor);
+    }
+    
+    return createGradient(topicColors, {
+      type: 'radial',
+      position: 'circle at center',
+      includeHighlight: true,
+      highlightColor: baseColor
+    });
+  }
+  
+  // If no topics, use a default gradient with the base color
+  else {
+    return createGradient([baseColor], {
+      type: 'radial',
+      position: 'circle at center',
+      includeHighlight: true,
+      highlightColor: baseColor
+    });
+  }
 };
