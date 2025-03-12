@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
-import { TeamMember } from '../components/Components';
-import Layout from '../components/Layout';
-import { generateTopicColor } from '../utils/colorUtils';
+import { TopNav, Footer } from '../components/Components';
+import { createProjectGradient } from '../utils/colorUtils';
 import '../styles/styles.css';
 
 const ProjectDetails: React.FC = () => {
@@ -12,118 +11,77 @@ const ProjectDetails: React.FC = () => {
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [projectTeam, setProjectTeam] = useState<any[]>([]);
-  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
-  const [isFrozen, setIsFrozen] = useState(false);
   
-  const colorBlockRef = React.useRef<HTMLDivElement>(null);
-  const LAB_COLOR = '#00AAFF';
+  // Store the current gradient for consistency
+  const [gradient, setGradient] = useState<string>('');
 
   useEffect(() => {
     // Find the project by ID
-    const foundProject = projects.find(p => p.id === id);
+    const currentProject = projects.find(p => p.id === id);
     
-    if (foundProject) {
-      setProject(foundProject);
+    if (currentProject) {
+      // Generate the gradient when project is loaded to ensure consistency
+      const projectGradient = createProjectGradient(currentProject, '#00AAFF');
+      setGradient(projectGradient);
       
-      // Find team members for this project
-      const teamData = teamMembers.filter(member => 
-        foundProject.team.includes(member.name)
-      );
-      setProjectTeam(teamData);
+      setProject(currentProject);
+      
+      // Get team member details for this project
+      const team = currentProject.team
+        .map((memberName: string) => 
+          teamMembers.find(tm => tm.name === memberName))
+        .filter(Boolean); // Remove undefined entries
+        
+      setProjectTeam(team);
     }
     
     setLoading(false);
   }, [id, projects, teamMembers]);
 
-  // Handle mouse movement over the banner
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (colorBlockRef.current && !isFrozen) {
-      const rect = colorBlockRef.current.getBoundingClientRect();
-      // Calculate relative position in percentage
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      setMousePosition({ x, y });
-    }
-  };
-
-  // Generate dynamic gradient based on mouse position and project topics
-  const generateDynamicGradient = () => {
-    if (!project || !project.topics) return '';
-    
-    // Generate colors based on project topics
-    const topicColors = project.topics.map((topic: string, index: number) => 
-      generateTopicColor(LAB_COLOR, index, project.topics.length)
-    );
-    
-    // Always include lab blue in the gradient
-    if (!topicColors.includes(LAB_COLOR)) {
-      topicColors.push(LAB_COLOR);
-    }
-    
-    // Get mouse position as percentage of card dimension
-    const { x, y } = mousePosition;
-    
-    // Create a dynamic position based on mouse
-    const position = `circle at ${x}% ${y}%`;
-    
-    // Generate gradient stops with percentages
-    const stops = topicColors.map((color: string, index: number) => {
-      if (index === topicColors.length - 1) {
-        return `${color} 100%`;
-      }
-      // Adjust distribution to make the gradient more dynamic
-      const percentage = Math.round(Math.pow(index / (topicColors.length - 1), 0.8) * 85);
-      return `${color} ${percentage}%`;
-    }).join(', ');
-    
-    return `radial-gradient(${position}, ${stops})`;
-  };
-
   if (loading) {
-    return (
-      <Layout>
-        <div>Loading project details...</div>
-      </Layout>
-    );
+    return <div className="loading">Loading project details...</div>;
   }
 
   if (!project) {
     return (
-      <Layout>
-        <div>Project not found</div>
-      </Layout>
+      <>
+        <TopNav />
+        <div className="project-details">
+          <h1>Project not found</h1>
+          <p>The requested project could not be found.</p>
+          <Link to="/projects">Return to Projects</Link>
+        </div>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
+      <TopNav />
       <div className="project-details">
-        {/* Project color header with same gradient as cards */}
-        <div 
-          ref={colorBlockRef}
-          className="project-color-header"
-          style={{ background: generateDynamicGradient() || project.color }}
-          onMouseMove={handleMouseMove}
-          onMouseEnter={() => setIsFrozen(false)}
-          onMouseLeave={() => setIsFrozen(true)}
-        ></div>
-
-        {/* Project title */}
+        {/* Use the stored gradient for the header to ensure consistency */}
+        <div className="project-color-header" style={{ background: gradient }}></div>
+        
         <h1 className="project-title-standalone">{project.title}</h1>
-
-        {/* Project category */}
-        <div className="project-metadata">
-          <span className="project-category">{project.category}</span>
+        
+        <div className="project-section">
+          <p>{project.description}</p>
           
-          {/* Project topics */}
+          {/* Display topics with their colors */}
           {project.topics && project.topics.length > 0 && (
             <div className="project-detail-topics">
               {project.topics.map((topic: string, index: number) => {
-                const topicColor = generateTopicColor(LAB_COLOR, index, project.topics.length);
+                // Find color from topicsWithColors if available
+                const topicWithColor = project.topicsWithColors?.find(
+                  (t: any) => t.name === topic
+                );
+                const topicColor = topicWithColor ? topicWithColor.color : '#CCCCCC';
+                
                 return (
                   <div key={topic} className="project-detail-topic">
                     <div 
-                      className="project-detail-topic-color" 
+                      className="project-detail-topic-color"
                       style={{ backgroundColor: topicColor }}
                     ></div>
                     <span className="project-detail-topic-name">{topic}</span>
@@ -132,36 +90,53 @@ const ProjectDetails: React.FC = () => {
               })}
             </div>
           )}
+          
+          <div className="project-metadata-container">
+            <div className="project-metadata-item">
+              <h4>Category:</h4>
+              <p>{project.category}</p>
+            </div>
+            
+            {project.status && (
+              <div className="project-metadata-item">
+                <h4>Status:</h4>
+                <p>{project.status.charAt(0).toUpperCase() + project.status.slice(1)}</p>
+              </div>
+            )}
+            
+            {project.startDate && (
+              <div className="project-metadata-item">
+                <h4>Started:</h4>
+                <p>{new Date(project.startDate).toLocaleDateString()}</p>
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* Project description */}
-        <div className="project-section">
-          <p>{project.description}</p>
-        </div>
-
-        {/* Team section */}
+        
         {projectTeam.length > 0 && (
           <div className="project-section">
             <h2>Project Team</h2>
-            <div className="team-container">
-              {projectTeam.map(member => (
-                <TeamMember
-                  key={member.id}
-                  id={member.id}
-                  name={member.name}
-                  bio={member.role}
-                  imageUrl={member.imageUrl}
-                  color={member.color}
-                />
+            <div className="project-team-list">
+              {projectTeam.map((member: any) => (
+                <Link 
+                  key={member.id} 
+                  to={`/team/${member.id}`}
+                  className="project-team-member"
+                >
+                  <div 
+                    className="team-color-indicator" 
+                    style={{ backgroundColor: member.color }}
+                  ></div>
+                  {member.name}
+                </Link>
               ))}
             </div>
           </div>
         )}
-
-        {/* Publications section */}
+        
         {project.publications && project.publications.length > 0 && (
           <div className="project-section">
-            <h2>Publications</h2>
+            <h2>Related Publications</h2>
             <ul>
               {project.publications.map((pub: string, index: number) => (
                 <li key={index}>{pub}</li>
@@ -169,35 +144,9 @@ const ProjectDetails: React.FC = () => {
             </ul>
           </div>
         )}
-
-        {/* Status and timeline section */}
-        <div className="project-section">
-          <h2>Status & Timeline</h2>
-          <p>
-            <strong>Status:</strong> {project.status || 'Ongoing'}
-            <br />
-            {project.startDate && (
-              <>
-                <strong>Started:</strong> {new Date(project.startDate).toLocaleDateString()}
-                <br />
-              </>
-            )}
-            {project.endDate && (
-              <>
-                <strong>Completed:</strong> {new Date(project.endDate).toLocaleDateString()}
-              </>
-            )}
-          </p>
-        </div>
-
-        {/* Back to all projects link */}
-        <div className="see-more-container" style={{ marginTop: '40px' }}>
-          <Link to="/projects" className="see-more-link">
-            Back to all projects <span className="arrow-icon">→</span>
-          </Link>
-        </div>
       </div>
-    </Layout>
+      <Footer />
+    </>
   );
 };
 

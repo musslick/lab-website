@@ -242,10 +242,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         // Create a dynamic position based on mouse
         const position = `circle at ${x}% ${y}%`;
         
-        // Get the base gradient from project topics
+        // Get the base gradient using the same function as ProjectDetails
         const baseGradient = createProjectGradient(project, LAB_COLOR);
         
-        // Extract just the colors for our dynamic gradient
+        // Extract colors from the gradient string for dynamic positioning
         const gradientMatch = baseGradient.match(/rgba?\([\d\s,.]+\)|#[a-f\d]+/gi) || [];
         const topicColors = gradientMatch.length > 0 ? gradientMatch : [LAB_COLOR];
         

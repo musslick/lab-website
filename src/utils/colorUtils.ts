@@ -29,14 +29,17 @@ export const rgbToHex = (r: number, g: number, b: number): string => {
  * Blend two colors together
  */
 export const blendColors = (color1: string, color2: string, ratio: number = 0.5): string => {
-  // Convert hex to RGB
+  // Ensure ratio is between 0 and 1
+  const normalizedRatio = Math.max(0, Math.min(1, ratio));
+  
+  // Convert both colors to RGB
   const [r1, g1, b1] = hexToRgb(color1);
   const [r2, g2, b2] = hexToRgb(color2);
   
-  // Blend the colors
-  const r = Math.round(r1 * (1 - ratio) + r2 * ratio);
-  const g = Math.round(g1 * (1 - ratio) + g2 * ratio);
-  const b = Math.round(b1 * (1 - ratio) + b2 * ratio);
+  // Blend the colors based on the ratio
+  const r = r1 + (r2 - r1) * normalizedRatio;
+  const g = g1 + (g2 - g1) * normalizedRatio;
+  const b = b1 + (b2 - b1) * normalizedRatio;
   
   // Convert back to hex
   return rgbToHex(r, g, b);
@@ -331,58 +334,47 @@ export const generateTopicColors = (baseColor: string, topicCount: number): stri
 };
 
 /**
- * Ensure project gradient uses topic colors when available
+ * Create a gradient specific for projects based on their topics
+ * Combines the two previous versions into a single comprehensive function
  * @param project The project object with topics and topicsWithColors
- * @param baseColor The base color to use when no topics are available
+ * @param baseColor The base color (lab color) to use when needed
  * @returns A CSS gradient string
  */
 export const createProjectGradient = (
-  project: { topics?: string[]; topicsWithColors?: { name: string; color: string }[] },
+  project: any, 
   baseColor: string = '#00AAFF'
 ): string => {
-  // If we have topics with colors, use those for the gradient
-  if (project.topicsWithColors && project.topicsWithColors.length > 0) {
-    const topicColors = project.topicsWithColors.map(topic => topic.color);
+  // Default return if no project or no topics
+  if (!project || !project.topics || project.topics.length === 0) {
+    return `radial-gradient(circle at center, ${baseColor} 0%, ${baseColor} 100%)`;
+  }
+
+  // Generate colors for topics with consistent ordering
+  const topicColors = project.topics.map((topic: string, index: number) => {
+    // Check if we already have this topic with a color
+    const existingTopicWithColor = project.topicsWithColors?.find((t: any) => t.name === topic);
     
-    // Always include the base color
-    if (!topicColors.includes(baseColor)) {
-      topicColors.push(baseColor);
+    if (existingTopicWithColor) {
+      // Use existing color
+      return existingTopicWithColor.color;
+    } else {
+      // Generate a new color - using the correct index order (not reversed)
+      return generateTopicColor(baseColor, index, project.topics.length);
     }
-    
-    return createGradient(topicColors, {
-      type: 'radial',
-      position: 'circle at center',
-      includeHighlight: true,
-      highlightColor: baseColor
-    });
+  });
+
+  // Always include the lab color
+  if (!topicColors.includes(baseColor)) {
+    topicColors.push(baseColor);
   }
-  
-  // If we just have topics but no colors, generate colors from the topics
-  else if (project.topics && project.topics.length > 0) {
-    const topicColors = project.topics.map((_, index) => 
-      generateTopicColor(baseColor, index, project.topics!.length)
-    );
-    
-    // Always include the base color
-    if (!topicColors.includes(baseColor)) {
-      topicColors.push(baseColor);
-    }
-    
-    return createGradient(topicColors, {
-      type: 'radial',
-      position: 'circle at center',
-      includeHighlight: true,
-      highlightColor: baseColor
-    });
-  }
-  
-  // If no topics, use a default gradient with the base color
-  else {
-    return createGradient([baseColor], {
-      type: 'radial',
-      position: 'circle at center',
-      includeHighlight: true,
-      highlightColor: baseColor
-    });
-  }
+
+  // Create a radial gradient using these colors
+  const options = {
+    type: 'radial' as const,
+    position: 'circle at center',
+    includeHighlight: false, // We already manually included the lab color
+    mixColors: false, // Don't mix again as we're using the exact colors
+  };
+
+  return createGradient(topicColors, options);
 };

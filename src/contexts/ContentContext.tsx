@@ -3,7 +3,7 @@ import { Project, projects as initialProjects } from '../data/projects';
 import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
 import { NewsItem, newsItems as initialNewsItems } from '../data/news';
 import { Collaborator, collaborators as initialCollaborators } from '../data/collaborators';
-import { createGradient, generateTopicColor, createProjectGradient } from '../utils/colorUtils';
+import { createGradient, generateTopicColor, createProjectGradient, hexToHsl } from '../utils/colorUtils';
 
 interface ContentContextType {
   projects: Project[];
