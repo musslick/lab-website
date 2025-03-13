@@ -239,43 +239,6 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <div className="admin-actions">
-          <h2>Quick Actions</h2>
-          <div className="admin-action-buttons">
-            <Link to="/admin/projects/new" className="admin-action-button">
-              Add New Project
-            </Link>
-            <Link to="/admin/team/new" className="admin-action-button">
-              Add Team Member
-            </Link>
-            <Link to="/admin/news/new" className="admin-action-button">
-              Add News Item
-            </Link>
-            <Link to="/admin/publications/new" className="admin-action-button">
-              Add Publication
-            </Link>
-            <Link to="/admin/collaborators/new" className="admin-action-button">
-              Add Collaborator
-            </Link>
-          </div>
-        </div>
-
-        {/* Utilities section */}
-        <div className="admin-utilities">
-          <h2>Utilities</h2>
-          <div className="admin-utilities-buttons">
-            <button 
-              className="utility-button danger" 
-              onClick={handleResetData}
-            >
-              Reset to Default Data
-            </button>
-          </div>
-          <p className="utility-warning">
-            Warning: Resetting to defaults will remove all your custom data and cannot be undone.
-          </p>
-        </div>
       </div>
     </Layout>
   );
