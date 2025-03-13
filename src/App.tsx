@@ -8,7 +8,7 @@ import TeamMemberDetail from './pages/TeamMemberDetail';
 import Feed from './pages/Feed';
 import Publications from './pages/Publications';
 import ProjectDetails from './pages/ProjectDetails';
-import Contact from './pages/Contact'; // Import the new Contact component
+import Contact from './pages/Contact';
 import Login from './pages/admin/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProjectForm from './pages/admin/ProjectForm';
@@ -16,6 +16,8 @@ import TeamMemberForm from './pages/admin/TeamMemberForm';
 import NewsForm from './pages/admin/NewsForm';
 import CollaboratorsList from './pages/admin/CollaboratorsList';
 import CollaboratorForm from './pages/admin/CollaboratorForm';
+import PublicationForm from './pages/admin/PublicationForm';  // Fixed import
+import PublicationsList from './pages/admin/PublicationsList';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -77,6 +79,9 @@ const App: React.FC = () => {
               <Route path="/admin/collaborators" element={<CollaboratorsList />} />
               <Route path="/admin/collaborators/new" element={<CollaboratorForm />} />
               <Route path="/admin/collaborators/edit/:id" element={<CollaboratorForm />} />
+              <Route path="/admin/publications" element={<PublicationsList />} /> {/* Add this route */}
+              <Route path="/admin/publications/new" element={<PublicationForm />} />
+              <Route path="/admin/publications/edit/:id" element={<PublicationForm />} />
             </Routes>
           </div>
         </Router>

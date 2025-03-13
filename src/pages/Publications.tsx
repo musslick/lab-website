@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { publications, Publication } from '../data/publications';
+import { Publication } from '../data/publications';
 import { useContent } from '../contexts/ContentContext';
 import '../styles/styles.css';
 
 const Publications: React.FC = () => {
-  const { projects } = useContent();
+  const { projects, publications } = useContent();
   const [selectedYear, setSelectedYear] = useState<string>('All');
   const [selectedType, setSelectedType] = useState<string>('All');
   const [selectedProject, setSelectedProject] = useState<string>('All');

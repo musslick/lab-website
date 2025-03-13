@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { cleanupStorage, resetNewsItems, repairTeamProjectAssociations } from '../../utils/debugStorage';
+import '../../styles/admin.css';
 
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { projects, teamMembers, newsItems, collaborators, resetToDefaults } = useContent();
+  const { projects, teamMembers, newsItems, collaborators, publications, resetToDefaults } = useContent();
   const [activePage, setActivePage] = useState<'overview' | 'projects' | 'team' | 'news' | 'collaborators'>('overview');
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Calculate storage usage
@@ -29,13 +31,19 @@ const AdminDashboard: React.FC = () => {
     }
   }, [showDebugInfo]);
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/admin/login');
+    }
+  }, [isAuthenticated, navigate]);
+
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+    return null; // Don't render anything while redirecting
   }
   
   const clearStorage = () => {
     if (window.confirm('Are you sure you want to clear all localStorage data? This cannot be undone.')) {
-      localStorage.clear();
+      localStorage.clear(); // Clear all localStorage data
       window.location.reload();
     }
   };
@@ -72,6 +80,15 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const handleResetData = () => {
+    resetToDefaults();
+  };
+
   // Format date for display
   const formatDate = (dateString: string): string => {
     const options: Intl.DateTimeFormatOptions = { 
@@ -95,7 +112,7 @@ const AdminDashboard: React.FC = () => {
             >
               {showDebugInfo ? 'Hide Debug' : 'Show Debug'}
             </button>
-            <button onClick={logout} className="logout-button">Logout</button>
+            <button onClick={handleLogout} className="logout-button">Logout</button>
           </div>
         </div>
 
@@ -206,6 +223,13 @@ const AdminDashboard: React.FC = () => {
               <p className="stats-number">{collaborators.length}</p>
               <Link to="/admin/collaborators" className="action-link">
                 Manage Collaborators
+              </Link>
+            </div>
+            <div className="stats-card">
+              <h3>Publications</h3>
+              <p className="stats-number">{publications.length}</p>
+              <Link to="/admin/publications" className="action-link">
+                Manage Publications
               </Link>
             </div>
           </div>
@@ -406,6 +430,16 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Remove the duplicate Publications Section */}
+
+        {/* Debug Section */}
+        <div className="admin-section admin-debug-section">
+          <div className="admin-section-header">
+            <h2>Debug Options</h2>
+            <button onClick={handleResetData} className="reset-button">Reset to Default Data</button>
+          </div>
+        </div>
       </div>
     </Layout>
   );

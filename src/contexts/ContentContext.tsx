@@ -3,6 +3,7 @@ import { Project, projects as initialProjects } from '../data/projects';
 import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
 import { NewsItem, newsItems as initialNewsItems } from '../data/news';
 import { Collaborator, collaborators as initialCollaborators } from '../data/collaborators';
+import { Publication, publications as initialPublications } from '../data/publications';
 import { createGradient, generateTopicColor, createProjectGradient, hexToHsl } from '../utils/colorUtils';
 
 interface ContentContextType {
@@ -10,20 +11,28 @@ interface ContentContextType {
   teamMembers: TeamMember[];
   newsItems: NewsItem[];
   collaborators: Collaborator[];
+  publications: Publication[];
   updateProject: (updatedProject: Project) => void;
-  addProject: (newProject: Project) => Project; // Updated return type
+  addProject: (newProject: Project) => Project;
   deleteProject: (id: string) => void;
   updateTeamMember: (updatedMember: TeamMember) => void;
-  addTeamMember: (newMember: TeamMember) => TeamMember; // Updated return type
+  addTeamMember: (newMember: TeamMember) => TeamMember;
   deleteTeamMember: (id: string) => void;
   updateNewsItem: (updatedNewsItem: NewsItem) => void;
-  addNewsItem: (newNewsItem: NewsItem) => NewsItem; // Updated return type
+  addNewsItem: (newNewsItem: NewsItem) => NewsItem;
   deleteNewsItem: (id: string) => void;
   updateCollaborator: (updatedCollaborator: Collaborator) => void;
   addCollaborator: (newCollaborator: Collaborator) => Collaborator;
   deleteCollaborator: (id: string) => void;
+  updatePublication: (updatedPublication: Publication) => void;
+  addPublication: (newPublication: Publication) => Publication;
+  deletePublication: (id: string) => void;
   resetToDefaults: () => void;
-  getTeamMemberById: (id: string) => TeamMember | undefined; // Add this method
+  getTeamMemberById: (id: string) => TeamMember | undefined;
+  getProjectById: (id: string) => Project | undefined;
+  getNewsItemById: (id: string) => NewsItem | undefined;
+  getCollaboratorById: (id: string) => Collaborator | undefined;
+  getPublicationById: (id: string) => Publication | undefined;
 }
 
 const ContentContext = createContext<ContentContextType>({
@@ -31,20 +40,36 @@ const ContentContext = createContext<ContentContextType>({
   teamMembers: [],
   newsItems: [],
   collaborators: [],
+  publications: [],
   updateProject: () => {},
-  addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }), // Updated with dummy return
+  addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }),
   deleteProject: () => {},
   updateTeamMember: () => {},
-  addTeamMember: () => ({ id: '', name: '', role: '', bio: '', imageUrl: '', color: '', projects: [] }), // Updated with dummy return
+  addTeamMember: () => ({ id: '', name: '', role: '', bio: '', imageUrl: '', color: '', projects: [] }),
   deleteTeamMember: () => {},
   updateNewsItem: () => {},
-  addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '', tags: [] }), // Updated with dummy return
+  addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '', tags: [] }),
   deleteNewsItem: () => {},
   updateCollaborator: () => {},
   addCollaborator: () => ({ id: '', name: '', url: '' }),
   deleteCollaborator: () => {},
+  updatePublication: () => {},
+  addPublication: () => ({ 
+    id: '', 
+    title: '', 
+    authors: [], 
+    journal: '', 
+    year: 0, 
+    type: 'journal', 
+    citation: '' 
+  }),
+  deletePublication: () => {},
   resetToDefaults: () => {},
-  getTeamMemberById: () => undefined, // Add this method
+  getTeamMemberById: () => undefined,
+  getProjectById: () => undefined,
+  getNewsItemById: () => undefined,
+  getCollaboratorById: () => undefined,
+  getPublicationById: () => undefined,
 });
 
 export const useContent = () => useContext(ContentContext);
@@ -58,6 +83,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
+  const [publications, setPublications] = useState<Publication[]>([]);
 
   // Helper function to generate color gradients for projects based on team members
   const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
@@ -101,6 +127,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedTeamMembers = localStorage.getItem('teamMembers');
         const savedNewsItems = localStorage.getItem('newsItems');
         const savedCollaborators = localStorage.getItem('collaborators');
+        const savedPublications = localStorage.getItem('publications');
   
         let projectsData: Project[];
         let teamData: TeamMember[];
@@ -136,6 +163,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
           setCollaborators(initialCollaborators);
         }
         
+        if (savedPublications) {
+          setPublications(JSON.parse(savedPublications));
+        } else {
+          setPublications(initialPublications);
+        }
+        
         // Save the updated projects if necessary
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
           localStorage.setItem('projects', JSON.stringify(updatedProjects));
@@ -146,6 +179,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         setTeamMembers(initialTeamMembers);
         setNewsItems(initialNewsItems);
         setCollaborators(initialCollaborators);
+        setPublications(initialPublications);
       }
     };
 
@@ -736,6 +770,48 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
   };
 
+  // Publication management functions
+  const savePublications = (updatedPublications: Publication[]) => {
+    try {
+      localStorage.setItem('publications', JSON.stringify(updatedPublications));
+      setPublications(updatedPublications);
+    } catch (error) {
+      console.error("Error saving publications to localStorage:", error);
+      alert("Failed to save publications. LocalStorage might be full or unavailable.");
+    }
+  };
+
+  const updatePublication = (updatedPublication: Publication) => {
+    const newPublications = publications.map(pub => 
+      pub.id === updatedPublication.id ? updatedPublication : pub
+    );
+    savePublications(newPublications);
+  };
+
+  const addPublication = (newPublication: Publication): Publication => {
+    try {
+      // Ensure unique ID
+      const pubId = newPublication.id || `pub-${Date.now()}`;
+      const pubWithId = {
+        ...newPublication,
+        id: pubId
+      };
+      
+      const newPublications = [...publications, pubWithId];
+      savePublications(newPublications);
+      
+      return pubWithId;
+    } catch (error) {
+      console.error("Failed to add publication:", error);
+      throw error;
+    }
+  };
+
+  const deletePublication = (id: string) => {
+    const newPublications = publications.filter(pub => pub.id !== id);
+    savePublications(newPublications);
+  };
+
   // Function to reset all data to defaults
   const resetToDefaults = () => {
     if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
@@ -743,6 +819,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('teamMembers');
       localStorage.removeItem('newsItems');
       localStorage.removeItem('collaborators');
+      localStorage.removeItem('publications');
       setTeamMembers(initialTeamMembers);
       
       // Update projects with default gradients based on default team members
@@ -750,6 +827,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       setProjects(projectsWithGradients);
       setNewsItems(initialNewsItems);
       setCollaborators(initialCollaborators);
+      setPublications(initialPublications);
       
       alert('Data has been reset to defaults.');
     }
@@ -760,12 +838,33 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     return teamMembers.find(member => member.id === id);
   };
 
+  // Add function to get project by ID
+  const getProjectById = (id: string): Project | undefined => {
+    return projects.find(project => project.id === id);
+  };
+
+  // Add function to get news item by ID
+  const getNewsItemById = (id: string): NewsItem | undefined => {
+    return newsItems.find(newsItem => newsItem.id === id);
+  };
+
+  // Add function to get collaborator by ID
+  const getCollaboratorById = (id: string): Collaborator | undefined => {
+    return collaborators.find(collaborator => collaborator.id === id);
+  };
+
+  // Add function to get publication by ID
+  const getPublicationById = (id: string): Publication | undefined => {
+    return publications.find(publication => publication.id === id);
+  };
+
   return (
     <ContentContext.Provider value={{
       projects,
       teamMembers,
       newsItems,
       collaborators,
+      publications,
       updateProject,
       addProject,
       deleteProject,
@@ -778,8 +877,15 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       updateCollaborator,
       addCollaborator,
       deleteCollaborator,
+      updatePublication,
+      addPublication,
+      deletePublication,
       resetToDefaults,
-      getTeamMemberById // Include the new method
+      getTeamMemberById, // Include the new method
+      getProjectById,
+      getNewsItemById,
+      getCollaboratorById,
+      getPublicationById
     }}>
       {children}
     </ContentContext.Provider>
