@@ -56,8 +56,8 @@ const Home: React.FC = () => {
                                     <span className="news-author">By {featuredNewsItem.author}</span>
                                 </div>
                                 <p className="project-excerpt">
-                                    {featuredNewsItem.content.length > 120 
-                                        ? `${featuredNewsItem.content.slice(0, 120)}...` 
+                                    {featuredNewsItem.content.length > 115 
+                                        ? `${featuredNewsItem.content.slice(0, 115)}...` 
                                         : featuredNewsItem.content}
                                 </p>
                                 {featuredNewsItem.tags && featuredNewsItem.tags.length > 0 && (
@@ -89,8 +89,8 @@ const Home: React.FC = () => {
                                 </p>
                                 {featuredPublication.abstract && (
                                     <p className="project-excerpt">
-                                        {featuredPublication.abstract.length > 120 
-                                            ? `${featuredPublication.abstract.slice(0, 120)}...` 
+                                        {featuredPublication.abstract.length > 115 
+                                            ? `${featuredPublication.abstract.slice(0, 115)}...` 
                                             : featuredPublication.abstract}
                                     </p>
                                 )}
