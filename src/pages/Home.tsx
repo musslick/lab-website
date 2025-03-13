@@ -8,13 +8,13 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as BrainLogo } from '../assets/logo.svg';
 
 const Home: React.FC = () => {
-    const { projects, collaborators, newsItems, teamMembers } = useContent();
+    const { projects, collaborators, newsItems, publications } = useContent();
     const { isAuthenticated } = useAuth();
     
-    // Select one project, one news item, and one team member
+    // Select the latest items (first item in each array assuming they're sorted by date)
     const featuredProject = projects.length > 0 ? projects[0] : null;
     const featuredNewsItem = newsItems.length > 0 ? newsItems[0] : null;
-    const featuredTeamMember = teamMembers.length > 0 ? teamMembers[0] : null;
+    const featuredPublication = publications.length > 0 ? publications[0] : null;
     
     // Format date for display in news card
     const formatDate = (dateString: string): string => {
@@ -43,16 +43,11 @@ const Home: React.FC = () => {
             
             <section className="featured-projects">
                 <h2>Featured Content</h2>
-                {/* Reordered to display: News, Project, Team Member */}
                 <div className="projects-grid">
-                    {/* News Card - now first */}
+                    {/* News Card */}
                     {featuredNewsItem && (
                         <Link to="/feed" className="project-card">
-                            <div 
-                                className="project-color-block"
-                                style={{ background: '#00AAFF' }}
-                            >
-                                {/* Removed the featured banner from here */}
+                            <div className="project-color-block" style={{ background: '#00AAFF' }}>
                             </div>
                             <div className="project-content">
                                 <h3 className="project-title">{featuredNewsItem.title}</h3>
@@ -76,36 +71,47 @@ const Home: React.FC = () => {
                         </Link>
                     )}
                     
-                    {/* Project Card - now second */}
-                    {featuredProject && (
-                        <ProjectCard key={featuredProject.id} project={featuredProject} />
-                    )}
+                    {/* Project Card */}
+                    {featuredProject && <ProjectCard key={featuredProject.id} project={featuredProject} />}
                     
-                    {/* Team Member Card - now third */}
-                    {featuredTeamMember && (
-                        <Link to={`/team/${featuredTeamMember.id}`} className="project-card">
+                    {/* Publication Card - replacing team member card */}
+                    {featuredPublication && (
+                        <Link to="/publications" className="project-card">
                             <div 
                                 className="project-color-block"
-                                style={{ background: featuredTeamMember.color }}
+                                style={{ background: '#00AAFF' }}
                             >
-                                {/* No content in color block, just the color */}
                             </div>
                             <div className="project-content">
-                                <h3 className="project-title">{featuredTeamMember.name}</h3>
+                                <h3 className="project-title">{featuredPublication.title}</h3>
                                 <p className="project-excerpt">
-                                    {featuredTeamMember.bio && featuredTeamMember.bio.length > 120 
-                                        ? `${featuredTeamMember.bio.slice(0, 120)}...` 
-                                        : featuredTeamMember.bio || featuredTeamMember.role}
+                                    {featuredPublication.authors.join(", ")}
                                 </p>
+                                {featuredPublication.abstract && (
+                                    <p className="project-excerpt">
+                                        {featuredPublication.abstract.length > 120 
+                                            ? `${featuredPublication.abstract.slice(0, 120)}...` 
+                                            : featuredPublication.abstract}
+                                    </p>
+                                )}
                                 <div className="project-metadata">
-                                    <span className="project-category">{featuredTeamMember.role}</span>
+                                    <span className="project-category">
+                                        {featuredPublication.journal} ({featuredPublication.year})
+                                    </span>
                                 </div>
+                                {featuredPublication.keywords && featuredPublication.keywords.length > 0 && (
+                                    <div className="news-tags">
+                                        {featuredPublication.keywords.slice(0, 3).map(keyword => (
+                                            <span key={keyword} className="news-tag">{keyword}</span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </Link>
                     )}
                 </div>
                 
-                {/* See all links container */}
+                {/* Update see all links container */}
                 <div className="see-all-links-container">
                     <Link to="/feed" className="see-more-link">
                         See all news <span className="arrow-icon">→</span>
@@ -113,8 +119,8 @@ const Home: React.FC = () => {
                     <Link to="/projects" className="see-more-link">
                         See all projects <span className="arrow-icon">→</span>
                     </Link>
-                    <Link to="/team" className="see-more-link">
-                        See all team members <span className="arrow-icon">→</span>
+                    <Link to="/publications" className="see-more-link">
+                        See all publications <span className="arrow-icon">→</span>
                     </Link>
                 </div>
             </section>
