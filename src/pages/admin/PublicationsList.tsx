@@ -36,9 +36,6 @@ const PublicationsList: React.FC = () => {
               <div key={publication.id} className="admin-list-item">
                 <div className="admin-item-title">
                   {publication.title}
-                  <span className="publication-type-indicator">
-                    {publication.type}
-                  </span>
                 </div>
                 <div className="admin-item-category">
                   {publication.journal}, {publication.year}

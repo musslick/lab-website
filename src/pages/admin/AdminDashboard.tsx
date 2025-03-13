@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
@@ -9,7 +9,6 @@ import '../../styles/admin.css';
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const { projects, teamMembers, newsItems, collaborators, publications, resetToDefaults } = useContent();
-  const [activePage, setActivePage] = useState<'overview' | 'projects' | 'team' | 'news' | 'collaborators'>('overview');
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
   const navigate = useNavigate();
@@ -89,14 +88,9 @@ const AdminDashboard: React.FC = () => {
     resetToDefaults();
   };
 
-  // Format date for display
-  const formatDate = (dateString: string): string => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  // Function to navigate to management pages when clicking on a card
+  const handleNavigate = (path: string) => {
+    navigate(path);
   };
 
   return (
@@ -116,39 +110,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="admin-nav">
-          <button 
-            className={activePage === 'overview' ? 'active' : ''}
-            onClick={() => setActivePage('overview')}
-          >
-            Overview
-          </button>
-          <button 
-            className={activePage === 'projects' ? 'active' : ''}
-            onClick={() => setActivePage('projects')}
-          >
-            Manage Projects
-          </button>
-          <button 
-            className={activePage === 'team' ? 'active' : ''}
-            onClick={() => setActivePage('team')}
-          >
-            Manage Team
-          </button>
-          <button 
-            className={activePage === 'news' ? 'active' : ''}
-            onClick={() => setActivePage('news')}
-          >
-            Manage News
-          </button>
-          <button 
-            className={activePage === 'collaborators' ? 'active' : ''}
-            onClick={() => setActivePage('collaborators')}
-          >
-            Collaborators
-          </button>
-        </div>
-
+        {/* Debug info section */}
         {showDebugInfo && (
           <div className="debug-info">
             <h3>Debug Information</h3>
@@ -195,250 +157,124 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {activePage === 'overview' && (
-          <div className="admin-overview">
-            <div className="stats-card">
-              <h3>Projects</h3>
-              <p className="stats-number">{projects.length}</p>
-              <Link to="/admin/projects/new" className="action-link">
-                Add New Project
-              </Link>
-            </div>
-            <div className="stats-card">
-              <h3>Team Members</h3>
-              <p className="stats-number">{teamMembers.length}</p>
-              <Link to="/admin/team/new" className="action-link">
-                Add Team Member
-              </Link>
-            </div>
-            <div className="stats-card">
-              <h3>News Items</h3>
-              <p className="stats-number">{newsItems.length}</p>
-              <Link to="/admin/news/new" className="action-link">
-                Add News Item
-              </Link>
-            </div>
-            <div className="stats-card">
-              <h3>Collaborators</h3>
-              <p className="stats-number">{collaborators.length}</p>
-              <Link to="/admin/collaborators" className="action-link">
-                Manage Collaborators
-              </Link>
-            </div>
-            <div className="stats-card">
-              <h3>Publications</h3>
-              <p className="stats-number">{publications.length}</p>
-              <Link to="/admin/publications" className="action-link">
-                Manage Publications
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {activePage === 'projects' && (
-          <div className="admin-projects">
-            <div className="admin-action-header">
+        {/* Main dashboard cards */}
+        <div className="admin-stats">
+          <div 
+            className="admin-card clickable" 
+            onClick={() => handleNavigate('/admin/projects')}
+          >
+            <div className="admin-card-header">
               <h2>Projects</h2>
-              <Link to="/admin/projects/new" className="add-button">
-                Add New Project
+              <Link to="/admin/projects/new" className="card-action-button">
+                + Add New
               </Link>
             </div>
-            <div className="admin-list">
-              {projects.length === 0 ? (
-                <div className="empty-state">
-                  <p>No projects yet. Add your first project to get started!</p>
-                </div>
-              ) : (
-                projects.map(project => (
-                  <div key={project.id} className="admin-list-item">
-                    <div className="admin-item-title">{project.title}</div>
-                    <div className="admin-item-category">{project.category}</div>
-                    <div className="admin-item-actions">
-                      <Link to={`/admin/projects/edit/${project.id}`} className="edit-button">
-                        Edit
-                      </Link>
-                      <Link to={`/projects/${project.id}`} className="view-button" target="_blank">
-                        View
-                      </Link>
-                    </div>
-                    {project.topics && project.topics.length > 0 && (
-                      <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '3px' }}>
-                        <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                          {project.topics.slice(0, 3).map(topic => (
-                            <span key={topic} style={{ 
-                              background: '#f1f1f1',
-                              padding: '2px 8px',
-                              borderRadius: '10px',
-                              fontSize: '0.7rem'
-                            }}>
-                              {topic}
-                            </span>
-                          ))}
-                          {project.topics.length > 3 && (
-                            <span style={{ fontSize: '0.7rem' }}>
-                              +{project.topics.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    {!project.topics || project.topics.length === 0 && (
-                      <div style={{ fontSize: '0.8rem', color: '#999', marginTop: '3px' }}>
-                        No topics
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{projects.length}</p>
+              <p>Research projects</p>
             </div>
           </div>
-        )}
 
-        {activePage === 'team' && (
-          <div className="admin-team">
-            <div className="admin-action-header">
-              <h2>Team Members</h2>
-              <Link to="/admin/team/new" className="add-button">
-                Add Team Member
+          <div 
+            className="admin-card clickable"
+            onClick={() => handleNavigate('/admin/team')}
+          >
+            <div className="admin-card-header">
+              <h2>Team</h2>
+              <Link to="/admin/team/new" className="card-action-button">
+                + Add New
               </Link>
             </div>
-            <div className="admin-list">
-              {teamMembers.length === 0 ? (
-                <div className="empty-state">
-                  <p>No team members yet. Add your first team member to get started!</p>
-                </div>
-              ) : (
-                teamMembers.map(member => (
-                  <div key={member.id} className="admin-list-item">
-                    <div className="admin-item-title">{member.name}</div>
-                    <div className="admin-item-category">{member.role}</div>
-                    <div className="admin-item-actions">
-                      <Link to={`/admin/team/edit/${member.id}`} className="edit-button">
-                        Edit
-                      </Link>
-                    </div>
-                  </div>
-                ))
-              )}
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{teamMembers.length}</p>
+              <p>Team members</p>
             </div>
           </div>
-        )}
 
-        {activePage === 'news' && (
-          <div className="admin-news">
-            <div className="admin-action-header">
-              <h2>News Items</h2>
-              <div className="action-buttons">
-                <button 
-                  onClick={handleCleanupNewsItems} 
-                  className="cleanup-button"
-                >
-                  Cleanup News Items
-                </button>
-                <button 
-                  onClick={handleResetNewsItems}
-                  className="reset-button"
-                >
-                  Reset News Items
-                </button>
-                <Link to="/admin/news/new" className="add-button">
-                  Add News Item
-                </Link>
-              </div>
+          <div 
+            className="admin-card clickable"
+            onClick={() => handleNavigate('/admin/news')}
+          >
+            <div className="admin-card-header">
+              <h2>News</h2>
+              <Link to="/admin/news/new" className="card-action-button">
+                + Add New
+              </Link>
             </div>
-            {newsItems.length === 0 ? (
-              <div className="empty-state">
-                <p>No news items yet. Add your first news item to get started!</p>
-              </div>
-            ) : (
-              <>
-                <div className="debug-info" style={{marginBottom: '20px', fontSize: '12px'}}>
-                  <strong>Total News Items:</strong> {newsItems.length}
-                </div>
-                <div className="admin-list">
-                  {newsItems
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                    .map(item => (
-                      <div key={item.id} className="admin-list-item">
-                        <div className="admin-item-title">
-                          {item.title} {item.featured && <span className="featured-badge">Featured</span>}
-                        </div>
-                        <div className="admin-item-category">
-                          <span className="news-date">{formatDate(item.date)}</span>
-                          <span className="news-author">By {item.author}</span>
-                        </div>
-                        <div className="admin-item-actions">
-                          <Link to={`/admin/news/edit/${item.id}`} className="edit-button">
-                            Edit
-                          </Link>
-                          <Link to="/feed" className="view-button" target="_blank">
-                            View All
-                          </Link>
-                        </div>
-                      </div>
-                    ))
-                  }
-                </div>
-              </>
-            )}
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{newsItems.length}</p>
+              <p>News items</p>
+            </div>
           </div>
-        )}
 
-        {activePage === 'collaborators' && (
-          <div className="admin-collaborators">
-            <div className="admin-action-header">
+          <div 
+            className="admin-card clickable"
+            onClick={() => handleNavigate('/admin/publications')}
+          >
+            <div className="admin-card-header">
+              <h2>Publications</h2>
+              <Link to="/admin/publications/new" className="card-action-button">
+                + Add New
+              </Link>
+            </div>
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{publications.length}</p>
+              <p>Scientific publications</p>
+            </div>
+          </div>
+
+          <div 
+            className="admin-card clickable"
+            onClick={() => handleNavigate('/admin/collaborators')}
+          >
+            <div className="admin-card-header">
               <h2>Collaborators</h2>
-              <Link to="/admin/collaborators/new" className="add-button">
-                Add New Collaborator
+              <Link to="/admin/collaborators/new" className="card-action-button">
+                + Add New
               </Link>
             </div>
-            <div className="admin-list">
-              {collaborators.length === 0 ? (
-                <div className="empty-state">
-                  <p>No collaborators yet. Add your first collaborator to get started!</p>
-                </div>
-              ) : (
-                collaborators.map(collaborator => (
-                  <div key={collaborator.id} className="admin-list-item">
-                    <div className="admin-item-title">{collaborator.name}</div>
-                    <div className="admin-item-category">
-                      <a 
-                        href={collaborator.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="collaborator-link"
-                      >
-                        {collaborator.url}
-                      </a>
-                    </div>
-                    <div className="admin-item-actions">
-                      <Link to={`/admin/collaborators/edit/${collaborator.id}`} className="edit-button">
-                        Edit
-                      </Link>
-                      <a 
-                        href={collaborator.url} 
-                        className="view-button" 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Visit
-                      </a>
-                    </div>
-                  </div>
-                ))
-              )}
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{collaborators.length}</p>
+              <p>Academic & industry partners</p>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Remove the duplicate Publications Section */}
-
-        {/* Debug Section */}
-        <div className="admin-section admin-debug-section">
-          <div className="admin-section-header">
-            <h2>Debug Options</h2>
-            <button onClick={handleResetData} className="reset-button">Reset to Default Data</button>
+        <div className="admin-actions">
+          <h2>Quick Actions</h2>
+          <div className="admin-action-buttons">
+            <Link to="/admin/projects/new" className="admin-action-button">
+              Add New Project
+            </Link>
+            <Link to="/admin/team/new" className="admin-action-button">
+              Add Team Member
+            </Link>
+            <Link to="/admin/news/new" className="admin-action-button">
+              Add News Item
+            </Link>
+            <Link to="/admin/publications/new" className="admin-action-button">
+              Add Publication
+            </Link>
+            <Link to="/admin/collaborators/new" className="admin-action-button">
+              Add Collaborator
+            </Link>
           </div>
+        </div>
+
+        {/* Utilities section */}
+        <div className="admin-utilities">
+          <h2>Utilities</h2>
+          <div className="admin-utilities-buttons">
+            <button 
+              className="utility-button danger" 
+              onClick={handleResetData}
+            >
+              Reset to Default Data
+            </button>
+          </div>
+          <p className="utility-warning">
+            Warning: Resetting to defaults will remove all your custom data and cannot be undone.
+          </p>
         </div>
       </div>
     </Layout>

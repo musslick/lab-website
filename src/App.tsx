@@ -16,8 +16,11 @@ import TeamMemberForm from './pages/admin/TeamMemberForm';
 import NewsForm from './pages/admin/NewsForm';
 import CollaboratorsList from './pages/admin/CollaboratorsList';
 import CollaboratorForm from './pages/admin/CollaboratorForm';
-import PublicationForm from './pages/admin/PublicationForm';  // Fixed import
+import PublicationForm from './pages/admin/PublicationForm';
 import PublicationsList from './pages/admin/PublicationsList';
+import TeamMembersList from './pages/admin/TeamMembersList';
+import NewsList from './pages/admin/NewsList';
+import ProjectsList from './pages/admin/ProjectsList';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -70,16 +73,19 @@ const App: React.FC = () => {
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/login" element={<Login />} />
+              <Route path="/admin/projects" element={<ProjectsList />} />
               <Route path="/admin/projects/new" element={<ProjectForm />} />
               <Route path="/admin/projects/edit/:id" element={<ProjectForm />} />
+              <Route path="/admin/team" element={<TeamMembersList />} />
               <Route path="/admin/team/new" element={<TeamMemberForm />} />
               <Route path="/admin/team/edit/:id" element={<TeamMemberForm />} />
+              <Route path="/admin/news" element={<NewsList />} />
               <Route path="/admin/news/new" element={<NewsForm />} />
               <Route path="/admin/news/edit/:id" element={<NewsForm />} />
               <Route path="/admin/collaborators" element={<CollaboratorsList />} />
               <Route path="/admin/collaborators/new" element={<CollaboratorForm />} />
               <Route path="/admin/collaborators/edit/:id" element={<CollaboratorForm />} />
-              <Route path="/admin/publications" element={<PublicationsList />} /> {/* Add this route */}
+              <Route path="/admin/publications" element={<PublicationsList />} />
               <Route path="/admin/publications/new" element={<PublicationForm />} />
               <Route path="/admin/publications/edit/:id" element={<PublicationForm />} />
             </Routes>
