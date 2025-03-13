@@ -160,12 +160,16 @@ const AdminDashboard: React.FC = () => {
         {/* Main dashboard cards */}
         <div className="admin-stats">
           <div 
-            className="admin-card clickable" 
+            className="admin-card"
             onClick={() => handleNavigate('/admin/projects')}
           >
             <div className="admin-card-header">
               <h2>Projects</h2>
-              <Link to="/admin/projects/new" className="card-action-button">
+              <Link 
+                to="/admin/projects/new" 
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()} // Prevent card click when clicking button
+              >
                 + Add New
               </Link>
             </div>
@@ -176,12 +180,16 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <div 
-            className="admin-card clickable"
+            className="admin-card"
             onClick={() => handleNavigate('/admin/team')}
           >
             <div className="admin-card-header">
               <h2>Team</h2>
-              <Link to="/admin/team/new" className="card-action-button">
+              <Link 
+                to="/admin/team/new"
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
                 + Add New
               </Link>
             </div>
@@ -192,12 +200,16 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <div 
-            className="admin-card clickable"
+            className="admin-card"
             onClick={() => handleNavigate('/admin/news')}
           >
             <div className="admin-card-header">
               <h2>News</h2>
-              <Link to="/admin/news/new" className="card-action-button">
+              <Link 
+                to="/admin/news/new"
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
                 + Add New
               </Link>
             </div>
@@ -208,12 +220,16 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <div 
-            className="admin-card clickable"
+            className="admin-card"
             onClick={() => handleNavigate('/admin/publications')}
           >
             <div className="admin-card-header">
               <h2>Publications</h2>
-              <Link to="/admin/publications/new" className="card-action-button">
+              <Link 
+                to="/admin/publications/new"
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
                 + Add New
               </Link>
             </div>
@@ -224,12 +240,16 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <div 
-            className="admin-card clickable"
+            className="admin-card"
             onClick={() => handleNavigate('/admin/collaborators')}
           >
             <div className="admin-card-header">
               <h2>Collaborators</h2>
-              <Link to="/admin/collaborators/new" className="card-action-button">
+              <Link 
+                to="/admin/collaborators/new"
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
                 + Add New
               </Link>
             </div>

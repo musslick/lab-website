@@ -1028,19 +1028,17 @@
 
 .admin-card {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.admin-card.clickable {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
-.admin-card.clickable:hover {
+.admin-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .admin-card-header {
@@ -1057,18 +1055,20 @@
 }
 
 .card-action-button {
+  display: inline-block;
+  padding: 8px 12px;
   background-color: #00AAFF;
   color: white;
-  padding: 5px 10px;
   border-radius: 4px;
-  font-size: 0.8rem;
   text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  z-index: 2;
 }
 
 .card-action-button:hover {
   background-color: #0088cc;
+  transform: translateY(-2px);
 }
 
 .admin-card-content {
