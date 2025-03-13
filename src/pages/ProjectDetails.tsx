@@ -4,6 +4,7 @@ import { useContent } from '../contexts/ContentContext';
 import { TopNav, Footer } from '../components/Components';
 import { createProjectGradient } from '../utils/colorUtils';
 import '../styles/styles.css';
+import { publications } from '../data/publications';
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -129,6 +130,9 @@ const ProjectDetails: React.FC = () => {
     );
   }
 
+  // Get publications related to this project
+  const projectPublications = publications.filter(pub => pub.projectId === id);
+
   return (
     <>
       <TopNav />
@@ -222,6 +226,44 @@ const ProjectDetails: React.FC = () => {
                 <li key={index}>{pub}</li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {/* Add publications section */}
+        {projectPublications.length > 0 && (
+          <div className="project-section">
+            <h2>Publications</h2>
+            <div className="project-publications">
+              {projectPublications.map(publication => (
+                <div key={publication.id} className="publication-item">
+                  <h3 className="publication-title">
+                    {publication.url ? (
+                      <a href={publication.url} target="_blank" rel="noopener noreferrer">
+                        {publication.title}
+                      </a>
+                    ) : (
+                      publication.title
+                    )}
+                  </h3>
+                  
+                  <p className="publication-authors">{publication.authors.join(", ")}</p>
+                  
+                  <div className="publication-meta">
+                    <span className="publication-journal">{publication.journal}</span>
+                    <span className="publication-year">{publication.year}</span>
+                    <span className="publication-type">{publication.type}</span>
+                  </div>
+                  
+                  {publication.doi && (
+                    <div className="publication-doi">
+                      <a href={`https://doi.org/${publication.doi}`} target="_blank" rel="noopener noreferrer">
+                        DOI: {publication.doi}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

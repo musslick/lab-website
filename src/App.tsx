@@ -6,6 +6,7 @@ import Projects from './pages/Projects';
 import Team from './pages/Team';
 import TeamMemberDetail from './pages/TeamMemberDetail';
 import Feed from './pages/Feed';
+import Publications from './pages/Publications';
 import ProjectDetails from './pages/ProjectDetails';
 import Contact from './pages/Contact'; // Import the new Contact component
 import Login from './pages/admin/Login';
@@ -53,6 +54,11 @@ const App: React.FC = () => {
               <Route path="/projects" element={
                 <Layout>
                   <Projects />
+                </Layout>
+              } />
+              <Route path="/publications" element={
+                <Layout>
+                  <Publications />
                 </Layout>
               } />
               {/* Remove the nested Layout component for ProjectDetails */}
