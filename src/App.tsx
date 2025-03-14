@@ -31,7 +31,7 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <ContentProvider>
-        <Router>
+        <Router basename={process.env.PUBLIC_URL}>
           <ScrollToTop />
           <div className="app">
             <Routes>
