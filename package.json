@@ -1,9 +1,9 @@
 {
-  "name": "scientific-lab-website",
+  "name": "automated-lab",
   "version": "1.0.0",
   "description": "A website for the Automated Scientific Discovery of Mind and Brain lab.",
   "main": "src/App.tsx",
-  "homepage": "https://morilori.github.io/scientific-lab-website",
+  "homepage": "https://morilori.github.io/automated-lab",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
