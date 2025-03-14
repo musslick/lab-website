@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "A website for the Automated Scientific Discovery of Mind and Brain lab.",
   "main": "src/App.tsx",
+  "homepage": "https://YOUR_GITHUB_USERNAME.github.io/scientific-lab-website",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test",
