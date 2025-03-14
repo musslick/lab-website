@@ -269,6 +269,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const updateProject = (updatedProject: Project) => {
     console.log("Updating project:", updatedProject);
     
+    // Get the existing project to compare changes
+    const existingProject = projects.find(p => p.id === updatedProject.id);
+    
     // Ensure topics have consistent colors
     let projectWithConsistentColors = { ...updatedProject };
     
@@ -312,19 +315,41 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       project.id === updatedProject.id ? projectWithUpdatedColor : project
     );
     
-    // Save to storage and update state
-    saveProjects(newProjects);
+    // Update team members if the project team has changed
+    if (existingProject && !areArraysEqual(existingProject.team, updatedProject.team)) {
+      const updatedTeamMembers = teamMembers.map(member => {
+        // Remove project from members no longer in the team
+        if (existingProject.team.includes(member.name) && !updatedProject.team.includes(member.name)) {
+          return {
+            ...member,
+            projects: member.projects?.filter(id => id !== updatedProject.id) || []
+          };
+        }
+        // Add project to new team members
+        if (!existingProject.team.includes(member.name) && updatedProject.team.includes(member.name)) {
+          return {
+            ...member,
+            projects: [...(member.projects || []), updatedProject.id]
+          };
+        }
+        return member;
+      });
+      
+      // Save updated team members
+      saveTeamMembers(updatedTeamMembers);
+    }
     
-    // Emit an event for components that need to know about the update
+    // Save projects and emit update event
+    saveProjects(newProjects);
     window.dispatchEvent(new CustomEvent('project-updated', {
       detail: { projectId: updatedProject.id, timestamp: Date.now() }
     }));
-    
-    // Force a re-render of the project page
-    setTimeout(() => {
-      // This timeout gives the browser time to process the state update
-      console.log("Project update completed:", updatedProject.id);
-    }, 100);
+  };
+
+  // Utility function to compare arrays
+  const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
+    if (arr1.length !== arr2.length) return false;
+    return arr1.every(item => arr2.includes(item));
   };
 
   const addProject = (newProject: Project): Project => {
