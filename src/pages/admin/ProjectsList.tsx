@@ -6,6 +6,14 @@ import Layout from '../../components/Layout';
 const ProjectsList: React.FC = () => {
   const { projects } = useContent();
   
+  // Helper to display disciplines as string
+  const formatDisciplines = (category: string | string[]): string => {
+    if (Array.isArray(category)) {
+      return category.join(', ');
+    }
+    return category;
+  };
+  
   return (
     <Layout>
       <div className="admin-dashboard">
@@ -36,7 +44,7 @@ const ProjectsList: React.FC = () => {
                   style={{ background: project.color }}
                 ></div>
                 <div className="admin-item-title">{project.title}</div>
-                <div className="admin-item-category">{project.category}</div>
+                <div className="admin-item-category">{formatDisciplines(project.category)}</div>
                 <div className="admin-item-actions">
                   <Link to={`/admin/projects/edit/${project.id}`} className="edit-button">
                     Edit

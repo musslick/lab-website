@@ -6,6 +6,22 @@ import { createProjectGradient } from '../utils/colorUtils';
 import '../styles/styles.css';
 import { publications } from '../data/publications';
 
+// Function to render categories, handling both string and array formats
+const renderCategories = (categories: string | string[]) => {
+  if (Array.isArray(categories)) {
+    return categories.join(', ');
+  }
+  return categories;
+};
+
+// Function to render disciplines, handling both string and array formats
+const renderDisciplines = (disciplines: string | string[]) => {
+  if (Array.isArray(disciplines)) {
+    return disciplines.join(', ');
+  }
+  return disciplines;
+};
+
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { projects, teamMembers } = useContent();
@@ -152,23 +168,23 @@ const ProjectDetails: React.FC = () => {
         <div className="project-section">
           <p>{project.description}</p>
           
-          {/* Display topics with their colors */}
+          {/* Display methods with their colors */}
           {project.topics && project.topics.length > 0 && (
             <div className="project-detail-topics">
-              {project.topics.map((topic: string, index: number) => {
+              {project.topics.map((method: string, index: number) => {
                 // Find color from topicsWithColors if available
-                const topicWithColor = project.topicsWithColors?.find(
-                  (t: any) => t.name === topic
+                const methodWithColor = project.topicsWithColors?.find(
+                  (t: any) => t.name === method
                 );
-                const topicColor = topicWithColor ? topicWithColor.color : '#CCCCCC';
+                const methodColor = methodWithColor ? methodWithColor.color : '#CCCCCC';
                 
                 return (
-                  <div key={topic} className="project-detail-topic">
+                  <div key={method} className="project-detail-topic">
                     <div 
                       className="project-detail-topic-color"
-                      style={{ backgroundColor: topicColor }}
+                      style={{ backgroundColor: methodColor }}
                     ></div>
-                    <span className="project-detail-topic-name">{topic}</span>
+                    <span className="project-detail-topic-name">{method}</span>
                   </div>
                 );
               })}
@@ -177,8 +193,8 @@ const ProjectDetails: React.FC = () => {
           
           <div className="project-metadata-container">
             <div className="project-metadata-item">
-              <h4>Category:</h4>
-              <p>{project.category}</p>
+              <h4>Discipline:</h4>
+              <p>{project.category && renderDisciplines(project.category)}</p>
             </div>
             
             {project.status && (

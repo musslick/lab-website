@@ -23,7 +23,8 @@ const ProjectForm: React.FC = () => {
   // Form fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState<string[]>([]); // Changed from string to string[]
+  const [categoryInput, setCategoryInput] = useState('');
   const [team, setTeam] = useState<string[]>([]);
   const [image, setImage] = useState('');
   const [topics, setTopics] = useState<TopicWithColor[]>([]);
@@ -37,33 +38,42 @@ const ProjectForm: React.FC = () => {
   const [previewHue, setPreviewHue] = useState<number>(0);
   
   // Extract all unique topics from existing projects
-  const existingTopics = React.useMemo(() => {
-    const allTopics = projects.flatMap(project => 
-      (project.topics || []).map(topicName => {
-        // Look for this topic in any existing project to get its color
-        const topicWithColor = projects
+  const existingMethods = React.useMemo(() => {
+    const allMethods = projects.flatMap(project => 
+      (project.topics || []).map(methodName => {
+        // Look for this method in any existing project to get its color
+        const methodWithColor = projects
           .flatMap(p => p.topicsWithColors || [])
-          .find(t => t && t.name === topicName);
+          .find(t => t && t.name === methodName);
           
         return {
-          name: topicName,
-          color: topicWithColor?.color || generateTopicColor(LAB_COLOR, 0, 1),
-          hue: topicWithColor?.hue || 0  // Using the hue property
+          name: methodName,
+          color: methodWithColor?.color || generateTopicColor(LAB_COLOR, 0, 1),
+          hue: methodWithColor?.hue || 0  // Using the hue property
         };
       })
     );
     
     // Remove duplicates by name
-    const uniqueTopics = Array.from(
-      allTopics.reduce((map, topic) => {
-        if (!map.has(topic.name)) {
-          map.set(topic.name, topic);
+    const uniqueMethods = Array.from(
+      allMethods.reduce((map, method) => {
+        if (!map.has(method.name)) {
+          map.set(method.name, method);
         }
         return map;
       }, new Map<string, TopicWithColor>())
-    ).map(([_, topic]) => topic);
+    ).map(([_, method]) => method);
     
-    return uniqueTopics.sort((a, b) => a.name.localeCompare(b.name));
+    return uniqueMethods.sort((a, b) => a.name.localeCompare(b.name));
+  }, [projects]);
+  
+  // Extract all unique categories from existing projects
+  const existingDisciplines = React.useMemo(() => {
+    const allDisciplines = projects.flatMap(project => 
+      typeof project.category === 'string' ? [project.category] :
+      Array.isArray(project.category) ? project.category : []
+    );
+    return Array.from(new Set(allDisciplines)).sort();
   }, [projects]);
   
   // UI state
@@ -72,7 +82,6 @@ const ProjectForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   
   // Constants for dropdown options
-  const categories = ['Neuroscience', 'Artificial Intelligence', 'Cognitive Enhancement', 'Interface Technology', 'Data Science', 'Other'];
   const statusOptions = [
     { value: 'ongoing', label: 'Ongoing' },
     { value: 'completed', label: 'Completed' }
@@ -97,7 +106,16 @@ const ProjectForm: React.FC = () => {
         setProjectId(projectToEdit.id);
         setTitle(projectToEdit.title || '');
         setDescription(projectToEdit.description || '');
-        setCategory(projectToEdit.category || '');
+        
+        // Handle category as either string or array
+        if (typeof projectToEdit.category === 'string') {
+          setCategories([projectToEdit.category]);
+        } else if (Array.isArray(projectToEdit.category)) {
+          setCategories(projectToEdit.category);
+        } else {
+          setCategories([]);
+        }
+        
         setTeam(projectToEdit.team || []);
         setImage(projectToEdit.image || '');
         
@@ -144,7 +162,7 @@ const ProjectForm: React.FC = () => {
   };
 
   // Topic management
-  const handleAddTopic = () => {
+  const handleAddMethod = () => {
     if (topicInput.trim() && !topics.some(t => t.name === topicInput.trim())) {
       // Use the preview hue value instead of a random hue
       const newColor = generateTopicColorWithHue(previewHue);
@@ -154,30 +172,30 @@ const ProjectForm: React.FC = () => {
         hue: previewHue
       }]);
       setTopicInput('');
-      // Reset preview hue for the next topic
+      // Reset preview hue for the next method
       setPreviewHue(Math.floor(Math.random() * 360));
     }
   };
   
-  const handleRemoveTopic = (topicName: string) => {
-    setTopics(prevTopics => prevTopics.filter(topic => topic.name !== topicName));
+  const handleRemoveMethod = (methodName: string) => {
+    setTopics(prevTopics => prevTopics.filter(topic => topic.name !== methodName));
   };
 
   // Handle selecting an existing topic from the dropdown
-  const handleSelectExistingTopic = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedTopicName = e.target.value;
-    if (selectedTopicName && !topics.some(t => t.name === selectedTopicName)) {
-      // Find the selected topic in existing topics
-      const selectedTopic = existingTopics.find(t => t.name === selectedTopicName);
+  const handleSelectExistingMethod = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedMethodName = e.target.value;
+    if (selectedMethodName && !topics.some(t => t.name === selectedMethodName)) {
+      // Find the selected method in existing methods
+      const selectedMethod = existingMethods.find(t => t.name === selectedMethodName);
       
-      if (selectedTopic) {
-        setTopics(prevTopics => [...prevTopics, selectedTopic]);
+      if (selectedMethod) {
+        setTopics(prevTopics => [...prevTopics, selectedMethod]);
       } else {
         // If not found, create a new one with default color
         const newHue = Math.floor(Math.random() * 360); // Random hue
         const newColor = generateTopicColorWithHue(newHue);
         setTopics(prevTopics => [...prevTopics, {
-          name: selectedTopicName,
+          name: selectedMethodName,
           color: newColor,
           hue: newHue
         }]);
@@ -205,10 +223,10 @@ const ProjectForm: React.FC = () => {
     setTopics(updatedTopics);
   };
   
-  // Update color for a specific topic
-  const updateTopicColor = (topicName: string, hue: number) => {
+  // Update color for a specific method
+  const updateMethodColor = (methodName: string, hue: number) => {
     setTopics(prevTopics => prevTopics.map(topic => {
-      if (topic.name === topicName) {
+      if (topic.name === methodName) {
         const newColor = generateTopicColorWithHue(hue);
         return {
           ...topic,
@@ -224,6 +242,36 @@ const ProjectForm: React.FC = () => {
   const handlePreviewHueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const hue = parseInt(e.target.value);
     setPreviewHue(hue);
+  };
+
+  // Category management
+  const handleAddDiscipline = () => {
+    if (categoryInput.trim() && !categories.includes(categoryInput.trim())) {
+      setCategories(prevCategories => [...prevCategories, categoryInput.trim()]);
+      setCategoryInput('');
+    }
+  };
+
+  const handleRemoveDiscipline = (disciplineToRemove: string) => {
+    setCategories(prevCategories => 
+      prevCategories.filter(category => category !== disciplineToRemove)
+    );
+  };
+
+  // Handle selecting an existing category
+  const handleSelectExistingDiscipline = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDiscipline = e.target.value;
+    if (selectedDiscipline && !categories.includes(selectedDiscipline)) {
+      setCategories(prevCategories => [...prevCategories, selectedDiscipline]);
+      e.target.value = ''; // Reset select after selection
+    }
+  };
+
+  const handleDisciplineKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddDiscipline();
+    }
   };
 
   // Publication management
@@ -246,14 +294,14 @@ const ProjectForm: React.FC = () => {
       handleAddPublication();
     }
   };
-  
+
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields
-    if (!title || !description || !category) {
-      setError('Please fill in all required fields');
+    if (!title || !description || categories.length === 0) {
+      setError('Please fill in all required fields and add at least one category');
       return;
     }
     
@@ -269,7 +317,7 @@ const ProjectForm: React.FC = () => {
         id: projectId,
         title,
         description,
-        category,
+        category: categories.length === 1 ? categories[0] : categories, // Support both single string and array
         team,
         color: '', // This will be generated based on team members in the context
         topics: topicNames,
@@ -370,22 +418,63 @@ const ProjectForm: React.FC = () => {
             />
           </div>
           
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="category">Category*</label>
-              <select
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                required
-              >
-                <option value="">Select a Category</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+          <div className="form-group">
+            <label>Disciplines*</label>
+            <div className="topic-selection-container">
+              {/* Dropdown for selecting existing disciplines */}
+              <div className="existing-topics-dropdown">
+                <select 
+                  onChange={handleSelectExistingDiscipline}
+                  defaultValue=""
+                >
+                  <option value="" disabled>Select existing discipline</option>
+                  {existingDisciplines.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Input for adding new disciplines */}
+              <div className="topic-input-container">
+                <input
+                  type="text"
+                  value={categoryInput}
+                  onChange={(e) => setCategoryInput(e.target.value)}
+                  onKeyDown={handleDisciplineKeyDown}
+                  placeholder="Type a new discipline and press Enter"
+                />
+                <button 
+                  type="button" 
+                  onClick={handleAddDiscipline}
+                  className="tag-add-button"
+                >
+                  Add
+                </button>
+              </div>
             </div>
             
+            {/* Display selected disciplines as tags */}
+            <div className="topics-container">
+              {categories.map(category => (
+                <div key={category} className="topic-badge">
+                  {category}
+                  <button 
+                    type="button" 
+                    className="tag-remove" 
+                    onClick={() => handleRemoveDiscipline(category)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+            
+            {categories.length === 0 && (
+              <p className="form-help-text">Please add at least one discipline</p>
+            )}
+          </div>
+          
+          <div className="form-row">
             <div className="form-group">
               <label htmlFor="status">Status</label>
               <select
@@ -469,16 +558,16 @@ const ProjectForm: React.FC = () => {
           </div>
           
           <div className="form-group">
-            <label>Topics</label>
+            <label>Methods</label>
             <div className="topic-selection-container">
-              {/* Dropdown for selecting existing topics */}
+              {/* Dropdown for selecting existing methods */}
               <div className="existing-topics-dropdown">
                 <select 
-                  onChange={handleSelectExistingTopic}
+                  onChange={handleSelectExistingMethod}
                   defaultValue=""
                 >
-                  <option value="" disabled>Select existing topic</option>
-                  {existingTopics.map(topic => (
+                  <option value="" disabled>Select existing method</option>
+                  {existingMethods.map(topic => (
                     <option key={topic.name} value={topic.name}>
                       {topic.name}
                     </option>
@@ -486,7 +575,7 @@ const ProjectForm: React.FC = () => {
                 </select>
               </div>
               
-              {/* Input for adding new topics with color control */}
+              {/* Input for adding new methods with color control */}
               <div className="topic-input-container">
                 <input
                   type="text"
@@ -495,14 +584,14 @@ const ProjectForm: React.FC = () => {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
-                      handleAddTopic();
+                      handleAddMethod();
                     }
                   }}
-                  placeholder="Type a new topic and press Enter"
+                  placeholder="Type a new method and press Enter"
                 />
                 <button 
                   type="button" 
-                  onClick={handleAddTopic}
+                  onClick={handleAddMethod}
                   className="tag-add-button"
                 >
                   Add
@@ -511,7 +600,7 @@ const ProjectForm: React.FC = () => {
               
               {/* Color hue control - Updated to use previewHue state */}
               <div className="topic-color-control">
-                <label>Topic Color</label>
+                <label>Method Color</label>
                 <div className="color-slider-container">
                   <input
                     type="range"
@@ -550,7 +639,7 @@ const ProjectForm: React.FC = () => {
                       min="0"
                       max="359"
                       value={topic.hue}
-                      onChange={(e) => updateTopicColor(topic.name, parseInt(e.target.value))}
+                      onChange={(e) => updateMethodColor(topic.name, parseInt(e.target.value))}
                       className="topic-hue-slider"
                       title="Adjust color hue"
                     />
@@ -567,7 +656,7 @@ const ProjectForm: React.FC = () => {
                     <button 
                       type="button" 
                       className="tag-remove" 
-                      onClick={() => handleRemoveTopic(topic.name)}
+                      onClick={() => handleRemoveMethod(topic.name)}
                     >
                       ×
                     </button>

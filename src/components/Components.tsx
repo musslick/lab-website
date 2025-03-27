@@ -292,6 +292,42 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         );
     };
 
+    // Function to render project category or categories
+    const renderCategories = () => {
+        if (Array.isArray(project.category)) {
+            return project.category.join(', ');
+        }
+        return project.category;
+    };
+
+    // Generate method colors from the lab blue color or use provided colors
+    const generateMethodTag = (method: string, index: number) => {
+        // First check if we have color information in topicsWithColors
+        const methodWithColor = project.topicsWithColors?.find(t => t.name === method);
+        
+        // Use the provided color or generate one
+        const methodColor = methodWithColor?.color || generateTopicColor(LAB_COLOR, index, project.topics?.length || 1);
+        
+        return (
+            <div key={method} className="topic-tag">
+                <div 
+                    className="topic-color-dot" 
+                    style={{ backgroundColor: methodColor }}
+                    title={method}
+                />
+                <span className="topic-name">{method}</span>
+            </div>
+        );
+    };
+
+    // Function to render project disciplines
+    const renderDisciplines = () => {
+        if (Array.isArray(project.category)) {
+            return project.category.join(', ');
+        }
+        return project.category;
+    };
+    
     return (
         <Link 
             to={`/projects/${project.id}`} 
@@ -318,14 +354,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                         : project.description}
                 </p>
                 
-                {/* Wrap category and topic info in a metadata div */}
+                {/* Wrap discipline and method info in a metadata div */}
                 <div className="project-metadata">
-                    <span className="project-category">{project.category}</span>
+                    <span className="project-category">{renderDisciplines()}</span>
                     
-                    {/* Display topics instead of team members */}
+                    {/* Display methods instead of team members */}
                     <div className="project-topics">
-                        {project.topics?.map((topic, index) => 
-                            generateTopicTag(topic, index)
+                        {project.topics?.map((method, index) => 
+                            generateMethodTag(method, index)
                         )}
                     </div>
                 </div>
