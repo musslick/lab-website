@@ -68,8 +68,18 @@ const TopNav: React.FC = () => {
                         </NavLink>
                     </li>
                     <li>
+                        <NavLink to="/software" className={({isActive}) => isActive ? 'active' : ''}>
+                            Software
+                        </NavLink>
+                    </li>
+                    <li>
                         <NavLink to="/feed" className={({isActive}) => isActive ? 'active' : ''}>
                             News
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/contact" className={({isActive}) => isActive ? 'active' : ''}>
+                            Contact
                         </NavLink>
                     </li>
                 </ul>
@@ -196,8 +206,18 @@ const SideNav: React.FC = () => {
                     </NavLink>
                 </li>
                 <li>
+                    <NavLink to="/software" className={({ isActive }) => isActive ? 'active' : ''}>
+                        Software
+                    </NavLink>
+                </li>
+                <li>
                     <NavLink to="/feed" className={({ isActive }) => isActive ? 'active' : ''}>
                         News Feed
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/contact" className={({ isActive }) => isActive ? 'active' : ''}>
+                        Contact
                     </NavLink>
                 </li>
             </ul>

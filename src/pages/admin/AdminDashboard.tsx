@@ -8,7 +8,7 @@ import '../../styles/admin.css';
 
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { projects, teamMembers, newsItems, collaborators, publications, resetToDefaults } = useContent();
+  const { projects, teamMembers, newsItems, collaborators, publications, software, resetToDefaults } = useContent();
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
   const navigate = useNavigate();
@@ -256,6 +256,26 @@ const AdminDashboard: React.FC = () => {
             <div className="admin-card-content">
               <p className="admin-stats-number">{collaborators.length}</p>
               <p>Academic & industry partners</p>
+            </div>
+          </div>
+
+          <div 
+            className="admin-card"
+            onClick={() => handleNavigate('/admin/software')}
+          >
+            <div className="admin-card-header">
+              <h2>Software</h2>
+              <Link 
+                to="/admin/software/new" 
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
+                + Add New
+              </Link>
+            </div>
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{software.length}</p>
+              <p>Software projects</p>
             </div>
           </div>
         </div>

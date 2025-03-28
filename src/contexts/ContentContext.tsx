@@ -4,6 +4,7 @@ import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
 import { NewsItem, newsItems as initialNewsItems } from '../data/news';
 import { Collaborator, collaborators as initialCollaborators } from '../data/collaborators';
 import { Publication, publications as initialPublications } from '../data/publications';
+import { Software, software as initialSoftware } from '../data/software';
 import { createGradient, generateTopicColor, createProjectGradient, hexToHsl } from '../utils/colorUtils';
 
 interface ContentContextType {
@@ -12,6 +13,7 @@ interface ContentContextType {
   newsItems: NewsItem[];
   collaborators: Collaborator[];
   publications: Publication[];
+  software: Software[];
   updateProject: (updatedProject: Project) => void;
   addProject: (newProject: Project) => Project;
   deleteProject: (id: string) => void;
@@ -27,12 +29,16 @@ interface ContentContextType {
   updatePublication: (updatedPublication: Publication) => void;
   addPublication: (newPublication: Publication) => Publication;
   deletePublication: (id: string) => void;
+  updateSoftware: (updatedSoftware: Software) => void;
+  addSoftware: (newSoftware: Software) => Software;
+  deleteSoftware: (id: string) => void;
   resetToDefaults: () => void;
   getTeamMemberById: (id: string) => TeamMember | undefined;
   getProjectById: (id: string) => Project | undefined;
   getNewsItemById: (id: string) => NewsItem | undefined;
   getCollaboratorById: (id: string) => Collaborator | undefined;
   getPublicationById: (id: string) => Publication | undefined;
+  getSoftwareById: (id: string) => Software | undefined;
 }
 
 const ContentContext = createContext<ContentContextType>({
@@ -41,6 +47,7 @@ const ContentContext = createContext<ContentContextType>({
   newsItems: [],
   collaborators: [],
   publications: [],
+  software: [],
   updateProject: () => {},
   addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }),
   deleteProject: () => {},
@@ -64,12 +71,24 @@ const ContentContext = createContext<ContentContextType>({
     citation: '' 
   }),
   deletePublication: () => {},
+  updateSoftware: () => {},
+  addSoftware: () => ({
+    id: '',
+    name: '',
+    description: '',
+    repoUrl: '',
+    technologies: [],
+    developers: [],
+    license: ''
+  }),
+  deleteSoftware: () => {},
   resetToDefaults: () => {},
   getTeamMemberById: () => undefined,
   getProjectById: () => undefined,
   getNewsItemById: () => undefined,
   getCollaboratorById: () => undefined,
   getPublicationById: () => undefined,
+  getSoftwareById: () => undefined,
 });
 
 export const useContent = () => useContext(ContentContext);
@@ -84,6 +103,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [publications, setPublications] = useState<Publication[]>([]);
+  const [software, setSoftware] = useState<Software[]>([]);
 
   // Helper function to generate color gradients for projects based on team members
   const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
@@ -128,6 +148,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedNewsItems = localStorage.getItem('newsItems');
         const savedCollaborators = localStorage.getItem('collaborators');
         const savedPublications = localStorage.getItem('publications');
+        const savedSoftware = localStorage.getItem('software');
   
         let projectsData: Project[];
         let teamData: TeamMember[];
@@ -169,6 +190,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
           setPublications(initialPublications);
         }
         
+        if (savedSoftware) {
+          setSoftware(JSON.parse(savedSoftware));
+        } else {
+          setSoftware(initialSoftware);
+        }
+        
         // Save the updated projects if necessary
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
           localStorage.setItem('projects', JSON.stringify(updatedProjects));
@@ -180,6 +207,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         setNewsItems(initialNewsItems);
         setCollaborators(initialCollaborators);
         setPublications(initialPublications);
+        setSoftware(initialSoftware);
       }
     };
 
@@ -265,6 +293,143 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     saveCollaborators(newCollaborators);
   };
 
+  // Software management functions
+  const saveSoftware = (updatedSoftware: Software[]) => {
+    try {
+      localStorage.setItem('software', JSON.stringify(updatedSoftware));
+      setSoftware(updatedSoftware);
+    } catch (error) {
+      console.error("Error saving software to localStorage:", error);
+      alert("Failed to save software. LocalStorage might be full or unavailable.");
+    }
+  };
+
+  const updateSoftware = (updatedSoftware: Software) => {
+    const newSoftwareList = software.map(item => 
+      item.id === updatedSoftware.id ? updatedSoftware : item
+    );
+    saveSoftware(newSoftwareList);
+  };
+
+  const addSoftware = (newSoftware: Software): Software => {
+    try {
+      // Ensure unique ID
+      const softwareId = newSoftware.id || `software-${Date.now()}`;
+      const softwareWithId = {
+        ...newSoftware,
+        id: softwareId
+      };
+      
+      const newSoftwareList = [...software, softwareWithId];
+      saveSoftware(newSoftwareList);
+      
+      return softwareWithId;
+    } catch (error) {
+      console.error("Failed to add software:", error);
+      throw error;
+    }
+  };
+
+  const deleteSoftware = (id: string) => {
+    const newSoftwareList = software.filter(item => item.id !== id);
+    saveSoftware(newSoftwareList);
+  };
+
+  // Get software by ID
+  const getSoftwareById = (id: string): Software | undefined => {
+    return software.find(item => item.id === id);
+  };
+
+  // Publication management functions
+  const savePublications = (updatedPublications: Publication[]) => {
+    try {
+      localStorage.setItem('publications', JSON.stringify(updatedPublications));
+      setPublications(updatedPublications);
+    } catch (error) {
+      console.error("Error saving publications to localStorage:", error);
+      alert("Failed to save publications. LocalStorage might be full or unavailable.");
+    }
+  };
+
+  const updatePublication = (updatedPublication: Publication) => {
+    const newPublications = publications.map(pub => 
+      pub.id === updatedPublication.id ? updatedPublication : pub
+    );
+    savePublications(newPublications);
+  };
+
+  const addPublication = (newPublication: Publication): Publication => {
+    try {
+      // Ensure unique ID
+      const pubId = newPublication.id || `pub-${Date.now()}`;
+      const pubWithId = {
+        ...newPublication,
+        id: pubId
+      };
+      
+      const newPublications = [...publications, pubWithId];
+      savePublications(newPublications);
+      
+      return pubWithId;
+    } catch (error) {
+      console.error("Failed to add publication:", error);
+      throw error;
+    }
+  };
+
+  const deletePublication = (id: string) => {
+    const newPublications = publications.filter(pub => pub.id !== id);
+    savePublications(newPublications);
+  };
+
+  // Function to reset all data to defaults
+  const resetToDefaults = () => {
+    if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
+      localStorage.removeItem('projects');
+      localStorage.removeItem('teamMembers');
+      localStorage.removeItem('newsItems');
+      localStorage.removeItem('collaborators');
+      localStorage.removeItem('publications');
+      localStorage.removeItem('software');
+      setTeamMembers(initialTeamMembers);
+      
+      // Update projects with default gradients based on default team members
+      const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
+      setProjects(projectsWithGradients);
+      setNewsItems(initialNewsItems);
+      setCollaborators(initialCollaborators);
+      setPublications(initialPublications);
+      setSoftware(initialSoftware);
+      
+      alert('Data has been reset to defaults.');
+    }
+  };
+
+  // Add function to get team member by ID
+  const getTeamMemberById = (id: string): TeamMember | undefined => {
+    return teamMembers.find(member => member.id === id);
+  };
+
+  // Add function to get project by ID
+  const getProjectById = (id: string): Project | undefined => {
+    return projects.find(project => project.id === id);
+  };
+
+  // Add function to get news item by ID
+  const getNewsItemById = (id: string): NewsItem | undefined => {
+    return newsItems.find(newsItem => newsItem.id === id);
+  };
+
+  // Add function to get collaborator by ID
+  const getCollaboratorById = (id: string): Collaborator | undefined => {
+    return collaborators.find(collaborator => collaborator.id === id);
+  };
+
+  // Add function to get publication by ID
+  const getPublicationById = (id: string): Publication | undefined => {
+    return publications.find(publication => publication.id === id);
+  };
+
   // Project management functions
   const updateProject = (updatedProject: Project) => {
     console.log("Updating project:", updatedProject);
@@ -345,7 +510,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       detail: { projectId: updatedProject.id, timestamp: Date.now() }
     }));
   };
-
+  
   // Utility function to compare arrays
   const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
     if (arr1.length !== arr2.length) return false;
@@ -448,116 +613,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       member.id === memberWithColor.id ? memberWithColor : member
     );
     
-    // First update team members
-    setTeamMembers(newTeamMembers);
-    
-    // Save to localStorage immediately to ensure colors are persisted
-    try {
-      localStorage.setItem('teamMembers', JSON.stringify(newTeamMembers));
-      console.log("Team member updated with color:", memberWithColor.color);
-    } catch (error) {
-      console.error("Error saving team members to localStorage:", error);
-    }
-    
-    // Track if we need to update projects
-    let projectsNeedUpdate = false;
-    let updatedProjects = [...projects];
-    
-    // If name changed, update all projects that include this team member
-    if (previousMember && previousMember.name !== memberWithColor.name) {
-      updatedProjects = projects.map(project => {
-        if (project.team.includes(previousMember.name)) {
-          // Replace old name with new name in the team array
-          const updatedTeam = project.team.map(name => 
-            name === previousMember.name ? memberWithColor.name : name
-          );
-          projectsNeedUpdate = true;
-          return { ...project, team: updatedTeam };
-        }
-        return project;
-      });
-    }
-    
-    // If color changed or projects were updated due to name change, update project colors
-    if ((previousMember && previousMember.color !== memberWithColor.color) || projectsNeedUpdate) {
-      updatedProjects = updatedProjects.map(project => {
-        if (project.team.includes(memberWithColor.name)) {
-          // Get the updated team colors
-          const teamColors = project.team.map(memberName => {
-            if (memberName === memberWithColor.name) return memberWithColor.color;
-            const member = newTeamMembers.find(m => m.name === memberName);
-            return member ? member.color : '#CCCCCC';
-          });
-          
-          return {
-            ...project,
-            color: createGradient(teamColors, {
-              includeHighlight: true,
-              highlightColor: '#00AAFF',
-              mixColors: true,
-              mixRatio: 0.3,
-              type: 'radial',
-              position: 'circle at center'
-            })
-          };
-        }
-        return project;
-      });
-      
-      // Save the updated projects with new gradients
-      saveProjects(updatedProjects);
-    } else {
-      // Otherwise just save team members
-      localStorage.setItem('teamMembers', JSON.stringify(newTeamMembers));
-    }
-    
-    // If the member has project IDs, ensure this member is part of those projects' teams
-    if (updatedMember.projects && updatedMember.projects.length > 0) {
-      const projectsToUpdate = [...updatedProjects];
-      let hasChanges = false;
-      
-      updatedMember.projects.forEach(projectId => {
-        const projectIndex = projectsToUpdate.findIndex(p => p.id === projectId);
-        if (projectIndex >= 0) {
-          const project = projectsToUpdate[projectIndex];
-          if (!project.team.includes(updatedMember.name)) {
-            // Add member to project team if not already there
-            projectsToUpdate[projectIndex] = {
-              ...project,
-              team: [...project.team, updatedMember.name]
-            };
-            hasChanges = true;
-          }
-        }
-      });
-      
-      if (hasChanges) {
-        // Update project colors based on new team composition
-        const finalProjects = projectsToUpdate.map(project => {
-          if (updatedMember.projects?.includes(project.id)) {
-            const teamColors = project.team.map(memberName => {
-              const member = newTeamMembers.find(m => m.name === memberName);
-              return member ? member.color : '#CCCCCC';
-            });
-            
-            return {
-              ...project,
-              color: createGradient(teamColors, {
-                includeHighlight: true,
-                highlightColor: '#00AAFF',
-                mixColors: true,
-                mixRatio: 0.3,
-                type: 'radial',
-                position: 'circle at center'
-              })
-            };
-          }
-          return project;
-        });
-        
-        saveProjects(finalProjects);
-      }
-    }
+    saveTeamMembers(newTeamMembers);
   };
 
   const addTeamMember = (newMember: TeamMember): TeamMember => {
@@ -574,78 +630,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         color: newMember.color || '#000000'
       };
       
-      console.log("Team member color being saved:", memberWithId.color);
-      
-      // Create a new array with the new member
       const updatedMembers = [...teamMembers, memberWithId];
+      saveTeamMembers(updatedMembers);
       
-      // Set state first for immediate UI update
-      setTeamMembers(updatedMembers);
-      
-      // Then save to localStorage
-      try {
-        localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
-        console.log("Team member saved to localStorage:", memberWithId.name);
-      } catch (storageError) {
-        console.error("Failed to save team members to localStorage:", storageError);
-      }
-      
-      // If the member has project IDs, ensure this member is part of those projects' teams
-      if (memberWithId.projects && memberWithId.projects.length > 0) {
-        const projectsToUpdate = [...projects];
-        let hasChanges = false;
-        
-        memberWithId.projects.forEach(projectId => {
-          const projectIndex = projectsToUpdate.findIndex(p => p.id === projectId);
-          if (projectIndex >= 0) {
-            const project = projectsToUpdate[projectIndex];
-            if (!project.team.includes(memberWithId.name)) {
-              // Add member to project team if not already there
-              projectsToUpdate[projectIndex] = {
-                ...project,
-                team: [...project.team, memberWithId.name]
-              };
-              hasChanges = true;
-            }
-          }
-        });
-        
-        if (hasChanges) {
-          // Update project colors based on new team composition
-          const updatedProjects = projectsToUpdate.map(project => {
-            if (memberWithId.projects?.includes(project.id)) {
-              const teamColors = project.team.map(memberName => {
-                // Get color for the new member or other team members
-                if (memberName === memberWithId.name) return memberWithId.color;
-                const member = updatedMembers.find(m => m.name === memberName);
-                return member ? member.color : '#CCCCCC';
-              });
-              
-              return {
-                ...project,
-                color: createGradient(teamColors, {
-                  includeHighlight: true,
-                  highlightColor: '#00AAFF',
-                  mixColors: true,
-                  mixRatio: 0.3,
-                  type: 'radial',
-                  position: 'circle at center'
-                })
-              };
-            }
-            return project;
-          });
-          
-          saveProjects(updatedProjects);
-        }
-      }
-      
-      // Emit event to notify other components
-      window.dispatchEvent(new CustomEvent('member-added', {
-        detail: { memberId: memberWithId.id, name: memberWithId.name, timestamp: Date.now() }
-      }));
-      
-      return memberWithId; // Return the created member
+      return memberWithId;
     } catch (error) {
       console.error("Failed to add team member:", error);
       throw error;
@@ -656,22 +644,19 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     const memberToDelete = teamMembers.find(member => member.id === id);
     const newTeamMembers = teamMembers.filter(member => member.id !== id);
     
-    // If we have a member name, update all projects that reference this member
+    // Update projects that reference this member
     if (memberToDelete) {
       const updatedProjects = projects.map(project => {
         if (project.team.includes(memberToDelete.name)) {
           // Remove this member from the team
           const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
           
-          // Get the updated team colors
-          const teamColors = updatedTeam.map(memberName => {
-            const member = newTeamMembers.find(m => m.name === memberName);
-            return member ? member.color : '#CCCCCC';
-          });
-          
           // Create a new gradient based on remaining team members
-          const updatedColor = teamColors.length > 0 
-            ? createGradient(teamColors, {
+          const updatedColor = updatedTeam.length > 0 
+            ? createGradient(updatedTeam.map(name => {
+                const member = newTeamMembers.find(m => m.name === name);
+                return member ? member.color : '#CCCCCC';
+              }), {
                 includeHighlight: true,
                 highlightColor: '#00AAFF',
                 mixColors: true,
@@ -679,7 +664,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
                 type: 'radial',
                 position: 'circle at center'
               })
-            : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)'; // Default gradient if no members left
+            : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)';
           
           return {
             ...project,
@@ -690,78 +675,39 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         return project;
       });
       
-      // Save both updated projects and team members
-      setProjects(updatedProjects);
-      setTeamMembers(newTeamMembers);
-      localStorage.setItem('projects', JSON.stringify(updatedProjects));
-      localStorage.setItem('teamMembers', JSON.stringify(newTeamMembers));
-    } else {
-      // If no member found, just save the team members
-      saveTeamMembers(newTeamMembers);
+      saveProjects(updatedProjects);
     }
+    
+    saveTeamMembers(newTeamMembers);
   };
-  
-  // News management functions
+
+  // News item management functions
   const updateNewsItem = (updatedNewsItem: NewsItem) => {
     try {
-      console.log("Updating news item:", updatedNewsItem);
-      
-      // First check if the item exists
-      const existingItemIndex = newsItems.findIndex(item => item.id === updatedNewsItem.id);
-      
-      if (existingItemIndex === -1) {
-        throw new Error(`News item with ID ${updatedNewsItem.id} not found`);
-      }
-      
-      // Create a new array with the updated item
-      const newNewsItems = [...newsItems];
-      newNewsItems[existingItemIndex] = {...updatedNewsItem};
-      
-      // Save to localStorage
-      localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
-      
-      // Update state
-      setNewsItems(newNewsItems);
-      console.log("News item updated successfully:", updatedNewsItem.id);
-      
+      const newNewsItems = newsItems.map(item => 
+        item.id === updatedNewsItem.id ? updatedNewsItem : item
+      );
+      saveNewsItems(newNewsItems);
       return true;
     } catch (error) {
-      console.error("Failed to update news item:", error);
+      console.error("Error updating news item:", error);
       throw error;
     }
   };
 
   const addNewsItem = (newNewsItem: NewsItem): NewsItem => {
     try {
-      console.log("Adding news item:", newNewsItem.title);
-      
-      // Ensure the item has an ID
+      // Ensure unique ID
       const newsId = newNewsItem.id || `news-${Date.now()}`;
-      const itemToAdd = {
+      const itemWithId = {
         ...newNewsItem,
         id: newsId
       };
       
-      // Create a new array with the added item
-      const newNewsItems = [...newsItems, itemToAdd];
+      const newNewsItems = [...newsItems, itemWithId];
+      saveNewsItems(newNewsItems);
       
-      // Update state first for immediate UI update
-      setNewsItems(newNewsItems);
-      
-      // Then save to localStorage
-      try {
-        localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
-        console.log("News item saved to localStorage:", itemToAdd.title);
-      } catch (storageError) {
-        console.error("Failed to save news items to localStorage:", storageError);
-      }
-      
-      // Emit event to notify other components
-      window.dispatchEvent(new CustomEvent('news-added', {
-        detail: { newsId: itemToAdd.id, title: itemToAdd.title, timestamp: Date.now() }
-      }));
-      
-      return itemToAdd; // Return the created news item
+      return itemWithId;
     } catch (error) {
       console.error("Failed to add news item:", error);
       throw error;
@@ -770,117 +716,13 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const deleteNewsItem = (id: string) => {
     try {
-      console.log("Deleting news item:", id);
-      
-      // Check if item exists
-      const existingItem = newsItems.find(item => item.id === id);
-      if (!existingItem) {
-        throw new Error(`News item with ID ${id} not found`);
-      }
-      
-      // Filter out the item to delete
       const newNewsItems = newsItems.filter(item => item.id !== id);
-      
-      // Save to localStorage
-      localStorage.setItem('newsItems', JSON.stringify(newNewsItems));
-      
-      // Update state
-      setNewsItems(newNewsItems);
-      console.log("News item deleted successfully:", id);
-      
+      saveNewsItems(newNewsItems);
       return true;
     } catch (error) {
       console.error("Failed to delete news item:", error);
       throw error;
     }
-  };
-
-  // Publication management functions
-  const savePublications = (updatedPublications: Publication[]) => {
-    try {
-      localStorage.setItem('publications', JSON.stringify(updatedPublications));
-      setPublications(updatedPublications);
-    } catch (error) {
-      console.error("Error saving publications to localStorage:", error);
-      alert("Failed to save publications. LocalStorage might be full or unavailable.");
-    }
-  };
-
-  const updatePublication = (updatedPublication: Publication) => {
-    const newPublications = publications.map(pub => 
-      pub.id === updatedPublication.id ? updatedPublication : pub
-    );
-    savePublications(newPublications);
-  };
-
-  const addPublication = (newPublication: Publication): Publication => {
-    try {
-      // Ensure unique ID
-      const pubId = newPublication.id || `pub-${Date.now()}`;
-      const pubWithId = {
-        ...newPublication,
-        id: pubId
-      };
-      
-      const newPublications = [...publications, pubWithId];
-      savePublications(newPublications);
-      
-      return pubWithId;
-    } catch (error) {
-      console.error("Failed to add publication:", error);
-      throw error;
-    }
-  };
-
-  const deletePublication = (id: string) => {
-    const newPublications = publications.filter(pub => pub.id !== id);
-    savePublications(newPublications);
-  };
-
-  // Function to reset all data to defaults
-  const resetToDefaults = () => {
-    if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
-      localStorage.removeItem('projects');
-      localStorage.removeItem('teamMembers');
-      localStorage.removeItem('newsItems');
-      localStorage.removeItem('collaborators');
-      localStorage.removeItem('publications');
-      setTeamMembers(initialTeamMembers);
-      
-      // Update projects with default gradients based on default team members
-      const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
-      setProjects(projectsWithGradients);
-      setNewsItems(initialNewsItems);
-      setCollaborators(initialCollaborators);
-      setPublications(initialPublications);
-      
-      alert('Data has been reset to defaults.');
-    }
-  };
-
-  // Add function to get team member by ID
-  const getTeamMemberById = (id: string): TeamMember | undefined => {
-    return teamMembers.find(member => member.id === id);
-  };
-
-  // Add function to get project by ID
-  const getProjectById = (id: string): Project | undefined => {
-    return projects.find(project => project.id === id);
-  };
-
-  // Add function to get news item by ID
-  const getNewsItemById = (id: string): NewsItem | undefined => {
-    return newsItems.find(newsItem => newsItem.id === id);
-  };
-
-  // Add function to get collaborator by ID
-  const getCollaboratorById = (id: string): Collaborator | undefined => {
-    return collaborators.find(collaborator => collaborator.id === id);
-  };
-
-  // Add function to get publication by ID
-  const getPublicationById = (id: string): Publication | undefined => {
-    return publications.find(publication => publication.id === id);
   };
 
   return (
@@ -890,6 +732,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       newsItems,
       collaborators,
       publications,
+      software,
       updateProject,
       addProject,
       deleteProject,
@@ -905,12 +748,16 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       updatePublication,
       addPublication,
       deletePublication,
+      updateSoftware,
+      addSoftware,
+      deleteSoftware,
       resetToDefaults,
-      getTeamMemberById, // Include the new method
+      getTeamMemberById,
       getProjectById,
       getNewsItemById,
       getCollaboratorById,
-      getPublicationById
+      getPublicationById,
+      getSoftwareById
     }}>
       {children}
     </ContentContext.Provider>
