@@ -53,13 +53,13 @@ const TopNav: React.FC = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/team" className={({isActive}) => isActive ? 'active' : ''}>
-                            Team
+                        <NavLink to="/feed" className={({isActive}) => isActive ? 'active' : ''}>
+                            News
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to="/projects" className={({isActive}) => isActive ? 'active' : ''}>
-                            Projects
+                            Research
                         </NavLink>
                     </li>
                     <li>
@@ -73,8 +73,8 @@ const TopNav: React.FC = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/feed" className={({isActive}) => isActive ? 'active' : ''}>
-                            News
+                        <NavLink to="/team" className={({isActive}) => isActive ? 'active' : ''}>
+                            Team
                         </NavLink>
                     </li>
                     <li>
@@ -191,13 +191,13 @@ const SideNav: React.FC = () => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/team" className={({ isActive }) => isActive ? 'active' : ''}>
-                        Team
+                    <NavLink to="/feed" className={({ isActive }) => isActive ? 'active' : ''}>
+                        News
                     </NavLink>
                 </li>
                 <li>
                     <NavLink to="/projects" className={({ isActive }) => isActive ? 'active' : ''}>
-                        Projects
+                        Research
                     </NavLink>
                 </li>
                 <li>
@@ -211,8 +211,8 @@ const SideNav: React.FC = () => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/feed" className={({ isActive }) => isActive ? 'active' : ''}>
-                        News Feed
+                    <NavLink to="/team" className={({ isActive }) => isActive ? 'active' : ''}>
+                        Team
                     </NavLink>
                 </li>
                 <li>
