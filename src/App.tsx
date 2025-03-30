@@ -24,6 +24,10 @@ import ProjectsList from './pages/admin/ProjectsList';
 import Software from './pages/Software';
 import SoftwareList from './pages/admin/SoftwareList';
 import SoftwareForm from './pages/admin/SoftwareForm';
+import JobOpeningsList from './pages/admin/JobOpeningsList';
+import JobOpeningForm from './pages/admin/JobOpeningForm';
+import JoinUs from './pages/JoinUs';
+import FeaturedItemsForm from './pages/admin/FeaturedItemsForm';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -74,6 +78,7 @@ const App: React.FC = () => {
               <Route path="/projects/:id" element={<ProjectDetails />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/software" element={<Software />} />
+              <Route path="/join-us" element={<JoinUs />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<RequireAuth><AdminDashboard /></RequireAuth>} />
@@ -96,6 +101,14 @@ const App: React.FC = () => {
               <Route path="/admin/software" element={<RequireAuth><SoftwareList /></RequireAuth>} />
               <Route path="/admin/software/new" element={<RequireAuth><SoftwareForm /></RequireAuth>} />
               <Route path="/admin/software/edit/:id" element={<RequireAuth><SoftwareForm /></RequireAuth>} />
+              <Route path="/admin/jobs" element={<RequireAuth><JobOpeningsList /></RequireAuth>} />
+              <Route path="/admin/jobs/new" element={<RequireAuth><JobOpeningForm /></RequireAuth>} />
+              <Route path="/admin/jobs/edit/:id" element={<RequireAuth><JobOpeningForm /></RequireAuth>} />
+              <Route path="/admin/featured" element={
+                <RequireAuth>
+                  <FeaturedItemsForm />
+                </RequireAuth>
+              } />
             </Routes>
           </div>
         </Router>

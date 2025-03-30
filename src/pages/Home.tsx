@@ -8,13 +8,16 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as BrainLogo } from '../assets/logo.svg';
 
 const Home: React.FC = () => {
-    const { projects, collaborators, newsItems, publications } = useContent();
+    const { projects, collaborators, newsItems, publications, getFeaturedItems } = useContent();
     const { isAuthenticated } = useAuth();
     
-    // Select the latest items (first item in each array assuming they're sorted by date)
-    const featuredProject = projects.length > 0 ? projects[0] : null;
-    const featuredNewsItem = newsItems.length > 0 ? newsItems[0] : null;
-    const featuredPublication = publications.length > 0 ? publications[0] : null;
+    // Get featured items from context
+    const featuredItems = getFeaturedItems();
+    
+    // Find the featured items by ID
+    const featuredProject = projects.find(p => p.id === featuredItems.projectId) || (projects.length > 0 ? projects[0] : null);
+    const featuredNewsItem = newsItems.find(n => n.id === featuredItems.newsItemId) || (newsItems.length > 0 ? newsItems[0] : null);
+    const featuredPublication = publications.find(p => p.id === featuredItems.publicationId) || (publications.length > 0 ? publications[0] : null);
     
     // Format date for display in news card
     const formatDate = (dateString: string): string => {
@@ -74,7 +77,7 @@ const Home: React.FC = () => {
                     {/* Project Card */}
                     {featuredProject && <ProjectCard key={featuredProject.id} project={featuredProject} />}
                     
-                    {/* Publication Card - replacing team member card */}
+                    {/* Publication Card */}
                     {featuredPublication && (
                         <Link to="/publications" className="project-card">
                             <div 

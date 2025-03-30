@@ -5,6 +5,7 @@ import { NewsItem, newsItems as initialNewsItems } from '../data/news';
 import { Collaborator, collaborators as initialCollaborators } from '../data/collaborators';
 import { Publication, publications as initialPublications } from '../data/publications';
 import { Software, software as initialSoftware } from '../data/software';
+import { JobOpening, jobOpenings as initialJobOpenings } from '../data/jobOpenings';
 import { createGradient, generateTopicColor, createProjectGradient, hexToHsl } from '../utils/colorUtils';
 
 interface ContentContextType {
@@ -14,6 +15,7 @@ interface ContentContextType {
   collaborators: Collaborator[];
   publications: Publication[];
   software: Software[];
+  jobOpenings: JobOpening[];
   updateProject: (updatedProject: Project) => void;
   addProject: (newProject: Project) => Project;
   deleteProject: (id: string) => void;
@@ -32,6 +34,9 @@ interface ContentContextType {
   updateSoftware: (updatedSoftware: Software) => void;
   addSoftware: (newSoftware: Software) => Software;
   deleteSoftware: (id: string) => void;
+  updateJobOpening: (updatedJobOpening: JobOpening) => void;
+  addJobOpening: (newJobOpening: JobOpening) => JobOpening;
+  deleteJobOpening: (id: string) => void;
   resetToDefaults: () => void;
   getTeamMemberById: (id: string) => TeamMember | undefined;
   getProjectById: (id: string) => Project | undefined;
@@ -39,6 +44,17 @@ interface ContentContextType {
   getCollaboratorById: (id: string) => Collaborator | undefined;
   getPublicationById: (id: string) => Publication | undefined;
   getSoftwareById: (id: string) => Software | undefined;
+  getJobOpeningById: (id: string) => JobOpening | undefined;
+
+  // Add these new methods
+  setFeaturedProject: (projectId: string) => void;
+  setFeaturedNewsItem: (newsItemId: string) => void;
+  setFeaturedPublication: (publicationId: string) => void;
+  getFeaturedItems: () => {
+    projectId: string | null;
+    newsItemId: string | null;
+    publicationId: string | null;
+  };
 }
 
 const ContentContext = createContext<ContentContextType>({
@@ -48,6 +64,7 @@ const ContentContext = createContext<ContentContextType>({
   collaborators: [],
   publications: [],
   software: [],
+  jobOpenings: [],
   updateProject: () => {},
   addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }),
   deleteProject: () => {},
@@ -82,6 +99,18 @@ const ContentContext = createContext<ContentContextType>({
     license: ''
   }),
   deleteSoftware: () => {},
+  updateJobOpening: () => {},
+  addJobOpening: () => ({
+    id: '',
+    title: '',
+    description: '',
+    requirements: [],
+    type: 'full-time',
+    location: '',
+    postedDate: '',
+    isOpen: true,
+  }),
+  deleteJobOpening: () => {},
   resetToDefaults: () => {},
   getTeamMemberById: () => undefined,
   getProjectById: () => undefined,
@@ -89,6 +118,17 @@ const ContentContext = createContext<ContentContextType>({
   getCollaboratorById: () => undefined,
   getPublicationById: () => undefined,
   getSoftwareById: () => undefined,
+  getJobOpeningById: () => undefined,
+
+  // Add these new methods to the default context
+  setFeaturedProject: () => {},
+  setFeaturedNewsItem: () => {},
+  setFeaturedPublication: () => {},
+  getFeaturedItems: () => ({
+    projectId: null,
+    newsItemId: null,
+    publicationId: null
+  }),
 });
 
 export const useContent = () => useContext(ContentContext);
@@ -104,6 +144,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [publications, setPublications] = useState<Publication[]>([]);
   const [software, setSoftware] = useState<Software[]>([]);
+  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
+
+  // Add state for featured items
+  const [featuredProject, setFeaturedProject] = useState<string | null>(null);
+  const [featuredNewsItem, setFeaturedNewsItem] = useState<string | null>(null);
+  const [featuredPublication, setFeaturedPublication] = useState<string | null>(null);
 
   // Helper function to generate color gradients for projects based on team members
   const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
@@ -149,6 +195,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedCollaborators = localStorage.getItem('collaborators');
         const savedPublications = localStorage.getItem('publications');
         const savedSoftware = localStorage.getItem('software');
+        const savedJobOpenings = localStorage.getItem('jobOpenings');
   
         let projectsData: Project[];
         let teamData: TeamMember[];
@@ -195,6 +242,26 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         } else {
           setSoftware(initialSoftware);
         }
+
+        if (savedJobOpenings) {
+          setJobOpenings(JSON.parse(savedJobOpenings));
+        } else {
+          setJobOpenings(initialJobOpenings);
+        }
+
+        // Load featured items
+        const savedFeaturedItems = localStorage.getItem('featuredItems');
+        if (savedFeaturedItems) {
+          const featuredItems = JSON.parse(savedFeaturedItems);
+          setFeaturedProject(featuredItems.projectId || null);
+          setFeaturedNewsItem(featuredItems.newsItemId || null);
+          setFeaturedPublication(featuredItems.publicationId || null);
+        } else {
+          // Default to first items if available
+          setFeaturedProject(projectsData.length > 0 ? projectsData[0].id : null);
+          setFeaturedNewsItem(newsData.length > 0 ? newsData[0].id : null);
+          setFeaturedPublication(initialPublications.length > 0 ? initialPublications[0].id : null);
+        }
         
         // Save the updated projects if necessary
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
@@ -208,11 +275,53 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         setCollaborators(initialCollaborators);
         setPublications(initialPublications);
         setSoftware(initialSoftware);
+        setJobOpenings(initialJobOpenings);
       }
     };
 
     loadData();
   }, []);
+
+  // Save featured items
+  const saveFeaturedItems = () => {
+    try {
+      const featuredItems = {
+        projectId: featuredProject,
+        newsItemId: featuredNewsItem,
+        publicationId: featuredPublication
+      };
+      localStorage.setItem('featuredItems', JSON.stringify(featuredItems));
+    } catch (error) {
+      console.error("Error saving featured items to localStorage:", error);
+    }
+  };
+
+  // Update featured project
+  const handleSetFeaturedProject = (projectId: string) => {
+    setFeaturedProject(projectId);
+    setTimeout(() => saveFeaturedItems(), 0);
+  };
+
+  // Update featured news item
+  const handleSetFeaturedNewsItem = (newsItemId: string) => {
+    setFeaturedNewsItem(newsItemId);
+    setTimeout(() => saveFeaturedItems(), 0);
+  };
+
+  // Update featured publication
+  const handleSetFeaturedPublication = (publicationId: string) => {
+    setFeaturedPublication(publicationId);
+    setTimeout(() => saveFeaturedItems(), 0);
+  };
+
+  // Get all featured items
+  const getFeaturedItems = () => {
+    return {
+      projectId: featuredProject,
+      newsItemId: featuredNewsItem,
+      publicationId: featuredPublication
+    };
+  };
 
   // Save changes to localStorage
   const saveProjects = (updatedProjects: Project[]) => {
@@ -251,6 +360,261 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
   };
 
+  // Project management functions
+  const updateProject = (updatedProject: Project) => {
+    const existingProject = projects.find(p => p.id === updatedProject.id);
+    let projectWithConsistentColors = { ...updatedProject };
+
+    if (updatedProject.topics && updatedProject.topics.length > 0) {
+      const topicsWithColors = updatedProject.topics.map((topic, index) => {
+        const existingTopicWithColor = updatedProject.topicsWithColors?.find(t => t.name === topic);
+
+        if (existingTopicWithColor) {
+          return existingTopicWithColor;
+        } else {
+          const color = generateTopicColor('#00AAFF', index, updatedProject.topics!.length);
+          const [h, s, l] = hexToHsl(color);
+          return {
+            name: topic,
+            color,
+            hue: h
+          };
+        }
+      });
+
+      projectWithConsistentColors = {
+        ...projectWithConsistentColors,
+        topicsWithColors
+      };
+    }
+
+    const projectWithUpdatedColor = {
+      ...projectWithConsistentColors,
+      color: createProjectGradient(projectWithConsistentColors, '#00AAFF'),
+      _lastUpdated: Date.now()
+    };
+
+    const newProjects = projects.map(project => 
+      project.id === updatedProject.id ? projectWithUpdatedColor : project
+    );
+
+    if (existingProject && !areArraysEqual(existingProject.team, updatedProject.team)) {
+      const updatedTeamMembers = teamMembers.map(member => {
+        if (existingProject.team.includes(member.name) && !updatedProject.team.includes(member.name)) {
+          return {
+            ...member,
+            projects: member.projects?.filter(id => id !== updatedProject.id) || []
+          };
+        }
+        if (!existingProject.team.includes(member.name) && updatedProject.team.includes(member.name)) {
+          return {
+            ...member,
+            projects: [...(member.projects || []), updatedProject.id]
+          };
+        }
+        return member;
+      });
+
+      saveTeamMembers(updatedTeamMembers);
+    }
+
+    saveProjects(newProjects);
+    window.dispatchEvent(new CustomEvent('project-updated', {
+      detail: { projectId: updatedProject.id, timestamp: Date.now() }
+    }));
+  };
+
+  const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
+    if (arr1.length !== arr2.length) return false;
+    return arr1.every(item => arr2.includes(item));
+  };
+
+  const addProject = (newProject: Project): Project => {
+    try {
+      const projectId = newProject.id || `project-${Date.now()}`;
+      const projectWithId = {
+        ...newProject,
+        id: projectId
+      };
+
+      let projectWithTopicColors = { ...projectWithId };
+
+      if (newProject.topics && newProject.topics.length > 0) {
+        const topicsWithColors = newProject.topics.map((topic, index) => {
+          const color = generateTopicColor('#00AAFF', index, newProject.topics!.length);
+          const [h, s, l] = hexToHsl(color);
+          return {
+            name: topic,
+            color,
+            hue: h
+          };
+        });
+
+        projectWithTopicColors = {
+          ...projectWithTopicColors,
+          topicsWithColors
+        };
+      }
+
+      const projectWithColor = {
+        ...projectWithTopicColors,
+        color: createProjectGradient(projectWithTopicColors, '#00AAFF')
+      };
+
+      const newProjects = [...projects, projectWithColor];
+      setProjects(newProjects);
+
+      try {
+        localStorage.setItem('projects', JSON.stringify(newProjects));
+      } catch (storageError) {
+        console.error("Failed to save projects to localStorage:", storageError);
+      }
+
+      window.dispatchEvent(new CustomEvent('project-added', {
+        detail: { projectId: projectWithColor.id, timestamp: Date.now() }
+      }));
+
+      return projectWithColor;
+    } catch (error) {
+      console.error("Failed to add project:", error);
+      throw error;
+    }
+  };
+
+  const deleteProject = (id: string) => {
+    const newProjects = projects.filter(project => project.id !== id);
+    saveProjects(newProjects);
+
+    const updatedTeamMembers = teamMembers.map(member => {
+      if (member.projects && member.projects.includes(id)) {
+        return {
+          ...member,
+          projects: member.projects.filter(projectId => projectId !== id)
+        };
+      }
+      return member;
+    });
+
+    saveTeamMembers(updatedTeamMembers);
+  };
+
+  // Team member management functions
+  const updateTeamMember = (updatedMember: TeamMember) => {
+    const previousMember = teamMembers.find(m => m.id === updatedMember.id);
+
+    const memberWithColor = {
+      ...updatedMember,
+      color: updatedMember.color || previousMember?.color || '#000000'
+    };
+
+    const newTeamMembers = teamMembers.map(member => 
+      member.id === memberWithColor.id ? memberWithColor : member
+    );
+
+    saveTeamMembers(newTeamMembers);
+  };
+
+  const addTeamMember = (newMember: TeamMember): TeamMember => {
+    try {
+      const memberId = newMember.id || `member-${Date.now()}`;
+
+      const memberWithId = {
+        ...newMember,
+        id: memberId,
+        color: newMember.color || '#000000'
+      };
+
+      const updatedMembers = [...teamMembers, memberWithId];
+      saveTeamMembers(updatedMembers);
+
+      return memberWithId;
+    } catch (error) {
+      console.error("Failed to add team member:", error);
+      throw error;
+    }
+  };
+
+  const deleteTeamMember = (id: string) => {
+    const memberToDelete = teamMembers.find(member => member.id === id);
+    const newTeamMembers = teamMembers.filter(member => member.id !== id);
+
+    if (memberToDelete) {
+      const updatedProjects = projects.map(project => {
+        if (project.team.includes(memberToDelete.name)) {
+          const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
+
+          const updatedColor = updatedTeam.length > 0 
+            ? createGradient(updatedTeam.map(name => {
+                const member = newTeamMembers.find(m => m.name === name);
+                return member ? member.color : '#CCCCCC';
+              }), {
+                includeHighlight: true,
+                highlightColor: '#00AAFF',
+                mixColors: true,
+                mixRatio: 0.3,
+                type: 'radial',
+                position: 'circle at center'
+              })
+            : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)';
+
+          return {
+            ...project,
+            team: updatedTeam,
+            color: updatedColor
+          };
+        }
+        return project;
+      });
+
+      saveProjects(updatedProjects);
+    }
+
+    saveTeamMembers(newTeamMembers);
+  };
+
+  // News item management functions
+  const updateNewsItem = (updatedNewsItem: NewsItem) => {
+    try {
+      const newNewsItems = newsItems.map(item => 
+        item.id === updatedNewsItem.id ? updatedNewsItem : item
+      );
+      saveNewsItems(newNewsItems);
+      return true;
+    } catch (error) {
+      console.error("Error updating news item:", error);
+      throw error;
+    }
+  };
+
+  const addNewsItem = (newNewsItem: NewsItem): NewsItem => {
+    try {
+      const newsId = newNewsItem.id || `news-${Date.now()}`;
+      const itemWithId = {
+        ...newNewsItem,
+        id: newsId
+      };
+
+      const newNewsItems = [...newsItems, itemWithId];
+      saveNewsItems(newNewsItems);
+
+      return itemWithId;
+    } catch (error) {
+      console.error("Failed to add news item:", error);
+      throw error;
+    }
+  };
+
+  const deleteNewsItem = (id: string) => {
+    try {
+      const newNewsItems = newsItems.filter(item => item.id !== id);
+      saveNewsItems(newNewsItems);
+      return true;
+    } catch (error) {
+      console.error("Failed to delete news item:", error);
+      throw error;
+    }
+  };
+
   // Collaborator management functions
   const saveCollaborators = (updatedCollaborators: Collaborator[]) => {
     try {
@@ -271,7 +635,6 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const addCollaborator = (newCollaborator: Collaborator): Collaborator => {
     try {
-      // Ensure unique ID
       const collabId = newCollaborator.id || `collab-${Date.now()}`;
       const collabWithId = {
         ...newCollaborator,
@@ -313,7 +676,6 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const addSoftware = (newSoftware: Software): Software => {
     try {
-      // Ensure unique ID
       const softwareId = newSoftware.id || `software-${Date.now()}`;
       const softwareWithId = {
         ...newSoftware,
@@ -335,7 +697,6 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     saveSoftware(newSoftwareList);
   };
 
-  // Get software by ID
   const getSoftwareById = (id: string): Software | undefined => {
     return software.find(item => item.id === id);
   };
@@ -360,7 +721,6 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const addPublication = (newPublication: Publication): Publication => {
     try {
-      // Ensure unique ID
       const pubId = newPublication.id || `pub-${Date.now()}`;
       const pubWithId = {
         ...newPublication,
@@ -382,6 +742,51 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     savePublications(newPublications);
   };
 
+  // Job openings management functions
+  const saveJobOpenings = (updatedJobOpenings: JobOpening[]) => {
+    try {
+      localStorage.setItem('jobOpenings', JSON.stringify(updatedJobOpenings));
+      setJobOpenings(updatedJobOpenings);
+    } catch (error) {
+      console.error("Error saving job openings to localStorage:", error);
+      alert("Failed to save job openings. LocalStorage might be full or unavailable.");
+    }
+  };
+
+  const updateJobOpening = (updatedJobOpening: JobOpening) => {
+    const newJobOpenings = jobOpenings.map(job => 
+      job.id === updatedJobOpening.id ? updatedJobOpening : job
+    );
+    saveJobOpenings(newJobOpenings);
+  };
+
+  const addJobOpening = (newJobOpening: JobOpening): JobOpening => {
+    try {
+      const jobId = newJobOpening.id || `job-${Date.now()}`;
+      const jobWithId = {
+        ...newJobOpening,
+        id: jobId
+      };
+      
+      const newJobOpenings = [...jobOpenings, jobWithId];
+      saveJobOpenings(newJobOpenings);
+      
+      return jobWithId;
+    } catch (error) {
+      console.error("Failed to add job opening:", error);
+      throw error;
+    }
+  };
+
+  const deleteJobOpening = (id: string) => {
+    const newJobOpenings = jobOpenings.filter(job => job.id !== id);
+    saveJobOpenings(newJobOpenings);
+  };
+
+  const getJobOpeningById = (id: string): JobOpening | undefined => {
+    return jobOpenings.find(job => job.id === id);
+  };
+
   // Function to reset all data to defaults
   const resetToDefaults = () => {
     if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
@@ -391,338 +796,45 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('collaborators');
       localStorage.removeItem('publications');
       localStorage.removeItem('software');
+      localStorage.removeItem('jobOpenings');
+      localStorage.removeItem('featuredItems');
       setTeamMembers(initialTeamMembers);
       
-      // Update projects with default gradients based on default team members
       const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
       setProjects(projectsWithGradients);
       setNewsItems(initialNewsItems);
       setCollaborators(initialCollaborators);
       setPublications(initialPublications);
       setSoftware(initialSoftware);
+      setJobOpenings(initialJobOpenings);
+
+      // Reset featured items
+      setFeaturedProject(initialProjects.length > 0 ? initialProjects[0].id : null);
+      setFeaturedNewsItem(initialNewsItems.length > 0 ? initialNewsItems[0].id : null);
+      setFeaturedPublication(initialPublications.length > 0 ? initialPublications[0].id : null);
       
       alert('Data has been reset to defaults.');
     }
   };
 
-  // Add function to get team member by ID
   const getTeamMemberById = (id: string): TeamMember | undefined => {
     return teamMembers.find(member => member.id === id);
   };
 
-  // Add function to get project by ID
   const getProjectById = (id: string): Project | undefined => {
     return projects.find(project => project.id === id);
   };
 
-  // Add function to get news item by ID
   const getNewsItemById = (id: string): NewsItem | undefined => {
     return newsItems.find(newsItem => newsItem.id === id);
   };
 
-  // Add function to get collaborator by ID
   const getCollaboratorById = (id: string): Collaborator | undefined => {
     return collaborators.find(collaborator => collaborator.id === id);
   };
 
-  // Add function to get publication by ID
   const getPublicationById = (id: string): Publication | undefined => {
     return publications.find(publication => publication.id === id);
-  };
-
-  // Project management functions
-  const updateProject = (updatedProject: Project) => {
-    console.log("Updating project:", updatedProject);
-    
-    // Get the existing project to compare changes
-    const existingProject = projects.find(p => p.id === updatedProject.id);
-    
-    // Ensure topics have consistent colors
-    let projectWithConsistentColors = { ...updatedProject };
-    
-    // If the project has topics, ensure we have topic colors
-    if (updatedProject.topics && updatedProject.topics.length > 0) {
-      // Generate colors for topics if they don't exist or are inconsistent
-      const topicsWithColors = updatedProject.topics.map((topic, index) => {
-        // Check if we already have this topic with a color
-        const existingTopicWithColor = updatedProject.topicsWithColors?.find(t => t.name === topic);
-        
-        if (existingTopicWithColor) {
-          // Use the existing color
-          return existingTopicWithColor;
-        } else {
-          // Generate a new color for this topic
-          const color = generateTopicColor('#00AAFF', index, updatedProject.topics!.length);
-          const [h, s, l] = hexToHsl(color);
-          return {
-            name: topic,
-            color,
-            hue: h // Store the hue for future reference
-          };
-        }
-      });
-      
-      projectWithConsistentColors = {
-        ...projectWithConsistentColors,
-        topicsWithColors
-      };
-    }
-    
-    // Generate a new gradient based on topic colors
-    const projectWithUpdatedColor = {
-      ...projectWithConsistentColors,
-      color: createProjectGradient(projectWithConsistentColors, '#00AAFF'),
-      _lastUpdated: Date.now() // Add timestamp for cache busting
-    };
-    
-    // Create a new array to ensure state update is triggered
-    const newProjects = projects.map(project => 
-      project.id === updatedProject.id ? projectWithUpdatedColor : project
-    );
-    
-    // Update team members if the project team has changed
-    if (existingProject && !areArraysEqual(existingProject.team, updatedProject.team)) {
-      const updatedTeamMembers = teamMembers.map(member => {
-        // Remove project from members no longer in the team
-        if (existingProject.team.includes(member.name) && !updatedProject.team.includes(member.name)) {
-          return {
-            ...member,
-            projects: member.projects?.filter(id => id !== updatedProject.id) || []
-          };
-        }
-        // Add project to new team members
-        if (!existingProject.team.includes(member.name) && updatedProject.team.includes(member.name)) {
-          return {
-            ...member,
-            projects: [...(member.projects || []), updatedProject.id]
-          };
-        }
-        return member;
-      });
-      
-      // Save updated team members
-      saveTeamMembers(updatedTeamMembers);
-    }
-    
-    // Save projects and emit update event
-    saveProjects(newProjects);
-    window.dispatchEvent(new CustomEvent('project-updated', {
-      detail: { projectId: updatedProject.id, timestamp: Date.now() }
-    }));
-  };
-  
-  // Utility function to compare arrays
-  const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
-    if (arr1.length !== arr2.length) return false;
-    return arr1.every(item => arr2.includes(item));
-  };
-
-  const addProject = (newProject: Project): Project => {
-    try {
-      console.log("Adding new project:", newProject.title);
-      
-      // Ensure unique ID
-      const projectId = newProject.id || `project-${Date.now()}`;
-      const projectWithId = {
-        ...newProject,
-        id: projectId
-      };
-      
-      // If the project has topics, ensure we have topic colors
-      let projectWithTopicColors = { ...projectWithId };
-      
-      if (newProject.topics && newProject.topics.length > 0) {
-        const topicsWithColors = newProject.topics.map((topic, index) => {
-          const color = generateTopicColor('#00AAFF', index, newProject.topics!.length);
-          const [h, s, l] = hexToHsl(color);
-          return {
-            name: topic,
-            color,
-            hue: h // Store the hue for future reference
-          };
-        });
-        
-        projectWithTopicColors = {
-          ...projectWithTopicColors,
-          topicsWithColors
-        };
-      }
-      
-      // Generate a gradient for the project using topic colors
-      const projectWithColor = {
-        ...projectWithTopicColors,
-        color: createProjectGradient(projectWithTopicColors, '#00AAFF')
-      };
-      
-      // Create a new projects array with the added project
-      const newProjects = [...projects, projectWithColor];
-      
-      // Set state first for immediate UI update
-      setProjects(newProjects);
-      
-      // Then save to localStorage
-      try {
-        localStorage.setItem('projects', JSON.stringify(newProjects));
-        console.log("Project saved to localStorage:", projectWithColor.title);
-      } catch (storageError) {
-        console.error("Failed to save projects to localStorage:", storageError);
-      }
-      
-      // Emit event to notify other components
-      window.dispatchEvent(new CustomEvent('project-added', {
-        detail: { projectId: projectWithColor.id, timestamp: Date.now() }
-      }));
-      
-      return projectWithColor; // Return the created project
-    } catch (error) {
-      console.error("Failed to add project:", error);
-      throw error;
-    }
-  };
-
-  const deleteProject = (id: string) => {
-    const newProjects = projects.filter(project => project.id !== id);
-    saveProjects(newProjects);
-    
-    // Also update team members that reference this project
-    const updatedTeamMembers = teamMembers.map(member => {
-      if (member.projects && member.projects.includes(id)) {
-        return {
-          ...member,
-          projects: member.projects.filter(projectId => projectId !== id)
-        };
-      }
-      return member;
-    });
-    
-    saveTeamMembers(updatedTeamMembers);
-  };
-
-  // Team member management functions
-  const updateTeamMember = (updatedMember: TeamMember) => {
-    // Make sure we have the latest data
-    const previousMember = teamMembers.find(m => m.id === updatedMember.id);
-    
-    // Ensure color is properly set
-    const memberWithColor = {
-      ...updatedMember,
-      color: updatedMember.color || previousMember?.color || '#000000'
-    };
-    
-    const newTeamMembers = teamMembers.map(member => 
-      member.id === memberWithColor.id ? memberWithColor : member
-    );
-    
-    saveTeamMembers(newTeamMembers);
-  };
-
-  const addTeamMember = (newMember: TeamMember): TeamMember => {
-    try {
-      console.log("Adding new team member:", newMember.name);
-      
-      // Ensure unique ID
-      const memberId = newMember.id || `member-${Date.now()}`;
-      
-      // Ensure color is set, use default if not provided
-      const memberWithId = {
-        ...newMember,
-        id: memberId,
-        color: newMember.color || '#000000'
-      };
-      
-      const updatedMembers = [...teamMembers, memberWithId];
-      saveTeamMembers(updatedMembers);
-      
-      return memberWithId;
-    } catch (error) {
-      console.error("Failed to add team member:", error);
-      throw error;
-    }
-  };
-
-  const deleteTeamMember = (id: string) => {
-    const memberToDelete = teamMembers.find(member => member.id === id);
-    const newTeamMembers = teamMembers.filter(member => member.id !== id);
-    
-    // Update projects that reference this member
-    if (memberToDelete) {
-      const updatedProjects = projects.map(project => {
-        if (project.team.includes(memberToDelete.name)) {
-          // Remove this member from the team
-          const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
-          
-          // Create a new gradient based on remaining team members
-          const updatedColor = updatedTeam.length > 0 
-            ? createGradient(updatedTeam.map(name => {
-                const member = newTeamMembers.find(m => m.name === name);
-                return member ? member.color : '#CCCCCC';
-              }), {
-                includeHighlight: true,
-                highlightColor: '#00AAFF',
-                mixColors: true,
-                mixRatio: 0.3,
-                type: 'radial',
-                position: 'circle at center'
-              })
-            : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)';
-          
-          return {
-            ...project,
-            team: updatedTeam,
-            color: updatedColor
-          };
-        }
-        return project;
-      });
-      
-      saveProjects(updatedProjects);
-    }
-    
-    saveTeamMembers(newTeamMembers);
-  };
-
-  // News item management functions
-  const updateNewsItem = (updatedNewsItem: NewsItem) => {
-    try {
-      const newNewsItems = newsItems.map(item => 
-        item.id === updatedNewsItem.id ? updatedNewsItem : item
-      );
-      saveNewsItems(newNewsItems);
-      return true;
-    } catch (error) {
-      console.error("Error updating news item:", error);
-      throw error;
-    }
-  };
-
-  const addNewsItem = (newNewsItem: NewsItem): NewsItem => {
-    try {
-      // Ensure unique ID
-      const newsId = newNewsItem.id || `news-${Date.now()}`;
-      const itemWithId = {
-        ...newNewsItem,
-        id: newsId
-      };
-      
-      const newNewsItems = [...newsItems, itemWithId];
-      saveNewsItems(newNewsItems);
-      
-      return itemWithId;
-    } catch (error) {
-      console.error("Failed to add news item:", error);
-      throw error;
-    }
-  };
-
-  const deleteNewsItem = (id: string) => {
-    try {
-      const newNewsItems = newsItems.filter(item => item.id !== id);
-      saveNewsItems(newNewsItems);
-      return true;
-    } catch (error) {
-      console.error("Failed to delete news item:", error);
-      throw error;
-    }
   };
 
   return (
@@ -733,6 +845,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       collaborators,
       publications,
       software,
+      jobOpenings,
       updateProject,
       addProject,
       deleteProject,
@@ -751,13 +864,23 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       updateSoftware,
       addSoftware,
       deleteSoftware,
+      updateJobOpening,
+      addJobOpening,
+      deleteJobOpening,
       resetToDefaults,
       getTeamMemberById,
       getProjectById,
       getNewsItemById,
       getCollaboratorById,
       getPublicationById,
-      getSoftwareById
+      getSoftwareById,
+      getJobOpeningById,
+
+      // Add the new methods
+      setFeaturedProject: handleSetFeaturedProject,
+      setFeaturedNewsItem: handleSetFeaturedNewsItem,
+      setFeaturedPublication: handleSetFeaturedPublication,
+      getFeaturedItems,
     }}>
       {children}
     </ContentContext.Provider>

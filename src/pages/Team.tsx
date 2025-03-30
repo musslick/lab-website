@@ -1,5 +1,5 @@
 import React from 'react';
-import { TeamMember } from '../components/Components';
+import { Link } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
 
 const Team: React.FC = () => {
@@ -21,15 +21,26 @@ const Team: React.FC = () => {
       </div>
       
       <div className="team-container">
-        {teamMembers.map((member) => (
-          <TeamMember
-            key={member.id}
-            id={member.id}
-            name={member.name}
-            bio={member.role} // Changed from bio to role
-            imageUrl={member.imageUrl}
-            color={member.color}
-          />
+        {/* Join Us Card */}
+        <Link to="/join-us" className="team-member-card join-us-card">
+          <div className="join-us-icon">+</div>
+          <h3 className="join-us-title">Join Us!</h3>
+          <p className="join-us-text">View our open positions and application process</p>
+        </Link>
+        
+        {/* Existing Team Members */}
+        {teamMembers.map(member => (
+          <Link key={member.id} to={`/team/${member.id}`} className="team-member-card">
+            {member.imageUrl ? (
+              <div className="team-member-image" style={{ backgroundImage: `url(${member.imageUrl})` }}></div>
+            ) : (
+              <div className="team-member-image-placeholder" style={{ backgroundColor: member.color }}></div>
+            )}
+            <div className="team-member-info">
+              <h3 className="team-member-name">{member.name}</h3>
+              <p className="team-member-role">{member.role}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

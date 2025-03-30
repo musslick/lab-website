@@ -8,7 +8,7 @@ import '../../styles/admin.css';
 
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { projects, teamMembers, newsItems, collaborators, publications, software, resetToDefaults } = useContent();
+  const { projects, teamMembers, newsItems, collaborators, publications, software, jobOpenings, resetToDefaults } = useContent();
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
   const navigate = useNavigate();
@@ -276,6 +276,41 @@ const AdminDashboard: React.FC = () => {
             <div className="admin-card-content">
               <p className="admin-stats-number">{software.length}</p>
               <p>Software projects</p>
+            </div>
+          </div>
+
+          {/* New Job Openings Card */}
+          <div 
+            className="admin-card"
+            onClick={() => handleNavigate('/admin/jobs')}
+          >
+            <div className="admin-card-header">
+              <h2>Job Openings</h2>
+              <Link 
+                to="/admin/jobs/new" 
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
+                + Add New
+              </Link>
+            </div>
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{jobOpenings.length}</p>
+              <p>Open positions</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Homepage Settings Section */}
+        <div className="admin-section">
+          <h2>Homepage Settings</h2>
+          <div className="admin-cards">
+            <div className="admin-card">
+              <h3>Featured Content</h3>
+              <p>Manage which items appear on the homepage</p>
+              <Link to="/admin/featured" className="admin-button">
+                Manage Featured Items
+              </Link>
             </div>
           </div>
         </div>
