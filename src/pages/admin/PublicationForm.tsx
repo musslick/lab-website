@@ -7,7 +7,7 @@ import { Publication } from '../../data/publications';
 const PublicationForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { publications, projects, updatePublication, addPublication, deletePublication } = useContent();
+  const { publications, projects, teamMembers, updatePublication, addPublication, deletePublication, updateTeamMember, updateProject } = useContent();
   
   // Form state
   const [title, setTitle] = useState('');
@@ -23,6 +23,9 @@ const PublicationForm: React.FC = () => {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState('');
   const [pubId, setPubId] = useState('');
+  
+  // NEW: Add state for team member selection
+  const [selectedTeamMember, setSelectedTeamMember] = useState<string>('');
   
   // UI state
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -82,6 +85,45 @@ const PublicationForm: React.FC = () => {
       const newAuthors = [...authors];
       newAuthors.splice(index, 1);
       setAuthors(newAuthors);
+    }
+  };
+
+  // NEW: Add team member as author
+  const handleAddTeamMemberAsAuthor = () => {
+    if (selectedTeamMember) {
+      const member = teamMembers.find(m => m.id === selectedTeamMember);
+      
+      if (member) {
+        // Format team member name as "LastName, F." format typically used in publications
+        const nameParts = member.name.split(' ');
+        const lastName = nameParts[nameParts.length - 1];
+        const firstInitial = nameParts[0][0];
+        const formattedName = `${lastName}, ${firstInitial}.`;
+        
+        // Check if this author is already in the list
+        if (!authors.some(author => author.includes(lastName))) {
+          setAuthors([...authors, formattedName]);
+          
+          // NEW: Update the member's publications list to include this publication
+          // Only do this if we have a valid pubId (which should always be the case)
+          if (pubId) {
+            const updatedMember = { 
+              ...member,
+              publications: [...(member.publications || []), pubId]
+            };
+            
+            // Remove duplicates if any
+            updatedMember.publications = [...new Set(updatedMember.publications)];
+            
+            // Update the team member with the new publication reference
+            updateTeamMember(updatedMember);
+            console.log(`Updated team member ${member.name} with publication: ${pubId}`);
+          }
+        }
+        
+        // Reset selection
+        setSelectedTeamMember('');
+      }
     }
   };
 
@@ -146,13 +188,110 @@ const PublicationForm: React.FC = () => {
       
       console.log("Saving publication:", publicationData);
       
+      // Track the old project ID for reference
+      const oldPublication = isNewPublication ? null : publications.find(pub => pub.id === pubId);
+      const oldProjectId = oldPublication?.projectId;
+      
+      // Get the team member IDs that match the authors
+      const teamMembersInPublication = teamMembers.filter(member => {
+        // Check if any author contains the team member's last name
+        const lastName = member.name.split(' ').pop()?.toLowerCase() || '';
+        return filteredAuthors.some(author => 
+          author.toLowerCase().includes(lastName)
+        );
+      });
+      
       if (isNewPublication) {
         const addedPublication = addPublication(publicationData);
         console.log("Added new publication with ID:", addedPublication.id);
+        
+        // Update team members with publication reference
+        teamMembersInPublication.forEach(member => {
+          // Check if the publication is already in the member's publications array
+          const memberPublications = member.publications || [];
+          if (!memberPublications.includes(addedPublication.id)) {
+            const updatedMember = { 
+              ...member, 
+              publications: [...memberPublications, addedPublication.id]
+            };
+            updateTeamMember(updatedMember);
+            console.log(`Added publication ${addedPublication.id} to team member ${member.name}`);
+          }
+        });
+        
+        // If project is associated, update the project's publications list
+        if (projectId) {
+          const project = projects.find(p => p.id === projectId);
+          if (project) {
+            // Add this publication to the project
+            const updatedProject = {
+              ...project,
+              publications: [...(project.publications || []), addedPublication.id]
+            };
+            updateProject(updatedProject);
+            console.log(`Added publication ${addedPublication.id} to project ${projectId}`);
+          }
+        }
       } else {
         updatePublication(publicationData);
         console.log("Updated existing publication:", publicationData.id);
+        
+        // Handle project association changes
+        if (oldProjectId !== projectId) {
+          // If publication was removed from a project
+          if (oldProjectId) {
+            const oldProject = projects.find(p => p.id === oldProjectId);
+            if (oldProject && oldProject.publications) {
+              const updatedProject = {
+                ...oldProject,
+                publications: oldProject.publications.filter(id => id !== pubId)
+              };
+              updateProject(updatedProject);
+              console.log(`Removed publication ${pubId} from project ${oldProjectId}`);
+            }
+          }
+          
+          // If publication was added to a new project
+          if (projectId) {
+            const newProject = projects.find(p => p.id === projectId);
+            if (newProject) {
+              const projectPubs = newProject.publications || [];
+              if (!projectPubs.includes(pubId)) {
+                const updatedProject = {
+                  ...newProject,
+                  publications: [...projectPubs, pubId]
+                };
+                updateProject(updatedProject);
+                console.log(`Added publication ${pubId} to project ${projectId}`);
+              }
+            }
+          }
+        }
+        
+        // Make sure team members have this publication in their list
+        teamMembersInPublication.forEach(member => {
+          const memberPublications = member.publications || [];
+          if (!memberPublications.includes(pubId)) {
+            const updatedMember = { 
+              ...member, 
+              publications: [...memberPublications, pubId]
+            };
+            updateTeamMember(updatedMember);
+            console.log(`Added publication ${pubId} to team member ${member.name}`);
+          }
+        });
       }
+      
+      // Trigger an update event so other components can refresh
+      const updateEvent = new CustomEvent('publication-updated', {
+        detail: { 
+          publicationId: pubId,
+          timestamp: Date.now(),
+          teamMembers: teamMembersInPublication.map(m => m.id)
+        }
+      });
+      window.dispatchEvent(updateEvent);
+      console.log("Dispatched publication-updated event");
       
       setFormSubmitted(true);
       setTimeout(() => {
@@ -168,7 +307,44 @@ const PublicationForm: React.FC = () => {
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this publication?')) {
       setIsDeleting(true);
+      
+      // Before deletion, clean up references
+      const publicationToDelete = publications.find(p => p.id === pubId);
+      
+      // Remove from project's publications list if applicable
+      if (publicationToDelete?.projectId) {
+        const project = projects.find(p => p.id === publicationToDelete.projectId);
+        if (project && project.publications) {
+          const updatedProject = {
+            ...project,
+            publications: project.publications.filter(id => id !== pubId)
+          };
+          updateProject(updatedProject);
+        }
+      }
+      
+      // Remove from team members' publications lists
+      teamMembers.forEach(member => {
+        if (member.publications && member.publications.includes(pubId)) {
+          const updatedMember = {
+            ...member,
+            publications: member.publications.filter(id => id !== pubId)
+          };
+          updateTeamMember(updatedMember);
+        }
+      });
+      
       deletePublication(pubId);
+      
+      // Notify other components about the deletion
+      window.dispatchEvent(new CustomEvent('publication-updated', {
+        detail: { 
+          publicationId: pubId,
+          action: 'delete',
+          timestamp: Date.now()
+        }
+      }));
+      
       setTimeout(() => {
         navigate('/admin/publications');
       }, 1000);
@@ -269,6 +445,32 @@ const PublicationForm: React.FC = () => {
           
           <div className="form-group">
             <label>Authors*</label>
+            
+            {/* NEW: Team member selection */}
+            <div className="team-member-author-selection">
+              <select
+                value={selectedTeamMember}
+                onChange={(e) => setSelectedTeamMember(e.target.value)}
+                className="team-member-select"
+              >
+                <option value="">-- Add team member as author --</option>
+                {teamMembers.map(member => (
+                  <option key={member.id} value={member.id}>
+                    {member.name} ({member.role})
+                  </option>
+                ))}
+              </select>
+              <button 
+                type="button" 
+                onClick={handleAddTeamMemberAsAuthor}
+                className="add-author-button"
+                disabled={!selectedTeamMember}
+              >
+                Add to Authors
+              </button>
+            </div>
+
+            {/* Existing author inputs */}
             {authors.map((author, index) => (
               <div key={index} className="author-input-row">
                 <input
@@ -296,6 +498,9 @@ const PublicationForm: React.FC = () => {
             >
               Add Author
             </button>
+            <p className="form-help-text">
+              You can add team members from the dropdown or manually enter authors using "LastName, F." format
+            </p>
           </div>
           
           <div className="form-row">

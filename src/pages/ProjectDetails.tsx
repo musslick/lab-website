@@ -4,7 +4,6 @@ import { useContent } from '../contexts/ContentContext';
 import { TopNav, Footer } from '../components/Components';
 import { createProjectGradient } from '../utils/colorUtils';
 import '../styles/styles.css';
-import { publications } from '../data/publications';
 
 // Function to render categories, handling both string and array formats
 const renderCategories = (categories: string | string[]) => {
@@ -24,7 +23,7 @@ const renderDisciplines = (disciplines: string | string[]) => {
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { projects, teamMembers } = useContent();
+  const { projects, teamMembers, publications } = useContent();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [projectTeam, setProjectTeam] = useState<any[]>([]);
@@ -234,52 +233,37 @@ const ProjectDetails: React.FC = () => {
           </div>
         )}
         
-        {project.publications && project.publications.length > 0 && (
-          <div className="project-section">
-            <h2>Related Publications</h2>
-            <ul>
-              {project.publications.map((pub: string, index: number) => (
-                <li key={index}>{pub}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Add publications section */}
+        {/* Publications section with improved formatting */}
         {projectPublications.length > 0 && (
           <div className="project-section">
             <h2>Publications</h2>
-            <div className="project-publications">
+            <ul className="publications-list">
               {projectPublications.map(publication => (
-                <div key={publication.id} className="publication-item">
-                  <h3 className="publication-title">
-                    {publication.url ? (
-                      <a href={publication.url} target="_blank" rel="noopener noreferrer">
-                        {publication.title}
-                      </a>
-                    ) : (
-                      publication.title
+                <li key={publication.id} className="publication-item">
+                  <div className="publication-year">{publication.year}</div>
+                  <div className="publication-details">
+                    <h3 className="publication-title">
+                      {publication.url ? (
+                        <a href={publication.url} target="_blank" rel="noopener noreferrer">
+                          {publication.title}
+                        </a>
+                      ) : (
+                        publication.title
+                      )}
+                    </h3>
+                    <p className="publication-authors">{publication.authors.join(', ')}</p>
+                    <p className="publication-journal">{publication.journal}</p>
+                    {publication.doi && (
+                      <p className="publication-doi">
+                        DOI: <a href={`https://doi.org/${publication.doi}`} target="_blank" rel="noopener noreferrer">
+                          {publication.doi}
+                        </a>
+                      </p>
                     )}
-                  </h3>
-                  
-                  <p className="publication-authors">{publication.authors.join(", ")}</p>
-                  
-                  <div className="publication-meta">
-                    <span className="publication-journal">{publication.journal}</span>
-                    <span className="publication-year">{publication.year}</span>
-                    <span className="publication-type">{publication.type}</span>
                   </div>
-                  
-                  {publication.doi && (
-                    <div className="publication-doi">
-                      <a href={`https://doi.org/${publication.doi}`} target="_blank" rel="noopener noreferrer">
-                        DOI: {publication.doi}
-                      </a>
-                    </div>
-                  )}
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
       </div>
