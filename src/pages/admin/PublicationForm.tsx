@@ -104,8 +104,7 @@ const PublicationForm: React.FC = () => {
         if (!authors.some(author => author.includes(lastName))) {
           setAuthors([...authors, formattedName]);
           
-          // NEW: Update the member's publications list to include this publication
-          // Only do this if we have a valid pubId (which should always be the case)
+          // IMMEDIATE UPDATE: Update the member's publications list to include this publication
           if (pubId) {
             const updatedMember = { 
               ...member,
@@ -117,6 +116,17 @@ const PublicationForm: React.FC = () => {
             
             // Update the team member with the new publication reference
             updateTeamMember(updatedMember);
+            
+            // FORCE AN UPDATE EVENT: Let other components know about this change immediately
+            window.dispatchEvent(new CustomEvent('publication-updated', {
+              detail: { 
+                publicationId: pubId, 
+                teamMemberId: member.id,
+                timestamp: Date.now(),
+                action: 'add-author'
+              }
+            }));
+            
             console.log(`Updated team member ${member.name} with publication: ${pubId}`);
           }
         }
@@ -232,6 +242,16 @@ const PublicationForm: React.FC = () => {
             console.log(`Added publication ${addedPublication.id} to project ${projectId}`);
           }
         }
+        
+        // IMMEDIATE UPDATE: Ensure the UI is updated right away
+        window.dispatchEvent(new CustomEvent('publication-updated', {
+          detail: { 
+            publicationId: addedPublication.id,
+            teamMemberIds: teamMembersInPublication.map(m => m.id),
+            timestamp: Date.now(),
+            action: 'new-publication'
+          }
+        }));
       } else {
         updatePublication(publicationData);
         console.log("Updated existing publication:", publicationData.id);
@@ -280,6 +300,16 @@ const PublicationForm: React.FC = () => {
             console.log(`Added publication ${pubId} to team member ${member.name}`);
           }
         });
+        
+        // IMMEDIATE UPDATE: Ensure the UI is updated right away
+        window.dispatchEvent(new CustomEvent('publication-updated', {
+          detail: { 
+            publicationId: pubId,
+            teamMemberIds: teamMembersInPublication.map(m => m.id),
+            timestamp: Date.now(),
+            action: 'update-publication'
+          }
+        }));
       }
       
       // Trigger an update event so other components can refresh
