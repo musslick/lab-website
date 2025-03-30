@@ -12,7 +12,8 @@ const AdminDashboard: React.FC = () => {
     projects, 
     teamMembers, 
     newsItems, 
-    collaborators, 
+    collaborators,
+    fundingSources,
     publications, 
     software, 
     jobOpenings, 
@@ -269,6 +270,27 @@ const AdminDashboard: React.FC = () => {
             <div className="admin-card-content">
               <p className="admin-stats-number">{collaborators.length}</p>
               <p>Academic & industry partners</p>
+            </div>
+          </div>
+
+          {/* New Funding Sources Card */}
+          <div 
+            className="admin-card"
+            onClick={() => handleNavigate('/admin/funding')}
+          >
+            <div className="admin-card-header">
+              <h2>Funding</h2>
+              <Link 
+                to="/admin/funding/new"
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
+                + Add New
+              </Link>
+            </div>
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{fundingSources.length}</p>
+              <p>Funding sources</p>
             </div>
           </div>
 

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as BrainLogo } from '../assets/logo.svg';
 
 const Home: React.FC = () => {
-    const { projects, collaborators, newsItems, publications, getFeaturedItems } = useContent();
+    const { projects, collaborators, fundingSources, newsItems, publications, getFeaturedItems } = useContent();
     const { isAuthenticated } = useAuth();
     
     // Get featured items from context
@@ -158,10 +158,49 @@ const Home: React.FC = () => {
                         </a>
                     ))}
                     
-                    {/* "Become a Collaborator" card with plus sign in the text */}
+                    {/* "Work with us!" card with plus sign in the text */}
                     <Link to="/contact" className="collaborator-tag collaborate-cta">
                         <div className="collaborate-icon">+</div>
-                        <span>Become a Collaborator</span>
+                        <span>Work with us!</span>
+                    </Link>
+                </div>
+            </section>
+            
+            {/* New "Our Funding" section */}
+            <section className="collaborators funding-section">
+                <div className="collaborators-header">
+                    <h2>Our Funding</h2>
+                    {isAuthenticated && (
+                        <Link to="/admin/funding" className="add-button">
+                            Manage Funding
+                        </Link>
+                    )}
+                </div>
+                
+                <div className="collaborator-list">
+                    {fundingSources.map(funding => (
+                        <a 
+                            href={funding.url} 
+                            key={funding.id} 
+                            className="collaborator-tag funding-tag"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
+                            {funding.logo && (
+                                <img 
+                                    src={funding.logo} 
+                                    alt={`${funding.name} logo`}
+                                    className="collaborator-logo"
+                                />
+                            )}
+                            <span>{funding.name}</span>
+                        </a>
+                    ))}
+                    
+                    {/* "Support our research" card with plus sign in the text */}
+                    <Link to="/contact" className="collaborator-tag collaborate-cta">
+                        <div className="collaborate-icon">+</div>
+                        <span>Support our research</span>
                     </Link>
                 </div>
             </section>

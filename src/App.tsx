@@ -28,6 +28,8 @@ import JobOpeningsList from './pages/admin/JobOpeningsList';
 import JobOpeningForm from './pages/admin/JobOpeningForm';
 import JoinUs from './pages/JoinUs';
 import FeaturedItemsForm from './pages/admin/FeaturedItemsForm';
+import FundingSourcesList from './pages/admin/FundingSourcesList';
+import FundingSourceForm from './pages/admin/FundingSourceForm';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -107,6 +109,22 @@ const App: React.FC = () => {
               <Route path="/admin/featured" element={
                 <RequireAuth>
                   <FeaturedItemsForm />
+                </RequireAuth>
+              } />
+              {/* Funding Source Management Routes */}
+              <Route path="/admin/funding" element={
+                <RequireAuth>
+                  <FundingSourcesList />
+                </RequireAuth>
+              } />
+              <Route path="/admin/funding/new" element={
+                <RequireAuth>
+                  <FundingSourceForm />
+                </RequireAuth>
+              } />
+              <Route path="/admin/funding/edit/:id" element={
+                <RequireAuth>
+                  <FundingSourceForm />
                 </RequireAuth>
               } />
             </Routes>

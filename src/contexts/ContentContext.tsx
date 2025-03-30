@@ -3,6 +3,7 @@ import { Project, projects as initialProjects } from '../data/projects';
 import { TeamMember, teamMembers as initialTeamMembers } from '../data/team';
 import { NewsItem, newsItems as initialNewsItems } from '../data/news';
 import { Collaborator, collaborators as initialCollaborators } from '../data/collaborators';
+import { FundingSource, fundingSources as initialFundingSources } from '../data/funding';
 import { Publication, publications as initialPublications } from '../data/publications';
 import { Software, software as initialSoftware } from '../data/software';
 import { JobOpening, jobOpenings as initialJobOpenings } from '../data/jobOpenings';
@@ -16,6 +17,7 @@ interface ContentContextType {
   publications: Publication[];
   software: Software[];
   jobOpenings: JobOpening[];
+  fundingSources: FundingSource[];
   updateProject: (updatedProject: Project) => void;
   addProject: (newProject: Project) => Project;
   deleteProject: (id: string) => void;
@@ -37,6 +39,9 @@ interface ContentContextType {
   updateJobOpening: (updatedJobOpening: JobOpening) => void;
   addJobOpening: (newJobOpening: JobOpening) => JobOpening;
   deleteJobOpening: (id: string) => void;
+  updateFundingSource: (updatedFunding: FundingSource) => void;
+  addFundingSource: (newFunding: FundingSource) => FundingSource;
+  deleteFundingSource: (id: string) => void;
   resetToDefaults: () => void;
   getTeamMemberById: (id: string) => TeamMember | undefined;
   getProjectById: (id: string) => Project | undefined;
@@ -45,6 +50,7 @@ interface ContentContextType {
   getPublicationById: (id: string) => Publication | undefined;
   getSoftwareById: (id: string) => Software | undefined;
   getJobOpeningById: (id: string) => JobOpening | undefined;
+  getFundingSourceById: (id: string) => FundingSource | undefined;
 
   // Add these new methods
   setFeaturedProject: (projectId: string) => void;
@@ -65,6 +71,7 @@ const ContentContext = createContext<ContentContextType>({
   publications: [],
   software: [],
   jobOpenings: [],
+  fundingSources: [],
   updateProject: () => {},
   addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }),
   deleteProject: () => {},
@@ -111,6 +118,9 @@ const ContentContext = createContext<ContentContextType>({
     isOpen: true,
   }),
   deleteJobOpening: () => {},
+  updateFundingSource: () => {},
+  addFundingSource: () => ({ id: '', name: '', url: '' }),
+  deleteFundingSource: () => {},
   resetToDefaults: () => {},
   getTeamMemberById: () => undefined,
   getProjectById: () => undefined,
@@ -119,6 +129,7 @@ const ContentContext = createContext<ContentContextType>({
   getPublicationById: () => undefined,
   getSoftwareById: () => undefined,
   getJobOpeningById: () => undefined,
+  getFundingSourceById: () => undefined,
 
   // Add these new methods to the default context
   setFeaturedProject: () => {},
@@ -145,6 +156,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [publications, setPublications] = useState<Publication[]>([]);
   const [software, setSoftware] = useState<Software[]>([]);
   const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
+  const [fundingSources, setFundingSources] = useState<FundingSource[]>([]);
 
   // Add state for featured items
   const [featuredProject, setFeaturedProject] = useState<string | null>(null);
@@ -196,6 +208,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedPublications = localStorage.getItem('publications');
         const savedSoftware = localStorage.getItem('software');
         const savedJobOpenings = localStorage.getItem('jobOpenings');
+        const savedFundingSources = localStorage.getItem('fundingSources');
   
         let projectsData: Project[];
         let teamData: TeamMember[];
@@ -249,6 +262,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
           setJobOpenings(initialJobOpenings);
         }
 
+        if (savedFundingSources) {
+          setFundingSources(JSON.parse(savedFundingSources));
+        } else {
+          setFundingSources(initialFundingSources);
+        }
+
         // Load featured items
         const savedFeaturedItems = localStorage.getItem('featuredItems');
         if (savedFeaturedItems) {
@@ -276,6 +295,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         setPublications(initialPublications);
         setSoftware(initialSoftware);
         setJobOpenings(initialJobOpenings);
+        setFundingSources(initialFundingSources);
       }
     };
 
@@ -358,6 +378,51 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       console.error("Error saving news items to localStorage:", error);
       alert("Failed to save news. LocalStorage might be full or unavailable.");
     }
+  };
+
+  // Funding sources management functions
+  const saveFundingSources = (updatedFundingSources: FundingSource[]) => {
+    try {
+      localStorage.setItem('fundingSources', JSON.stringify(updatedFundingSources));
+      setFundingSources(updatedFundingSources);
+    } catch (error) {
+      console.error("Error saving funding sources to localStorage:", error);
+      alert("Failed to save funding sources. LocalStorage might be full or unavailable.");
+    }
+  };
+
+  const updateFundingSource = (updatedFunding: FundingSource) => {
+    const newFundingSources = fundingSources.map(source => 
+      source.id === updatedFunding.id ? updatedFunding : source
+    );
+    saveFundingSources(newFundingSources);
+  };
+
+  const addFundingSource = (newFunding: FundingSource): FundingSource => {
+    try {
+      const fundingId = newFunding.id || `funding-${Date.now()}`;
+      const fundingWithId = {
+        ...newFunding,
+        id: fundingId
+      };
+      
+      const newFundingSources = [...fundingSources, fundingWithId];
+      saveFundingSources(newFundingSources);
+      
+      return fundingWithId;
+    } catch (error) {
+      console.error("Failed to add funding source:", error);
+      throw error;
+    }
+  };
+
+  const deleteFundingSource = (id: string) => {
+    const newFundingSources = fundingSources.filter(source => source.id !== id);
+    saveFundingSources(newFundingSources);
+  };
+
+  const getFundingSourceById = (id: string): FundingSource | undefined => {
+    return fundingSources.find(source => source.id === id);
   };
 
   // Project management functions
@@ -798,6 +863,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('software');
       localStorage.removeItem('jobOpenings');
       localStorage.removeItem('featuredItems');
+      localStorage.removeItem('fundingSources');
       setTeamMembers(initialTeamMembers);
       
       const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
@@ -807,6 +873,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       setPublications(initialPublications);
       setSoftware(initialSoftware);
       setJobOpenings(initialJobOpenings);
+      setFundingSources(initialFundingSources);
 
       // Reset featured items
       setFeaturedProject(initialProjects.length > 0 ? initialProjects[0].id : null);
@@ -846,6 +913,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       publications,
       software,
       jobOpenings,
+      fundingSources,
       updateProject,
       addProject,
       deleteProject,
@@ -867,6 +935,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       updateJobOpening,
       addJobOpening,
       deleteJobOpening,
+      updateFundingSource,
+      addFundingSource,
+      deleteFundingSource,
       resetToDefaults,
       getTeamMemberById,
       getProjectById,
@@ -875,6 +946,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       getPublicationById,
       getSoftwareById,
       getJobOpeningById,
+      getFundingSourceById,
 
       // Add the new methods
       setFeaturedProject: handleSetFeaturedProject,
