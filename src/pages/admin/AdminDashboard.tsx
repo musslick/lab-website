@@ -8,11 +8,24 @@ import '../../styles/admin.css';
 
 const AdminDashboard: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { projects, teamMembers, newsItems, collaborators, publications, software, jobOpenings, resetToDefaults } = useContent();
+  const { 
+    projects, 
+    teamMembers, 
+    newsItems, 
+    collaborators, 
+    publications, 
+    software, 
+    jobOpenings, 
+    resetToDefaults,
+    getFeaturedItems
+  } = useContent();
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
   const navigate = useNavigate();
   
+  // Get current featured items
+  const featuredItems = getFeaturedItems();
+
   useEffect(() => {
     // Calculate storage usage
     const calculateStorage = () => {
@@ -299,18 +312,49 @@ const AdminDashboard: React.FC = () => {
               <p>Open positions</p>
             </div>
           </div>
-        </div>
 
-        {/* Homepage Settings Section */}
-        <div className="admin-section">
-          <h2>Homepage Settings</h2>
-          <div className="admin-cards">
-            <div className="admin-card">
-              <h3>Featured Content</h3>
-              <p>Manage which items appear on the homepage</p>
-              <Link to="/admin/featured" className="admin-button">
-                Manage Featured Items
+          {/* Featured Content Card - Updated to be cleaner */}
+          <div 
+            className="admin-card"
+            onClick={() => handleNavigate('/admin/featured')}
+          >
+            <div className="admin-card-header">
+              <h2>Featured Content</h2>
+              <Link 
+                to="/admin/featured" 
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Manage
               </Link>
+            </div>
+            <div className="admin-card-content featured-card-content">
+              {/* Show only the featured items indicators */}
+              <div className="featured-items-indicators">
+                {featuredItems.projectId && (
+                  <span className="featured-indicator">
+                    <strong>Project:</strong> {projects.find(p => p.id === featuredItems.projectId)?.title.substring(0, 20)}
+                    {projects.find(p => p.id === featuredItems.projectId)?.title.length! > 20 ? "..." : ""}
+                  </span>
+                )}
+                {featuredItems.newsItemId && (
+                  <span className="featured-indicator">
+                    <strong>News:</strong> {newsItems.find(n => n.id === featuredItems.newsItemId)?.title.substring(0, 20)}
+                    {newsItems.find(n => n.id === featuredItems.newsItemId)?.title.length! > 20 ? "..." : ""}
+                  </span>
+                )}
+                {featuredItems.publicationId && (
+                  <span className="featured-indicator">
+                    <strong>Publication:</strong> {publications.find(p => p.id === featuredItems.publicationId)?.title.substring(0, 20)}
+                    {publications.find(p => p.id === featuredItems.publicationId)?.title.length! > 20 ? "..." : ""}
+                  </span>
+                )}
+                
+                {/* Show message if no items are featured */}
+                {!featuredItems.projectId && !featuredItems.newsItemId && !featuredItems.publicationId && (
+                  <span className="no-featured-items">No items currently featured</span>
+                )}
+              </div>
             </div>
           </div>
         </div>

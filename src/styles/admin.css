@@ -238,6 +238,42 @@
   text-decoration: underline;
 }
 
+/* Featured Content Card Styles */
+.featured-card-content {
+  padding-top: 5px !important;  /* Reduce top padding to compensate for removed stats number */
+}
+
+.featured-items-indicators {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.featured-indicator {
+  background-color: #f0f8ff;
+  border-left: 3px solid #00AAFF;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.featured-indicator strong {
+  color: #0088cc;
+  margin-right: 4px;
+}
+
+.no-featured-items {
+  color: #666;
+  font-style: italic;
+  padding: 6px 10px;
+}
+
 /* Admin Lists */
 .admin-action-header {
   display: flex;
