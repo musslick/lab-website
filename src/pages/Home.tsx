@@ -8,11 +8,15 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as BrainLogo } from '../assets/logo.svg';
 
 const Home: React.FC = () => {
-    const { projects, collaborators, fundingSources, newsItems, publications, getFeaturedItems } = useContent();
+    const { projects, collaborators, fundingSources, newsItems, publications, getFeaturedItems, getTeamImage, getTeamImagePosition } = useContent();
     const { isAuthenticated } = useAuth();
     
     // Get featured items from context
     const featuredItems = getFeaturedItems();
+    
+    // Get team image and its position from context
+    const teamImage = getTeamImage();
+    const teamImagePosition = getTeamImagePosition();
     
     // Find the featured items by ID
     const featuredProject = projects.find(p => p.id === featuredItems.projectId) || (projects.length > 0 ? projects[0] : null);
@@ -126,6 +130,28 @@ const Home: React.FC = () => {
                         See all publications <span className="arrow-icon">→</span>
                     </Link>
                 </div>
+            </section>
+            
+            {/* Team Picture Section */}
+            <section className="team-picture-section">
+                <h2>Our Team</h2>
+                <Link to="/team" className="team-picture-link">
+                    <div className="team-picture-container">
+                        <div className="team-picture-overlay" style={{ backgroundColor: 'rgba(0, 170, 255, 0.3)' }}></div>
+                        <img 
+                            src={teamImage} 
+                            alt="Our Research Team" 
+                            className="team-picture" 
+                            style={{ 
+                                filter: 'grayscale(100%)',
+                                objectFit: 'cover',
+                                width: '100%',
+                                height: '100%',
+                                objectPosition: teamImagePosition // Apply the position from context
+                            }}
+                        />
+                    </div>
+                </Link>
             </section>
             
             <section className="collaborators">

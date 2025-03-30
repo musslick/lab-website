@@ -379,6 +379,26 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Team Image Card */}
+          <div 
+            className="admin-card"
+            onClick={() => handleNavigate('/admin/team-image')}
+          >
+            <div className="admin-card-header">
+              <h2>Team Image</h2>
+              <Link 
+                to="/admin/team-image" 
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Update
+              </Link>
+            </div>
+            <div className="admin-card-content">
+              <p>Update the team image displayed on the homepage</p>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

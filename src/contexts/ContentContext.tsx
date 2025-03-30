@@ -61,6 +61,14 @@ interface ContentContextType {
     newsItemId: string | null;
     publicationId: string | null;
   };
+
+  // Add team image methods
+  getTeamImage: () => string;
+  updateTeamImage: (imageUrl: string) => void;
+
+  // Add new methods for image positioning
+  getTeamImagePosition: () => string;
+  updateTeamImagePosition: (position: string) => void;
 }
 
 const ContentContext = createContext<ContentContextType>({
@@ -140,6 +148,14 @@ const ContentContext = createContext<ContentContextType>({
     newsItemId: null,
     publicationId: null
   }),
+
+  // Add default implementations
+  getTeamImage: () => '/assets/lab_team.jpeg',
+  updateTeamImage: () => {},
+
+  // Add default implementations for image positioning
+  getTeamImagePosition: () => 'center',
+  updateTeamImagePosition: () => {},
 });
 
 export const useContent = () => useContext(ContentContext);
@@ -162,6 +178,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [featuredProject, setFeaturedProject] = useState<string | null>(null);
   const [featuredNewsItem, setFeaturedNewsItem] = useState<string | null>(null);
   const [featuredPublication, setFeaturedPublication] = useState<string | null>(null);
+
+  // Add state for team image
+  const [teamImage, setTeamImage] = useState<string>('/assets/lab_team.jpeg');
+  // Add state for team image position (default to 'center')
+  const [teamImagePosition, setTeamImagePosition] = useState<string>('center');
 
   // Helper function to generate color gradients for projects based on team members
   const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
@@ -281,6 +302,18 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
           setFeaturedNewsItem(newsData.length > 0 ? newsData[0].id : null);
           setFeaturedPublication(initialPublications.length > 0 ? initialPublications[0].id : null);
         }
+
+        // Load team image
+        const savedTeamImage = localStorage.getItem('teamImage');
+        if (savedTeamImage) {
+          setTeamImage(savedTeamImage);
+        }
+
+        // Load team image position
+        const savedTeamImagePosition = localStorage.getItem('teamImagePosition');
+        if (savedTeamImagePosition) {
+          setTeamImagePosition(savedTeamImagePosition);
+        }
         
         // Save the updated projects if necessary
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
@@ -341,6 +374,36 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       newsItemId: featuredNewsItem,
       publicationId: featuredPublication
     };
+  };
+
+  // Get team image function
+  const getTeamImage = (): string => {
+    return teamImage;
+  };
+  
+  // Update team image function
+  const updateTeamImage = (imageUrl: string): void => {
+    try {
+      setTeamImage(imageUrl);
+      localStorage.setItem('teamImage', imageUrl);
+    } catch (error) {
+      console.error("Error saving team image to localStorage:", error);
+    }
+  };
+
+  // Get team image position function
+  const getTeamImagePosition = (): string => {
+    return teamImagePosition;
+  };
+  
+  // Update team image position function
+  const updateTeamImagePosition = (position: string): void => {
+    try {
+      setTeamImagePosition(position);
+      localStorage.setItem('teamImagePosition', position);
+    } catch (error) {
+      console.error("Error saving team image position to localStorage:", error);
+    }
   };
 
   // Save changes to localStorage
@@ -864,6 +927,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('jobOpenings');
       localStorage.removeItem('featuredItems');
       localStorage.removeItem('fundingSources');
+      localStorage.removeItem('teamImage');
+      localStorage.removeItem('teamImagePosition');
       setTeamMembers(initialTeamMembers);
       
       const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
@@ -879,6 +944,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       setFeaturedProject(initialProjects.length > 0 ? initialProjects[0].id : null);
       setFeaturedNewsItem(initialNewsItems.length > 0 ? initialNewsItems[0].id : null);
       setFeaturedPublication(initialPublications.length > 0 ? initialPublications[0].id : null);
+
+      // Reset team image
+      setTeamImage('/assets/lab_team.jpeg');
+      
+      // Reset team image position
+      setTeamImagePosition('center');
       
       alert('Data has been reset to defaults.');
     }
@@ -953,6 +1024,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       setFeaturedNewsItem: handleSetFeaturedNewsItem,
       setFeaturedPublication: handleSetFeaturedPublication,
       getFeaturedItems,
+      getTeamImage,
+      updateTeamImage,
+      getTeamImagePosition,
+      updateTeamImagePosition,
     }}>
       {children}
     </ContentContext.Provider>

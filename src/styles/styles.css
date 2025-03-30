@@ -559,6 +559,102 @@ header {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Team picture section styling */
+.team-picture-section {
+  width: 100%;
+  margin: 3rem 0 1.5rem 0; /* Reduced bottom margin from 3rem to 1.5rem */
+}
+
+.team-picture-section h2 {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.team-picture-link {
+  display: block;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.team-picture-link:hover {
+  transform: translateY(-5px);
+}
+
+.team-picture-container {
+  position: relative;
+  width: 100%;
+  height: 500px; /* Maintained height at 500px */
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.team-picture-link:hover .team-picture-container {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.team-picture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  z-index: 1;
+}
+
+.team-picture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 170, 255, 0.3); /* Slightly reduced opacity for better visibility */
+  z-index: 2;
+}
+
+.team-picture-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  z-index: 3;
+  width: 80%;
+  max-width: 600px;
+}
+
+.team-picture-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.team-picture-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.team-link-button {
+  display: inline-block;
+  background-color: #00AAFF;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  border: 2px solid white;
+}
+
+.team-link-button:hover {
+  background-color: #0088cc;
+}
+
 /* =========================================
    JOB OPENINGS STYLES
    ========================================= */
@@ -1279,6 +1375,35 @@ header {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
+}
+
+/* Project filter styles matching news filter styles */
+
+.projects-page .tag-button {
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.projects-page .tag-button:hover {
+  background-color: #e0e0e0;
+}
+
+.projects-page .tag-button.active {
+  background-color: #00AAFF;
+  color: white;
+}
+
+.no-projects {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 18px;
 }
 
 /* Project filter styles matching news filter styles */
