@@ -5,9 +5,10 @@ import '../styles/styles.css';
 
 const TeamMemberDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { getTeamMemberById, getProjectById } = useContent();
+  const { getTeamMemberById, getProjectById, publications } = useContent();
   const [member, setMember] = useState(id ? getTeamMemberById(id) : undefined);
   const [memberProjects, setMemberProjects] = useState<any[]>([]);
+  const [memberPublications, setMemberPublications] = useState<any[]>([]);
 
   useEffect(() => {
     const updateMemberData = () => {
@@ -22,6 +23,23 @@ const TeamMemberDetail: React.FC = () => {
             .filter(project => project !== undefined);
           setMemberProjects(projects);
         }
+        
+        // Find publications where this team member is an author
+        if (updatedMember) {
+          // Get the last name of the team member for matching in publications
+          const lastName = updatedMember.name.split(' ').pop()?.toLowerCase() || '';
+          
+          // Filter publications where the member appears as an author
+          const relatedPublications = publications.filter(publication => 
+            publication.authors.some(author => 
+              author.toLowerCase().includes(lastName)
+            )
+          );
+          
+          // Sort by year (newest first)
+          const sortedPublications = [...relatedPublications].sort((a, b) => b.year - a.year);
+          setMemberPublications(sortedPublications);
+        }
       }
     };
 
@@ -33,12 +51,19 @@ const TeamMemberDetail: React.FC = () => {
       updateMemberData();
     };
 
+    // Listen for publication updates too
+    const handlePublicationUpdate = () => {
+      updateMemberData();
+    };
+
     window.addEventListener('project-updated', handleProjectUpdate);
+    window.addEventListener('publication-updated', handlePublicationUpdate);
     
     return () => {
       window.removeEventListener('project-updated', handleProjectUpdate);
+      window.removeEventListener('publication-updated', handlePublicationUpdate);
     };
-  }, [id, getTeamMemberById, getProjectById]);
+  }, [id, getTeamMemberById, getProjectById, publications]);
 
   if (!member) {
     return <div>Team member not found</div>;
@@ -110,6 +135,38 @@ const TeamMemberDetail: React.FC = () => {
                   <p>{project.description}</p>
                 </div>
               </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Publications section */}
+      {memberPublications.length > 0 && (
+        <div className="team-member-publications-section">
+          <h2>Publications</h2>
+          <div className="publications-list">
+            {memberPublications.map(publication => (
+              <div key={publication.id} className="publication-item">
+                <h3>{publication.title}</h3>
+                <p className="publication-authors">{publication.authors.join(', ')}</p>
+                <p className="publication-journal">
+                  <span className="journal-name">{publication.journal}</span>, {publication.year}
+                </p>
+                {publication.doi && (
+                  <p className="publication-doi">
+                    DOI: <a href={`https://doi.org/${publication.doi}`} target="_blank" rel="noopener noreferrer">
+                      {publication.doi}
+                    </a>
+                  </p>
+                )}
+                {publication.url && !publication.doi && (
+                  <p className="publication-url">
+                    <a href={publication.url} target="_blank" rel="noopener noreferrer">
+                      View Publication
+                    </a>
+                  </p>
+                )}
+              </div>
             ))}
           </div>
         </div>
