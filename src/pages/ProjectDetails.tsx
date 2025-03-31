@@ -147,6 +147,16 @@ const ProjectDetails: React.FC = () => {
 
   // Get publications related to this project
   const projectPublications = publications.filter(pub => pub.projectId === id);
+  
+  // Group publications by year
+  const publicationsByYear = projectPublications.reduce((acc, publication) => {
+    const year = publication.year.toString();
+    if (!acc[year]) {
+      acc[year] = [];
+    }
+    acc[year].push(publication);
+    return acc;
+  }, {} as Record<string, typeof projectPublications>);
 
   return (
     <>
@@ -233,37 +243,53 @@ const ProjectDetails: React.FC = () => {
           </div>
         )}
         
-        {/* Publications section with improved formatting */}
+        {/* Publications section with the same structure as TeamMemberDetail */}
         {projectPublications.length > 0 && (
-          <div className="project-section">
+          <div className="project-publications-section">
             <h2>Publications</h2>
-            <ul className="publications-list">
-              {projectPublications.map(publication => (
-                <li key={publication.id} className="publication-item">
-                  <div className="publication-year">{publication.year}</div>
-                  <div className="publication-details">
-                    <h3 className="publication-title">
-                      {publication.url ? (
-                        <a href={publication.url} target="_blank" rel="noopener noreferrer">
-                          {publication.title}
-                        </a>
-                      ) : (
-                        publication.title
-                      )}
-                    </h3>
-                    <p className="publication-authors">{publication.authors.join(', ')}</p>
-                    <p className="publication-journal">{publication.journal}</p>
-                    {publication.doi && (
-                      <p className="publication-doi">
-                        DOI: <a href={`https://doi.org/${publication.doi}`} target="_blank" rel="noopener noreferrer">
-                          {publication.doi}
-                        </a>
-                      </p>
-                    )}
+            <div className="publications-by-year">
+              {Object.entries(publicationsByYear)
+                .sort(([yearA], [yearB]) => parseInt(yearB) - parseInt(yearA))
+                .map(([year, yearPublications]) => (
+                  <div key={year} className="publication-year-group">
+                    <h3 className="year-heading">{year}</h3>
+                    <div className="publications-list">
+                      {yearPublications.map((publication) => (
+                        <div key={publication.id} className="publication-item">
+                          <h4 className="publication-title">
+                            {publication.url ? (
+                              <a 
+                                href={publication.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                              >
+                                {publication.title}
+                              </a>
+                            ) : (
+                              publication.title
+                            )}
+                          </h4>
+                          <p className="publication-authors">{publication.authors.join(', ')}</p>
+                          <p className="publication-journal">
+                            <em>{publication.journal}</em>, {publication.year}
+                          </p>
+                          {publication.doi && (
+                            <p className="publication-doi">
+                              DOI: <a 
+                                href={`https://doi.org/${publication.doi}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {publication.doi}
+                              </a>
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </li>
-              ))}
-            </ul>
+                ))}
+            </div>
           </div>
         )}
       </div>
