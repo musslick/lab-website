@@ -385,6 +385,75 @@
   transform: translateY(-2px);
 }
 
+/* Project Reordering Styles */
+.admin-list.reorder-mode .admin-list-item {
+  cursor: grab;
+  transition: all 0.2s ease;
+  position: relative;
+  padding-left: 40px; /* Extra space for drag handle */
+}
+
+.admin-list.reorder-mode .admin-list-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.drag-handle {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #888;
+  cursor: grab;
+  user-select: none;
+}
+
+.reorder-instructions {
+  background-color: #f8f9fa;
+  padding: 10px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 4px solid #00AAFF;
+  font-size: 0.9rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.save-order-button {
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.save-order-button:hover {
+  background-color: #3d8b40;
+}
+
+.reorder-button {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.reorder-button:hover {
+  background-color: #e0e0e0;
+}
+
 /* Job Opening Admin List */
 .closed-badge {
   display: inline-block;
