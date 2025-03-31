@@ -29,6 +29,12 @@ const NewsForm: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
+  // Extract all existing unique tags from all news items
+  const existingTags = React.useMemo(() => {
+    const allTags = newsItems.flatMap(item => item.tags || []);
+    return Array.from(new Set(allTags)).sort();
+  }, [newsItems]);
+  
   // Determine if we're in create mode or edit mode
   const isNewNewsItem = !id || id === 'new';
   const today = new Date().toISOString().split('T')[0];
@@ -80,6 +86,15 @@ const NewsForm: React.FC = () => {
     if (e.key === 'Enter') {
       e.preventDefault();
       handleAddTag();
+    }
+  };
+  
+  // Handle selecting an existing tag from dropdown
+  const handleSelectExistingTag = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedTag = e.target.value;
+    if (selectedTag && !tags.includes(selectedTag)) {
+      setTags(prevTags => [...prevTags, selectedTag]);
+      e.target.value = ''; // Reset select after selection
     }
   };
   
@@ -272,22 +287,38 @@ const NewsForm: React.FC = () => {
           
           <div className="form-group">
             <label>Tags</label>
-            <div className="tag-input-container">
-              <input
-                type="text"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Type a tag and press Enter"
-              />
-              <button 
-                type="button" 
-                onClick={handleAddTag}
-                className="tag-add-button"
+            
+            {/* Add dropdown for existing tags */}
+            <div className="tag-selection-container">
+              <select
+                onChange={handleSelectExistingTag}
+                defaultValue=""
+                className="existing-tags-dropdown"
               >
-                Add
-              </button>
+                <option value="" disabled>Select existing tag</option>
+                {existingTags.map(tag => (
+                  <option key={tag} value={tag}>{tag}</option>
+                ))}
+              </select>
+            
+              <div className="tag-input-container">
+                <input
+                  type="text"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type a tag and press Enter"
+                />
+                <button 
+                  type="button" 
+                  onClick={handleAddTag}
+                  className="tag-add-button"
+                >
+                  Add
+                </button>
+              </div>
             </div>
+            
             <div className="tags-container">
               {tags.map(tag => (
                 <div key={tag} className="tag-badge">
