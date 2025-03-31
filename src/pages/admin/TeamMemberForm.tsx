@@ -21,10 +21,10 @@ const TeamMemberForm: React.FC = () => {
   const LAB_COLOR = '#00AAFF';
   const [memberProjects, setMemberProjects] = useState<string[]>([]);
   const [email, setEmail] = useState('');
+  const [github, setGithub] = useState('');
+  const [cvUrl, setCvUrl] = useState('');
   const [memberId, setMemberId] = useState('');
   
-  // Removed color-related states and functions since we're using a fixed color
-
   // New image upload states
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -65,6 +65,8 @@ const TeamMemberForm: React.FC = () => {
         setImageUrl(memberToEdit.imageUrl || '');
         setMemberProjects(memberToEdit.projects || []);
         setEmail(memberToEdit.email || '');
+        setGithub(memberToEdit.github || '');
+        setCvUrl(memberToEdit.cvUrl || '');
         
         // If there's an existing image URL and it's a base64 image, set it as uploaded
         if (memberToEdit.imageUrl && memberToEdit.imageUrl.startsWith('data:image/')) {
@@ -169,9 +171,17 @@ const TeamMemberForm: React.FC = () => {
         projects: memberProjects
       };
       
-      // Add email if provided
+      // Add optional fields if provided
       if (email) {
         memberData.email = email;
+      }
+      
+      if (github) {
+        memberData.github = github;
+      }
+      
+      if (cvUrl) {
+        memberData.cvUrl = cvUrl;
       }
       
       console.log("Submitting team member data with color:", memberData.color);
@@ -369,7 +379,32 @@ const TeamMemberForm: React.FC = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@university.edu"
             />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="github">GitHub Username (Optional)</label>
+            <input
+              type="text"
+              id="github"
+              value={github}
+              onChange={(e) => setGithub(e.target.value)}
+              placeholder="username (without @)"
+            />
+            <p className="form-help-text">Just enter the username, not the full URL</p>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="cvUrl">CV PDF URL or Upload Path (Optional)</label>
+            <input
+              type="text"
+              id="cvUrl"
+              value={cvUrl}
+              onChange={(e) => setCvUrl(e.target.value)}
+              placeholder="/assets/cv/name_cv.pdf or https://example.com/cv.pdf"
+            />
+            <p className="form-help-text">Path to uploaded PDF file or external URL</p>
           </div>
           
           <div className="form-actions">

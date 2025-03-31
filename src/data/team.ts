@@ -10,6 +10,8 @@ export interface TeamMember {
     projects?: string[];
     email?: string;
     publications?: string[];
+    github?: string;
+    cvUrl?: string;
 }
 
 export const teamMembers: TeamMember[] = [

@@ -113,13 +113,47 @@ const TeamMemberDetail: React.FC = () => {
         <div className="team-member-profile-info">
           <h1>{member.name}</h1>
           <h2 className="team-member-role">{member.role}</h2>
-          {member.email && (
-            <div className="team-member-contact">
-              <a href={`mailto:${member.email}`} className="team-member-email">
-                {member.email}
-              </a>
-            </div>
-          )}
+          
+          {/* Contact information section */}
+          <div className="team-member-contact">
+            {member.email && (
+              <div className="contact-item">
+                <span className="contact-icon">✉️</span>
+                <a href={`mailto:${member.email}`} className="team-member-email">
+                  {member.email}
+                </a>
+              </div>
+            )}
+            
+            {member.github && (
+              <div className="contact-item">
+                <span className="contact-icon">🐙</span>
+                <a 
+                  href={`https://github.com/${member.github}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="team-member-github"
+                >
+                  github.com/{member.github}
+                </a>
+              </div>
+            )}
+            
+            {member.cvUrl && (
+              <div className="contact-item">
+                <span className="contact-icon">📄</span>
+                <a 
+                  href={member.cvUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="team-member-cv"
+                >
+                  Curriculum Vitae (PDF)
+                </a>
+              </div>
+            )}
+          </div>
+          
           <div className="team-member-bio-extended">
             <p>{member.bio}</p>
           </div>
