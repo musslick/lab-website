@@ -17,7 +17,6 @@ const TeamMemberForm: React.FC = () => {
   const [role, setRole] = useState('');
   const [bio, setBio] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  // Lab color (blue) - fixed for all team members
   const LAB_COLOR = '#00AAFF';
   const [memberProjects, setMemberProjects] = useState<string[]>([]);
   const [email, setEmail] = useState('');
@@ -29,6 +28,11 @@ const TeamMemberForm: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // New CV upload states
+  const [isUploadingCV, setIsUploadingCV] = useState(false);
+  const [uploadedCV, setUploadedCV] = useState<string | null>(null);
+  const cvFileInputRef = useRef<HTMLInputElement>(null);
   
   // Available projects for selection
   const [availableProjects, setAvailableProjects] = useState<{ id: string, title: string }[]>([]);
@@ -71,6 +75,11 @@ const TeamMemberForm: React.FC = () => {
         // If there's an existing image URL and it's a base64 image, set it as uploaded
         if (memberToEdit.imageUrl && memberToEdit.imageUrl.startsWith('data:image/')) {
           setUploadedImage(memberToEdit.imageUrl);
+        }
+        
+        // If there's an existing CV URL and it's a base64 PDF, set it as uploaded
+        if (memberToEdit.cvUrl && memberToEdit.cvUrl.startsWith('data:application/pdf')) {
+          setUploadedCV(memberToEdit.cvUrl);
         }
       } else {
         setError(`Could not find team member with ID: ${id}`);
@@ -137,6 +146,62 @@ const TeamMemberForm: React.FC = () => {
     // Clear uploaded image if we're using an external URL
     if (url && !url.startsWith('data:image/')) {
       setUploadedImage(null);
+    }
+  };
+
+  // Handle CV file upload
+  const handleCVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Check file type
+    if (file.type !== 'application/pdf') {
+      setError('Please select a PDF file for the CV');
+      return;
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('CV file size should be less than 5MB');
+      return;
+    }
+    
+    setIsUploadingCV(true);
+    
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setUploadedCV(base64);
+      setCvUrl(base64); // Also update the cvUrl field
+      setIsUploadingCV(false);
+    };
+    
+    reader.onerror = () => {
+      setError('Failed to read the CV file');
+      setIsUploadingCV(false);
+    };
+    
+    reader.readAsDataURL(file);
+  };
+  
+  // Clear uploaded CV
+  const handleClearCVUpload = () => {
+    setUploadedCV(null);
+    setCvUrl('');
+    if (cvFileInputRef.current) {
+      cvFileInputRef.current.value = '';
+    }
+  };
+  
+  // Handle CV URL input
+  const handleCVUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setCvUrl(url);
+    
+    // Clear uploaded CV if we're using an external URL
+    if (url && !url.startsWith('data:application/pdf')) {
+      setUploadedCV(null);
     }
   };
 
@@ -396,15 +461,68 @@ const TeamMemberForm: React.FC = () => {
           </div>
           
           <div className="form-group">
-            <label htmlFor="cvUrl">CV PDF URL or Upload Path (Optional)</label>
-            <input
-              type="text"
-              id="cvUrl"
-              value={cvUrl}
-              onChange={(e) => setCvUrl(e.target.value)}
-              placeholder="/assets/cv/name_cv.pdf or https://example.com/cv.pdf"
-            />
-            <p className="form-help-text">Path to uploaded PDF file or external URL</p>
+            <label>CV (Optional)</label>
+            
+            <div className="cv-upload-container">
+              <div className="cv-upload-options">
+                <div className="upload-option">
+                  <label htmlFor="cvUpload" className="upload-label">
+                    Upload CV (PDF)
+                  </label>
+                  <input
+                    type="file"
+                    id="cvUpload"
+                    ref={cvFileInputRef}
+                    onChange={handleCVUpload}
+                    accept="application/pdf"
+                    className="file-input"
+                  />
+                  {isUploadingCV && <span className="uploading-indicator">Uploading...</span>}
+                </div>
+                
+                <div className="upload-option">
+                  <label htmlFor="cvUrl">or Enter CV URL</label>
+                  <input
+                    type="text"
+                    id="cvUrl"
+                    value={cvUrl}
+                    onChange={handleCVUrlChange}
+                    placeholder="/assets/cv/name_cv.pdf or https://example.com/cv.pdf"
+                    disabled={!!uploadedCV}
+                  />
+                </div>
+              </div>
+              
+              {uploadedCV && (
+                <div className="uploaded-cv-preview">
+                  <div className="cv-preview-info">
+                    <span className="cv-file-icon">📄</span>
+                    <span className="cv-file-name">CV uploaded successfully</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClearCVUpload}
+                    className="clear-upload-button"
+                  >
+                    Clear Uploaded CV
+                  </button>
+                </div>
+              )}
+              
+              {cvUrl && !uploadedCV && cvUrl.endsWith('.pdf') && (
+                <div className="cv-link-preview">
+                  <span className="cv-file-icon">🔗</span>
+                  <a 
+                    href={cvUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="cv-link"
+                  >
+                    View linked CV
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="form-actions">

@@ -118,37 +118,40 @@ const TeamMemberDetail: React.FC = () => {
           <div className="team-member-contact">
             {member.email && (
               <div className="contact-item">
-                <span className="contact-icon">✉️</span>
+                <span className="contact-icon">✉️ </span>
                 <a href={`mailto:${member.email}`} className="team-member-email">
-                  {member.email}
+                  Mail
                 </a>
               </div>
             )}
             
             {member.github && (
               <div className="contact-item">
-                <span className="contact-icon">🐙</span>
+                <span className="contact-icon">🐙 </span>
                 <a 
                   href={`https://github.com/${member.github}`} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="team-member-github"
                 >
-                  github.com/{member.github}
+                  GitHub
                 </a>
               </div>
             )}
             
             {member.cvUrl && (
               <div className="contact-item">
-                <span className="contact-icon">📄</span>
+                <span className="contact-icon">📄 </span>
                 <a 
-                  href={member.cvUrl} 
+                  href={member.cvUrl.startsWith('data:') 
+                    ? URL.createObjectURL(dataURLtoBlob(member.cvUrl)) 
+                    : member.cvUrl}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="team-member-cv"
+                  download={member.cvUrl.startsWith('data:') ? `${member.name.replace(/\s+/g, '_')}_CV.pdf` : false}
                 >
-                  Curriculum Vitae (PDF)
+                  CV
                 </a>
               </div>
             )}
@@ -236,5 +239,28 @@ const TeamMemberDetail: React.FC = () => {
     </div>
   );
 };
+
+// Helper function to convert data URL to a Blob
+function dataURLtoBlob(dataURL: string): Blob {
+  // Split the data URL at the comma to separate the MIME type from the base64 data
+  const parts = dataURL.split(',');
+  const mime = parts[0].match(/:(.*?);/)?.[1] || 'application/octet-stream';
+  const base64 = parts[1];
+  
+  // Convert base64 to raw binary data
+  const binaryString = atob(base64);
+  
+  // Create an array buffer of the right size
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  
+  // Fill the array buffer with the binary data
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  
+  // Create a Blob from the array buffer with the correct MIME type
+  return new Blob([bytes], { type: mime });
+}
 
 export default TeamMemberDetail;

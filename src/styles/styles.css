@@ -895,12 +895,16 @@ header {
   margin-bottom: 20px;
 }
 
-.team-member-email {
-  color: #00AAFF;
+.team-member-email, 
+.team-member-github, 
+.team-member-cv {
+  color: #000000;
   text-decoration: none;
 }
 
-.team-member-email:hover {
+.team-member-email:hover, 
+.team-member-github:hover, 
+.team-member-cv:hover {
   text-decoration: underline;
 }
 
@@ -3176,4 +3180,117 @@ footer .nav-link.active {
   .publication-doi {
     margin-top: 10px;
   }
+}
+
+/* =========================================
+   CV UPLOAD STYLES
+   ========================================= */
+
+/* CV upload styling */
+.cv-upload-container {
+  margin-top: 10px;
+}
+
+.cv-upload-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upload-option {
+  margin-bottom: 10px;
+}
+
+.upload-label {
+  display: inline-block;
+  background-color: #f8f9fa;
+  color: #333;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+  transition: background-color 0.2s ease;
+}
+
+.upload-label:hover {
+  background-color: #e9ecef;
+}
+
+.file-input {
+  display: block;
+  margin-top: 5px;
+}
+
+.uploading-indicator {
+  display: inline-block;
+  margin-left: 10px;
+  color: #00AAFF;
+  font-style: italic;
+}
+
+.uploaded-cv-preview {
+  margin-top: 15px;
+  background-color: #f8fafb;
+  border: 1px solid #e0e5e9;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cv-preview-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cv-file-icon {
+  font-size: 1.5rem;
+}
+
+.cv-file-name {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.clear-upload-button {
+  background-color: #f1f1f1;
+  color: #666;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.clear-upload-button:hover {
+  background-color: #e5e5e5;
+}
+
+.cv-link-preview {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cv-link {
+  color: #00AAFF;
+  text-decoration: none;
+}
+
+.cv-link:hover {
+  text-decoration: underline;
+}
+
+/* Contact icon styling */
+.contact-icon {
+  margin-right: 10px;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
 }
