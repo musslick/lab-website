@@ -30,7 +30,7 @@ const Home: React.FC = () => {
             month: 'long', 
             day: 'numeric' 
         };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString('en-US', options);
     };
     
     return (
@@ -49,7 +49,7 @@ const Home: React.FC = () => {
             </section>
             
             <section className="featured-projects">
-                <h2>Featured Content</h2>
+                <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '2rem' }}>Featured Content</h2>
                 <div className="projects-grid">
                     {/* News Card */}
                     {featuredNewsItem && (
@@ -119,7 +119,7 @@ const Home: React.FC = () => {
                 </div>
                 
                 {/* Update see all links container */}
-                <div className="see-all-links-container">
+                <div className="see-all-links-container" style={{ marginTop: '2rem' }}>
                     <Link to="/feed" className="see-more-link">
                         See all news <span className="arrow-icon">→</span>
                     </Link>
@@ -132,31 +132,80 @@ const Home: React.FC = () => {
                 </div>
             </section>
             
-            {/* Team Picture Section */}
-            <section className="team-picture-section">
-                <h2>Our Team</h2>
-                <Link to="/team" className="team-picture-link">
-                    <div className="team-picture-container">
-                        <div className="team-picture-overlay" style={{ backgroundColor: 'rgba(0, 170, 255, 0.3)' }}></div>
-                        <img 
-                            src={teamImage} 
-                            alt="Our Research Team" 
-                            className="team-picture" 
-                            style={{ 
-                                filter: 'grayscale(100%)',
-                                objectFit: 'cover',
-                                width: '100%',
-                                height: '100%',
-                                objectPosition: teamImagePosition // Apply the position from context
-                            }}
-                        />
+            {/* Team Picture Section - Updated to include mission statement */}
+            <section className="team-picture-section" style={{ marginTop: '4rem' }}>
+                <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '2rem' }}>Our Team</h2>
+                <div className="team-mission-container" style={{ 
+                    display: 'flex', 
+                    gap: '1.5rem',
+                    alignItems: 'stretch',
+                    marginBottom: '2rem',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap' // Allow items to wrap to next line on smaller screens
+                }}>
+                    {/* Team Image - styled with responsive width */}
+                    <Link to="/team" className="team-picture-link" style={{ 
+                        flex: '1 1 400px', // Grow, shrink, and basis of 400px
+                        minWidth: '280px', // Minimum width before wrapping
+                        display: 'block',
+                        minHeight: '400px'
+                    }}>
+                        <div className="team-picture-container" style={{ 
+                            height: '100%',
+                            overflow: 'hidden',
+                            position: 'relative'
+                        }}>
+                            <div className="team-picture-overlay" style={{ 
+                                backgroundColor: 'rgba(0, 170, 255, 0.3)',
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                zIndex: 1
+                            }}></div>
+                            <img 
+                                src={teamImage} 
+                                alt="Our Research Team" 
+                                className="team-picture" 
+                                style={{ 
+                                    objectFit: 'cover',
+                                    width: '100%',
+                                    height: '100%',
+                                    objectPosition: teamImagePosition,
+                                    display: 'block',
+                                    filter: 'none'
+                                }}
+                            />
+                        </div>
+                    </Link>
+                    
+                    {/* Mission Statement - without card styling, responsive width */}
+                    <div className="mission-statement" style={{ 
+                        flex: '1 1 400px', // Grow, shrink, and basis of 400px
+                        minWidth: '280px', // Minimum width before wrapping
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        minHeight: '400px'
+                    }}>
+                        <h3 style={{ marginTop: '0', color: '#00AAFF' }}>Our Mission</h3>
+                        <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
+                            Our lab is dedicated to uncovering the fundamental computational principles that underlie the capabilities and limitations of human cognition. Ironically, as human scientists, we are constrained by the very cognitive limitations we aim to understand: The complexity of the brain, its behaviors, and its interactions with the environment is often too vast for human minds to fully grasp.
+                        </p>
+                        <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
+                            To overcome this, we harness artificial intelligence and other automated scientific discovery techniques to efficiently explore spaces of experiments, models, and theories that exceed our cognitive reach. Our AI-driven systems are designed to autonomously investigate brain function and behavior, offering insights and perspectives that might otherwise remain hidden for human scientists.
+                        </p>
+                        <p style={{ lineHeight: '1.7', fontSize: '1rem', marginBottom: '0' }}>
+                            By partnering with intelligent systems, we aim to gain an integrative understanding of the capabilities and limitations of mind and brain.
+                        </p>
                     </div>
-                </Link>
+                </div>
             </section>
             
-            <section className="collaborators">
+            <section className="collaborators" style={{ marginTop: '4rem', marginBottom: '1rem' }}>
                 <div className="collaborators-header">
-                    <h2>Our Collaborators</h2>
+                    <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '1rem' }}>Our Collaborators</h2>
                     {isAuthenticated && (
                         <Link to="/admin/collaborators" className="add-button">
                             Manage Collaborators
@@ -193,9 +242,9 @@ const Home: React.FC = () => {
             </section>
             
             {/* New "Our Funding" section */}
-            <section className="collaborators funding-section">
+            <section className="collaborators funding-section" style={{ marginTop: '4rem', marginBottom: '1rem' }}>
                 <div className="collaborators-header">
-                    <h2>Our Funding</h2>
+                    <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '1rem' }}>Our Funding</h2>
                     {isAuthenticated && (
                         <Link to="/admin/funding" className="add-button">
                             Manage Funding

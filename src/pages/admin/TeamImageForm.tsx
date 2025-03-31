@@ -5,18 +5,13 @@ import Layout from '../../components/Layout';
 
 const TeamImageForm: React.FC = () => {
   const navigate = useNavigate();
-  const { getTeamImage, updateTeamImage, getTeamImagePosition, updateTeamImagePosition } = useContent();
+  const { getTeamImage, updateTeamImage } = useContent();
   
   // Form state
   const [imageUrl, setImageUrl] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [currentImage, setCurrentImage] = useState('');
-  const [imagePosition, setImagePosition] = useState('center');
-  
-  // Position controls
-  const [horizontalPosition, setHorizontalPosition] = useState(50);
-  const [verticalPosition, setVerticalPosition] = useState(50);
   
   // UI state
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -25,28 +20,11 @@ const TeamImageForm: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   
-  // Load current team image and position on component mount
+  // Load current team image on component mount
   useEffect(() => {
     const teamImage = getTeamImage();
-    const position = getTeamImagePosition();
     setCurrentImage(teamImage);
-    
-    // Parse position values
-    if (position && position !== 'center') {
-      const positionParts = position.split(' ');
-      if (positionParts.length === 2) {
-        const horizontal = parseInt(positionParts[0]);
-        const vertical = parseInt(positionParts[1]);
-        
-        if (!isNaN(horizontal) && !isNaN(vertical)) {
-          setHorizontalPosition(horizontal);
-          setVerticalPosition(vertical);
-        }
-      }
-    }
-    
-    setImagePosition(position || 'center');
-  }, [getTeamImage, getTeamImagePosition]);
+  }, [getTeamImage]);
   
   // Handle image file upload
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,38 +79,9 @@ const TeamImageForm: React.FC = () => {
     }
   };
   
-  // Update position state when sliders change
-  const handlePositionChange = () => {
-    const newPosition = `${horizontalPosition}% ${verticalPosition}%`;
-    setImagePosition(newPosition);
-  };
-  
-  // Update horizontal position
-  const handleHorizontalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHorizontalPosition(parseInt(e.target.value));
-    handlePositionChange();
-  };
-  
-  // Update vertical position
-  const handleVerticalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVerticalPosition(parseInt(e.target.value));
-    handlePositionChange();
-  };
-  
-  // Effect to update position when either slider changes
-  useEffect(() => {
-    handlePositionChange();
-  }, [horizontalPosition, verticalPosition]);
-  
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate - either URL or uploaded image must be provided for image update
-    if ((imageUrl || uploadedImage) && !imagePosition) {
-      setError('Please set the image position');
-      return;
-    }
     
     // Clear any previous errors
     setError(null);
@@ -143,15 +92,14 @@ const TeamImageForm: React.FC = () => {
         // Update with either uploaded image or URL
         const newImageSource = uploadedImage || imageUrl;
         updateTeamImage(newImageSource);
+        
+        setFormSubmitted(true);
+        setTimeout(() => {
+          navigate('/admin');
+        }, 1500);
+      } else {
+        setError('Please provide an image URL or upload an image');
       }
-      
-      // Always update position
-      updateTeamImagePosition(imagePosition);
-      
-      setFormSubmitted(true);
-      setTimeout(() => {
-        navigate('/admin');
-      }, 1500);
     } catch (error) {
       console.error("Error updating team image:", error);
       setError("An error occurred while updating the team image.");
@@ -182,13 +130,24 @@ const TeamImageForm: React.FC = () => {
             ref={previewRef} 
             className="image-position-preview"
             style={{
-              maxWidth: '100%',
+              width: '100%',
               maxHeight: '300px',
               overflow: 'hidden',
               border: '1px solid #ddd',
-              borderRadius: '4px'
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+              position: 'relative'
             }}
           >
+            <div style={{ 
+              backgroundColor: 'rgba(0, 170, 255, 0.3)',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 1
+            }}></div>
             <img 
               src={uploadedImage || imageUrl || currentImage} 
               alt="Team preview" 
@@ -196,7 +155,7 @@ const TeamImageForm: React.FC = () => {
                 width: '100%',
                 height: '300px',
                 objectFit: 'cover',
-                objectPosition: imagePosition
+                display: 'block'
               }}
               onError={(e) => {
                 (e.target as HTMLImageElement).src = 'https://via.placeholder.com/800x400?text=Team+Image+Not+Found';
@@ -250,50 +209,6 @@ const TeamImageForm: React.FC = () => {
                   </button>
                 </div>
               )}
-            </div>
-          </div>
-          
-          {/* Image Position Controls */}
-          <div className="form-group">
-            <label>Image Position</label>
-            <p className="form-help-text">Adjust sliders to control which part of the image is visible</p>
-            
-            <div className="position-controls">
-              <div className="slider-control">
-                <label htmlFor="horizontalPosition">Horizontal Position: {horizontalPosition}%</label>
-                <input
-                  type="range"
-                  id="horizontalPosition"
-                  min="0"
-                  max="100"
-                  value={horizontalPosition}
-                  onChange={handleHorizontalChange}
-                  className="position-slider"
-                />
-                <div className="slider-labels">
-                  <span>Left</span>
-                  <span>Center</span>
-                  <span>Right</span>
-                </div>
-              </div>
-              
-              <div className="slider-control">
-                <label htmlFor="verticalPosition">Vertical Position: {verticalPosition}%</label>
-                <input
-                  type="range"
-                  id="verticalPosition"
-                  min="0"
-                  max="100"
-                  value={verticalPosition}
-                  onChange={handleVerticalChange}
-                  className="position-slider"
-                />
-                <div className="slider-labels">
-                  <span>Top</span>
-                  <span>Center</span>
-                  <span>Bottom</span>
-                </div>
-              </div>
             </div>
           </div>
           
