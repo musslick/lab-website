@@ -21,7 +21,8 @@ interface ContentContextType {
   updateProject: (updatedProject: Project) => void;
   addProject: (newProject: Project) => Project;
   deleteProject: (id: string) => void;
-  reorderProjects: (projectIds: string[]) => void; // New method to reorder projects
+  reorderProjects: (projectIds: string[]) => void;
+  reorderTeamMembers: (teamMemberIds: string[]) => void; // New method for reordering team members
   updateTeamMember: (updatedMember: TeamMember) => void;
   addTeamMember: (newMember: TeamMember) => TeamMember;
   deleteTeamMember: (id: string) => void;
@@ -86,6 +87,7 @@ export const ContentContext = createContext<ContentContextType>({
   addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }),
   deleteProject: () => {},
   reorderProjects: () => {}, // Default implementation for reorderProjects
+  reorderTeamMembers: () => {}, // Add default implementation
   updateTeamMember: () => {},
   addTeamMember: () => ({ id: '', name: '', role: '', bio: '', imageUrl: '', color: '', projects: [] }),
   deleteTeamMember: () => {},
@@ -634,6 +636,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     saveProjects(reorderedProjects);
   };
 
+  const reorderTeamMembers = (teamMemberIds: string[]) => {
+    const reorderedTeamMembers = teamMemberIds.map(id => teamMembers.find(member => member.id === id)).filter(Boolean) as TeamMember[];
+    saveTeamMembers(reorderedTeamMembers);
+  };
+
   // Team member management functions
   const updateTeamMember = (updatedMember: TeamMember) => {
     const previousMember = teamMembers.find(m => m.id === updatedMember.id);
@@ -997,6 +1004,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       addProject,
       deleteProject,
       reorderProjects,
+      reorderTeamMembers,
       updateTeamMember,
       addTeamMember,
       deleteTeamMember,

@@ -170,6 +170,17 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     setTeamMembers(prevMembers => prevMembers.filter(member => member.id !== id));
   };
 
+  // New method: reorderTeamMembers
+  const reorderTeamMembers = (teamMemberIds: string[]) => {
+    // Create a new array of team members in the specified order
+    const orderedMembers = teamMemberIds.map(id => 
+      teamMembers.find(member => member.id === id)
+    ).filter((member): member is TeamMember => !!member);
+    
+    // Update the team members state
+    setTeamMembers(orderedMembers);
+  };
+
   // NewsItem operations
   const updateNewsItem = (updatedNewsItem: NewsItem) => {
     setNewsItems(prevNewsItems => 
@@ -424,6 +435,7 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       updateTeamMember,
       addTeamMember,
       deleteTeamMember,
+      reorderTeamMembers,
       updateNewsItem,
       addNewsItem,
       deleteNewsItem,
