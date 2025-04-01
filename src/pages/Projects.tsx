@@ -8,6 +8,7 @@ const Projects: React.FC = () => {
   const { projects } = useContent();
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>('All');
   const [selectedMethod, setSelectedMethod] = useState<string>('All');
+  const [keywordSearch, setKeywordSearch] = useState<string>('');
   
   // Get unique disciplines
   const allDisciplines = projects.flatMap(project => 
@@ -21,14 +22,40 @@ const Projects: React.FC = () => {
   const allMethods = projects.flatMap(project => project.topics || []);
   const uniqueMethods = ['All', ...Array.from(new Set(allMethods))];
 
-  // Filter projects by selected discipline and method
+  // Filter projects by selected discipline, method, and keyword search
   const filteredProjects = projects
     .filter(project => 
       selectedDiscipline === 'All' || 
       (typeof project.category === 'string' && project.category === selectedDiscipline) ||
       (Array.isArray(project.category) && project.category.includes(selectedDiscipline))
     )
-    .filter(project => selectedMethod === 'All' || project.topics?.includes(selectedMethod));
+    .filter(project => selectedMethod === 'All' || project.topics?.includes(selectedMethod))
+    .filter(project => {
+      if (!keywordSearch.trim()) return true;
+      const searchTerms = keywordSearch.toLowerCase().trim().split(/\s+/);
+      const projectText = `${project.title} ${project.description}`.toLowerCase();
+      
+      // Project must match at least one search term
+      return searchTerms.some(term => projectText.includes(term));
+    });
+
+  // Handle keyword search input change
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeywordSearch(e.target.value);
+  };
+
+  // Handle pressing Enter in the search field
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Search is automatically applied as the user types
+    }
+  };
+
+  // Clear search
+  const clearSearch = () => {
+    setKeywordSearch('');
+  };
 
   return (
     <div className="projects-page">
@@ -65,6 +92,29 @@ const Projects: React.FC = () => {
                 {method}
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="tag-filter">
+          <h3>Search Research Projects</h3>
+          <div className="search-container">
+            <input
+              type="text"
+              value={keywordSearch}
+              onChange={handleKeywordChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Search titles, descriptions, keywords..."
+              className="keyword-search"
+            />
+            {keywordSearch && (
+              <button 
+                onClick={clearSearch}
+                className="clear-search-button"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
           </div>
         </div>
       </div>

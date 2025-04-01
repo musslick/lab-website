@@ -9,6 +9,7 @@ const Publications: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<string>('All');
   const [selectedType, setSelectedType] = useState<string>('All');
   const [selectedProject, setSelectedProject] = useState<string>('All');
+  const [keywordSearch, setKeywordSearch] = useState<string>('');
   
   // Get unique years
   const years = Array.from(new Set(publications.map(pub => pub.year.toString())));
@@ -27,7 +28,27 @@ const Publications: React.FC = () => {
     const matchesYear = selectedYear === 'All' || publication.year.toString() === selectedYear;
     const matchesType = selectedType === 'All' || publication.type === selectedType;
     const matchesProject = selectedProject === 'All' || publication.projectId === selectedProject;
-    return matchesYear && matchesType && matchesProject;
+    
+    // Enhanced search: search across title, abstract, authors, journal, and keywords
+    const matchesSearch = !keywordSearch.trim() || (() => {
+      const searchTerms = keywordSearch.toLowerCase().trim().split(/\s+/);
+      
+      // Create a combined text of all relevant fields for search
+      const titleText = publication.title.toLowerCase();
+      const abstractText = publication.abstract?.toLowerCase() || '';
+      const authorText = publication.authors.join(' ').toLowerCase();
+      const journalText = publication.journal.toLowerCase();
+      const keywordsText = publication.keywords?.join(' ').toLowerCase() || '';
+      const doiText = publication.doi?.toLowerCase() || '';
+      
+      // Combine all text fields for comprehensive search
+      const fullText = `${titleText} ${abstractText} ${authorText} ${journalText} ${keywordsText} ${doiText}`;
+      
+      // Match if any search term is found in any field
+      return searchTerms.some(term => fullText.includes(term));
+    })();
+    
+    return matchesYear && matchesType && matchesProject && matchesSearch;
   });
   
   // Sort publications by year (newest first)
@@ -37,6 +58,16 @@ const Publications: React.FC = () => {
   const getProjectTitle = (projectId: string): string => {
     const project = projects.find(p => p.id === projectId);
     return project ? project.title : '';
+  };
+
+  // Handle keyword search input change
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeywordSearch(e.target.value);
+  };
+
+  // Clear search
+  const clearSearch = () => {
+    setKeywordSearch('');
   };
 
   return (
@@ -111,6 +142,28 @@ const Publications: React.FC = () => {
             </div>
           </div>
         )}
+
+        <div className="tag-filter">
+          <h3>Search Publications</h3>
+          <div className="search-container">
+            <input
+              type="text"
+              value={keywordSearch}
+              onChange={handleKeywordChange}
+              placeholder="Search titles, authors, keywords, etc..."
+              className="keyword-search"
+            />
+            {keywordSearch && (
+              <button 
+                onClick={clearSearch}
+                className="clear-search-button"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
       </div>
       
       <div className="publications-list">

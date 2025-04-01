@@ -3423,3 +3423,51 @@ footer .nav-link.active {
   justify-content: center;
   width: 24px;
 }
+
+/* Keyword search styling */
+.search-container {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.keyword-search {
+  width: 100%;
+  padding: 8px 30px 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #333;
+  background-color: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.keyword-search:focus {
+  outline: none;
+  border-color: #00AAFF;
+  box-shadow: 0 0 0 2px rgba(0, 170, 255, 0.2);
+  background-color: #fff;
+}
+
+.clear-search-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.clear-search-button:hover {
+  color: #333;
+}
