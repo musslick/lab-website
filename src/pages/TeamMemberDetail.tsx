@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
+import { TopNav, Footer } from '../components/Components';
 import '../styles/styles.css';
 
 const TeamMemberDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { getTeamMemberById, getProjectById, publications } = useContent();
+  const { getTeamMemberById, getProjectById, publications, software } = useContent();
   const [member, setMember] = useState(id ? getTeamMemberById(id) : undefined);
   const [memberProjects, setMemberProjects] = useState<any[]>([]);
   const [memberPublications, setMemberPublications] = useState<any[]>([]);
+  const [memberSoftware, setMemberSoftware] = useState<any[]>([]);
   const [publicationsByYear, setPublicationsByYear] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
@@ -52,6 +54,12 @@ const TeamMemberDetail: React.FC = () => {
           }, {} as Record<string, typeof sortedPublications>);
           
           setPublicationsByYear(publicationsByYear);
+          
+          // Find software developed by this team member
+          const relatedSoftware = software.filter(sw => 
+            sw.developers.includes(updatedMember.name)
+          );
+          setMemberSoftware(relatedSoftware);
         }
       }
     };
@@ -76,7 +84,7 @@ const TeamMemberDetail: React.FC = () => {
       window.removeEventListener('project-updated', handleProjectUpdate);
       window.removeEventListener('publication-updated', handlePublicationUpdate);
     };
-  }, [id, getTeamMemberById, getProjectById, publications]);
+  }, [id, getTeamMemberById, getProjectById, publications, software]);
 
   if (!member) {
     return <div>Team member not found</div>;
@@ -84,6 +92,7 @@ const TeamMemberDetail: React.FC = () => {
 
   return (
     <div className="team-member-detail-page">
+      <TopNav />
       <div className="team-member-header">
         <div
           className="team-member-color-header"
@@ -186,56 +195,139 @@ const TeamMemberDetail: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Publications section */}
-      {Object.keys(publicationsByYear).length > 0 && (
-        <div className="team-member-publications-section">
-          <h2>Publications</h2>
-          <div className="publications-by-year">
-            {Object.entries(publicationsByYear)
-              .sort(([yearA], [yearB]) => parseInt(yearB) - parseInt(yearA))
-              .map(([year, yearPublications]) => (
-                <div key={year} className="publication-year-group">
-                  <h3 className="year-heading">{year}</h3>
-                  <div className="publications-list">
-                    {yearPublications.map((publication) => (
-                      <div key={publication.id} className="publication-item">
-                        <h4 className="publication-title">
-                          {publication.url ? (
-                            <a 
-                              href={publication.url} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                            >
-                              {publication.title}
-                            </a>
-                          ) : (
-                            publication.title
-                          )}
-                        </h4>
-                        <p className="publication-authors">{publication.authors.join(', ')}</p>
-                        <p className="publication-journal">
-                          <em>{publication.journal}</em>, {publication.year}
-                        </p>
-                        {publication.doi && (
-                          <p className="publication-doi">
-                            DOI: <a 
-                              href={`https://doi.org/${publication.doi}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {publication.doi}
-                            </a>
-                          </p>
-                        )}
-                      </div>
+      
+      {/* Software section - updated to match existing software design */}
+      {memberSoftware.length > 0 && (
+        <div className="team-member-section">
+          <h2>Software</h2>
+          <div className="software-grid">
+            {memberSoftware.map(sw => (
+              <div key={sw.id} className="software-card">
+                <div className="software-header">
+                  <h3 className="software-name">{sw.name}</h3>
+                  {sw.featured && <span className="software-featured">Featured</span>}
+                </div>
+                
+                <p className="software-description">{sw.description}</p>
+                
+                {sw.technologies && sw.technologies.length > 0 && (
+                  <div className="software-tech-tags">
+                    {sw.technologies.map((tech: string) => (
+                      <span key={tech} className="software-tech-tag">{tech}</span>
                     ))}
                   </div>
+                )}
+                
+                {sw.developers && sw.developers.length > 0 && sw.developers.length > 1 && (
+                  <p className="software-developed-by">
+                    Co-developed with: {sw.developers.filter((dev: string) => dev !== member.name).join(', ')}
+                  </p>
+                )}
+                
+                <div className="software-meta">
+                  {sw.license && (
+                    <span className="software-license">{sw.license}</span>
+                  )}
+                  {sw.releaseDate && (
+                    <p className="software-date">
+                      Released: {new Date(sw.releaseDate).toLocaleDateString()}
+                    </p>
+                  )}
+                  {sw.lastUpdate && (
+                    <p className="software-date">
+                      Updated: {new Date(sw.lastUpdate).toLocaleDateString()}
+                    </p>
+                  )}
                 </div>
-              ))}
+                
+                <div className="software-links">
+                  <a href={sw.repoUrl} target="_blank" rel="noopener noreferrer" className="software-link repo-link">
+                    Repository
+                  </a>
+                  {sw.demoUrl && (
+                    <a href={sw.demoUrl} target="_blank" rel="noopener noreferrer" className="software-link demo-link">
+                      Demo
+                    </a>
+                  )}
+                  {sw.documentationUrl && (
+                    <a href={sw.documentationUrl} target="_blank" rel="noopener noreferrer" className="software-link docs-link">
+                      Docs
+                    </a>
+                  )}
+                </div>
+                
+                {sw.projectId && (
+                  <div className="software-related-project">
+                    <Link to={`/projects/${sw.projectId}`} className="project-link">
+                      {getProjectById(sw.projectId)?.title || 'Related Project'}
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
+
+      {/* Publications section - updated to match existing publications design */}
+      {memberPublications.length > 0 && (
+        <div className="team-member-section">
+          <h2>Publications</h2>
+          <div className="publications-list">
+            {memberPublications.map((publication) => (
+              <div key={publication.id} className="publication-item">
+                <h4 className="publication-title">
+                  {publication.url ? (
+                    <a 
+                      href={publication.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      {publication.title}
+                    </a>
+                  ) : (
+                    publication.title
+                  )}
+                </h4>
+                <p className="publication-authors">{publication.authors.join(', ')}</p>
+                <div className="publication-meta">
+                  <span className="publication-journal">
+                    <em>{publication.journal}</em>
+                  </span>
+                  <span className="publication-year">{publication.year}</span>
+                  {publication.type && (
+                    <span className="publication-type">{publication.type}</span>
+                  )}
+                </div>
+                {publication.abstract && (
+                  <div className="publication-abstract">
+                    <p>{publication.abstract}</p>
+                  </div>
+                )}
+                {publication.projectId && (
+                  <p className="publication-project">
+                    Related project: <Link to={`/projects/${publication.projectId}`}>
+                      {getProjectById(publication.projectId)?.title || 'View project'}
+                    </Link>
+                  </p>
+                )}
+                {publication.doi && (
+                  <p className="publication-doi">
+                    DOI: <a 
+                      href={`https://doi.org/${publication.doi}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {publication.doi}
+                    </a>
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <Footer />
     </div>
   );
 };

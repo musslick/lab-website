@@ -23,10 +23,11 @@ const renderDisciplines = (disciplines: string | string[]) => {
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { projects, teamMembers, publications } = useContent();
+  const { projects, teamMembers, publications, software } = useContent();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [projectTeam, setProjectTeam] = useState<any[]>([]);
+  const [projectSoftware, setProjectSoftware] = useState<any[]>([]);
   
   // Store the colors for creating dynamic gradients
   const [topicColors, setTopicColors] = useState<string[]>([]);
@@ -78,10 +79,14 @@ const ProjectDetails: React.FC = () => {
         .filter(Boolean); // Remove undefined entries
         
       setProjectTeam(team);
+      
+      // Find software related to this project
+      const relatedSoftware = software.filter(sw => sw.projectId === id);
+      setProjectSoftware(relatedSoftware);
     }
     
     setLoading(false);
-  }, [id, projects, teamMembers, baseColor]);
+  }, [id, projects, teamMembers, software, baseColor]);
 
   // Handle mouse movement over the header
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -243,52 +248,119 @@ const ProjectDetails: React.FC = () => {
           </div>
         )}
         
-        {/* Publications section with the same structure as TeamMemberDetail */}
-        {projectPublications.length > 0 && (
-          <div className="project-publications-section">
-            <h2>Publications</h2>
-            <div className="publications-by-year">
-              {Object.entries(publicationsByYear)
-                .sort(([yearA], [yearB]) => parseInt(yearB) - parseInt(yearA))
-                .map(([year, yearPublications]) => (
-                  <div key={year} className="publication-year-group">
-                    <h3 className="year-heading">{year}</h3>
-                    <div className="publications-list">
-                      {yearPublications.map((publication) => (
-                        <div key={publication.id} className="publication-item">
-                          <h4 className="publication-title">
-                            {publication.url ? (
-                              <a 
-                                href={publication.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                              >
-                                {publication.title}
-                              </a>
-                            ) : (
-                              publication.title
-                            )}
-                          </h4>
-                          <p className="publication-authors">{publication.authors.join(', ')}</p>
-                          <p className="publication-journal">
-                            <em>{publication.journal}</em>, {publication.year}
-                          </p>
-                          {publication.doi && (
-                            <p className="publication-doi">
-                              DOI: <a 
-                                href={`https://doi.org/${publication.doi}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {publication.doi}
-                              </a>
-                            </p>
-                          )}
-                        </div>
+        {/* Software section - updated to match existing software design */}
+        {projectSoftware.length > 0 && (
+          <div className="project-section">
+            <h2>Software</h2>
+            <div className="software-grid">
+              {projectSoftware.map(sw => (
+                <div key={sw.id} className="software-card">
+                  <div className="software-header">
+                    <h3 className="software-name">{sw.name}</h3>
+                    {sw.featured && <span className="software-featured">Featured</span>}
+                  </div>
+                  
+                  <p className="software-description">{sw.description}</p>
+                  
+                  {sw.technologies && sw.technologies.length > 0 && (
+                    <div className="software-tech-tags">
+                      {sw.technologies.map((tech: string) => (
+                        <span key={tech} className="software-tech-tag">{tech}</span>
                       ))}
                     </div>
+                  )}
+                  
+                  {sw.developers && sw.developers.length > 0 && (
+                    <p className="software-developed-by">
+                      Developed by: {sw.developers.join(', ')}
+                    </p>
+                  )}
+                  
+                  <div className="software-meta">
+                    {sw.license && (
+                      <span className="software-license">{sw.license}</span>
+                    )}
+                    {sw.releaseDate && (
+                      <p className="software-date">
+                        Released: {new Date(sw.releaseDate).toLocaleDateString()}
+                      </p>
+                    )}
+                    {sw.lastUpdate && (
+                      <p className="software-date">
+                        Updated: {new Date(sw.lastUpdate).toLocaleDateString()}
+                      </p>
+                    )}
                   </div>
-                ))}
+                  
+                  <div className="software-links">
+                    <a href={sw.repoUrl} target="_blank" rel="noopener noreferrer" className="software-link repo-link">
+                      Repository
+                    </a>
+                    {sw.demoUrl && (
+                      <a href={sw.demoUrl} target="_blank" rel="noopener noreferrer" className="software-link demo-link">
+                        Demo
+                      </a>
+                    )}
+                    {sw.documentationUrl && (
+                      <a href={sw.documentationUrl} target="_blank" rel="noopener noreferrer" className="software-link docs-link">
+                        Docs
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Publications section - updated to match existing publications design */}
+        {projectPublications.length > 0 && (
+          <div className="project-section">
+            <h2>Publications</h2>
+            <div className="publications-list">
+              {projectPublications.map((publication) => (
+                <div key={publication.id} className="publication-item">
+                  <h4 className="publication-title">
+                    {publication.url ? (
+                      <a 
+                        href={publication.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        {publication.title}
+                      </a>
+                    ) : (
+                      publication.title
+                    )}
+                  </h4>
+                  <p className="publication-authors">{publication.authors.join(', ')}</p>
+                  <div className="publication-meta">
+                    <span className="publication-journal">
+                      <em>{publication.journal}</em>
+                    </span>
+                    <span className="publication-year">{publication.year}</span>
+                    {publication.type && (
+                      <span className="publication-type">{publication.type}</span>
+                    )}
+                  </div>
+                  {publication.abstract && (
+                    <div className="publication-abstract">
+                      <p>{publication.abstract}</p>
+                    </div>
+                  )}
+                  {publication.doi && (
+                    <p className="publication-doi">
+                      DOI: <a 
+                        href={`https://doi.org/${publication.doi}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {publication.doi}
+                      </a>
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}
