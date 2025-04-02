@@ -77,11 +77,6 @@ const TopNav: React.FC = () => {
                             Team
                         </NavLink>
                     </li>
-                    <li>
-                        <NavLink to="/contact" className={({isActive}) => isActive ? 'active' : ''}>
-                            Contact
-                        </NavLink>
-                    </li>
                 </ul>
             </div>
         </nav>
@@ -450,21 +445,12 @@ const Filter: React.FC<FilterProps> = ({ categories, onFilterChange }) => {
 // Footer Component
 // ===============================
 const Footer: React.FC = () => {
-    const { isAuthenticated } = useAuth();
-    
     return (
         <footer>
             <div>
                 <p>&copy; {new Date().getFullYear()} Automated Scientific Discovery of Mind and Brain. All rights reserved.</p>
                 <div>
-                    <a href="https://twitter.com/yourlab" target="_blank" rel="noopener noreferrer">Twitter</a>
-                    <a href="https://facebook.com/yourlab" target="_blank" rel="noopener noreferrer">Facebook</a>
-                    <a href="https://linkedin.com/company/yourlab" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                    {isAuthenticated ? (
-                        <NavLink to="/admin">Admin Dashboard</NavLink>
-                    ) : (
-                        <NavLink to="/admin/login">Admin Login</NavLink>
-                    )}
+                    <NavLink to="/contact">Contact</NavLink>
                 </div>
             </div>
         </footer>
