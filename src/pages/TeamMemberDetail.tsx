@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
-import { TopNav, Footer } from '../components/Components';
 import '../styles/styles.css';
 
 const TeamMemberDetail: React.FC = () => {
@@ -92,7 +91,6 @@ const TeamMemberDetail: React.FC = () => {
 
   return (
     <div className="team-member-detail-page">
-      <TopNav />
       <div className="team-member-header">
         <div
           className="team-member-color-header"
@@ -327,7 +325,6 @@ const TeamMemberDetail: React.FC = () => {
           </div>
         </div>
       )}
-      <Footer />
     </div>
   );
 };
