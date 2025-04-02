@@ -17,6 +17,9 @@ const TeamMemberForm: React.FC = () => {
   const [role, setRole] = useState('');
   const [bio, setBio] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isResizingImage, setIsResizingImage] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const LAB_COLOR = '#00AAFF';
   const [memberProjects, setMemberProjects] = useState<string[]>([]);
   const [email, setEmail] = useState('');
@@ -93,8 +96,111 @@ const TeamMemberForm: React.FC = () => {
     setMemberProjects(selected);
   };
   
+  // Maximum dimensions for team member images - increasing to allow larger images
+  const MAX_IMAGE_WIDTH = 800;  // Increased from 400 to 800
+  const MAX_IMAGE_HEIGHT = 800; // Increased from 400 to 800
+  
+  // Function to resize large images - Adding clearer console logs and improved error handling
+  const resizeImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      setIsResizingImage(true);
+      console.log(`Processing image: ${file.name}, size: ${(file.size / 1024).toFixed(2)}KB`);
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (!e.target?.result) {
+          setIsResizingImage(false);
+          reject(new Error('Failed to read image file'));
+          return;
+        }
+        
+        const img = new Image();
+        img.onload = () => {
+          console.log(`Original dimensions: ${img.width}x${img.height}`);
+          
+          // Check if resize is needed
+          if (img.width <= MAX_IMAGE_WIDTH && img.height <= MAX_IMAGE_HEIGHT && file.size <= 1024 * 1024) {
+            console.log('Image already within acceptable dimensions and size, no resize needed');
+            setIsResizingImage(false);
+            resolve(e.target?.result as string);
+            return;
+          }
+          
+          // Calculate new dimensions while maintaining aspect ratio
+          let newWidth = img.width;
+          let newHeight = img.height;
+          
+          if (newWidth > MAX_IMAGE_WIDTH) {
+            newHeight = Math.round((newHeight * MAX_IMAGE_WIDTH) / newWidth);
+            newWidth = MAX_IMAGE_WIDTH;
+          }
+          
+          if (newHeight > MAX_IMAGE_HEIGHT) {
+            newWidth = Math.round((newWidth * MAX_IMAGE_HEIGHT) / newHeight);
+            newHeight = MAX_IMAGE_HEIGHT;
+          }
+          
+          console.log(`Resizing to: ${newWidth}x${newHeight}`);
+          
+          // Resize using canvas
+          const canvas = canvasRef.current;
+          if (!canvas) {
+            setIsResizingImage(false);
+            reject(new Error('Canvas not available'));
+            return;
+          }
+          
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            setIsResizingImage(false);
+            reject(new Error('Canvas context not available'));
+            return;
+          }
+          
+          ctx.drawImage(img, 0, 0, newWidth, newHeight);
+          
+          // Convert to base64
+          try {
+            // Try to maintain original format when possible
+            const format = file.type.includes('png') ? 'image/png' : 'image/jpeg';
+            const quality = format === 'image/png' ? 1 : 0.85; // Lower quality for JPEGs to reduce size
+            const resizedImage = canvas.toDataURL(format, quality);
+            console.log('Image successfully resized');
+            setIsResizingImage(false);
+            resolve(resizedImage);
+          } catch (err) {
+            console.error('Error converting to data URL, falling back to JPEG', err);
+            // Fallback to JPEG if there's an error
+            const resizedImage = canvas.toDataURL('image/jpeg', 0.85);
+            setIsResizingImage(false);
+            resolve(resizedImage);
+          }
+        };
+        
+        img.onerror = () => {
+          console.error('Failed to load image for resizing');
+          setIsResizingImage(false);
+          reject(new Error('Failed to load image'));
+        };
+        
+        img.src = e.target.result as string;
+      };
+      
+      reader.onerror = () => {
+        console.error('Failed to read file for resizing');
+        setIsResizingImage(false);
+        reject(new Error('Failed to read file'));
+      };
+      
+      reader.readAsDataURL(file);
+    });
+  };
+
   // Handle image file upload
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
@@ -104,29 +210,27 @@ const TeamMemberForm: React.FC = () => {
       return;
     }
     
-    // Check file size (max 1MB)
+    // No longer rejecting large files, just notify user if resizing will happen
     if (file.size > 1024 * 1024) {
-      setError('Image file size should be less than 1MB');
-      return;
+      console.log(`Large image detected (${(file.size / (1024 * 1024)).toFixed(2)}MB), will resize automatically`);
     }
     
     setIsUploading(true);
+    setImageFile(file);
+    setError(null); // Clear any previous errors
     
-    // Convert to base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setUploadedImage(base64);
-      setImageUrl(base64); // Also update the imageUrl field
+    try {
+      // Process the image (resize if needed)
+      const resizedImage = await resizeImage(file);
+      setUploadedImage(resizedImage);
+      setImageUrl(resizedImage); // Also update the imageUrl field
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setError('Failed to process image. Please try a different image.');
+      // Don't set the image URL if processing failed
+    } finally {
       setIsUploading(false);
-    };
-    
-    reader.onerror = () => {
-      setError('Failed to read the image file');
-      setIsUploading(false);
-    };
-    
-    reader.readAsDataURL(file);
+    }
   };
   
   // Clear uploaded image
@@ -296,6 +400,12 @@ const TeamMemberForm: React.FC = () => {
       <div className="admin-form-container">
         <h1>{isNewMember ? 'Add Team Member' : 'Edit Team Member'}</h1>
         
+        {/* Hidden canvas for image resizing */}
+        <canvas 
+          ref={canvasRef}
+          style={{ display: 'none' }}
+        />
+        
         {formSubmitted && (
           <div className="success-message">
             Team member successfully {isNewMember ? 'added' : 'updated'}! Redirecting...
@@ -371,6 +481,7 @@ const TeamMemberForm: React.FC = () => {
                       className="file-input"
                     />
                     {isUploading && <span className="uploading-indicator">Uploading...</span>}
+                    {isResizingImage && <span className="uploading-indicator">Resizing image, please wait...</span>}
                   </div>
                   
                   <div className="upload-option">
@@ -416,6 +527,9 @@ const TeamMemberForm: React.FC = () => {
                   </div>
                 )}
               </div>
+              <p className="form-help-text">
+                Images larger than {MAX_IMAGE_WIDTH}x{MAX_IMAGE_HEIGHT} pixels or 1MB will be automatically resized.
+              </p>
             </div>
           </div>
           
