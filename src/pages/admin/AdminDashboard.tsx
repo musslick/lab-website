@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { cleanupStorage, resetNewsItems, repairTeamProjectAssociations } from '../../utils/debugStorage';
+import { exportAsDefaultData, downloadAsTypeScriptFiles } from '../../utils/exportDefaultData';
 import '../../styles/admin.css';
 
 const AdminDashboard: React.FC = () => {
@@ -22,6 +23,7 @@ const AdminDashboard: React.FC = () => {
   } = useContent();
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
+  const [showExportModal, setShowExportModal] = useState(false);
   const navigate = useNavigate();
   
   // Get current featured items
@@ -102,6 +104,17 @@ const AdminDashboard: React.FC = () => {
     resetToDefaults();
   };
 
+  // New handler for exporting default data
+  const handleExportDefaultData = () => {
+    setShowExportModal(true);
+  };
+
+  // Handler for downloading TypeScript files
+  const handleDownloadAsTypeScript = () => {
+    downloadAsTypeScriptFiles();
+    setShowExportModal(false);
+  };
+
   // Function to navigate to management pages when clicking on a card
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -124,6 +137,31 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
+        {/* Export Default Data Modal */}
+        {showExportModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Export Current Data as Default</h2>
+              <p>This will generate TypeScript files containing your current data as the default data for the application.</p>
+              <p>You can use these files to replace the corresponding files in the <code>src/data</code> directory of the project.</p>
+              <div className="modal-actions">
+                <button 
+                  onClick={() => setShowExportModal(false)} 
+                  className="cancel-button"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleDownloadAsTypeScript} 
+                  className="primary-button"
+                >
+                  Download TypeScript Files
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Debug info section */}
         {showDebugInfo && (
           <div className="debug-info">
@@ -131,6 +169,9 @@ const AdminDashboard: React.FC = () => {
             <div className="debug-actions">
               <button onClick={resetToDefaults} className="reset-button">
                 Reset to Default Data
+              </button>
+              <button onClick={handleExportDefaultData} className="export-button">
+                Export Current Data as Default
               </button>
               <button onClick={clearStorage} className="clear-button">
                 Clear All Storage
