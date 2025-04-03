@@ -107,10 +107,10 @@ const Home: React.FC = () => {
                     }}>
                         <h3 style={{ marginTop: '0', color: '#00AAFF' }}>Our Mission</h3>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
-                            Our lab explores how the human mind works — and why it sometimes doesn’t. But understanding something as complex as the brain is hard, especially when we’re limited by our own brains in the process.
+                            Our lab explores <b><span style={{ color: '#00AAFF' }}>how the human mind works</span></b> — and why it sometimes doesn’t. But understanding something as complex as the brain is hard, especially when we’re limited by our own brains in the process.
                         </p>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem', marginBottom: '0' }}>
-                            To break through these limits, we build AI scientists that work alongside us as research partners. These artificial scientists help us explore larger spaces of theories and experiments, and identify patterns that human researchers might otherwise miss. Together, we aim to better understand the computational principles behind human thought and behavior — and push the boundaries of how science itself is done.
+                            To break through these limits, we <b><span style={{ color: '#00AAFF' }}>build AI scientists</span></b> that work alongside us as research partners. These artificial scientists help us explore larger spaces of theories and experiments, and identify patterns that human researchers might otherwise miss. Together, we aim to better understand the computational principles behind human thought and behavior — and push the boundaries of how science itself is done.
                         </p>
                     </div>
                 </div>
