@@ -107,13 +107,10 @@ const Home: React.FC = () => {
                     }}>
                         <h3 style={{ marginTop: '0', color: '#00AAFF' }}>Our Mission</h3>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
-                            Our lab is dedicated to uncovering the fundamental computational principles that underlie the capabilities and limitations of human cognition. Ironically, as human scientists, we are constrained by the very cognitive limitations we aim to understand: The complexity of the brain, its behaviors, and its interactions with the environment is often too vast for human minds to fully grasp.
-                        </p>
-                        <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
-                            To overcome this, we harness artificial intelligence and other automated scientific discovery techniques to efficiently explore spaces of experiments, models, and theories that exceed our cognitive reach. Our AI-driven systems are designed to autonomously investigate brain function and behavior, offering insights and perspectives that might otherwise remain hidden for human scientists.
+                            Our lab explores how the human mind works — and why it sometimes doesn’t. But understanding something as complex as the brain is hard, especially when we’re limited by our own brains in the process.
                         </p>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem', marginBottom: '0' }}>
-                            By partnering with intelligent systems, we aim to gain an integrative understanding of the capabilities and limitations of mind and brain.
+                            To break through these limits, we build AI scientists that work alongside us as research partners. These artificial scientists help us explore larger spaces of theories and experiments, and identify patterns that human researchers might otherwise miss. Together, we aim to better understand the computational principles behind human thought and behavior — and push the boundaries of how science itself is done.
                         </p>
                     </div>
                 </div>
