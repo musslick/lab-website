@@ -8,26 +8,21 @@ const Team: React.FC = () => {
   return (
     <div className="team-page">
       <div className="projects-header">
-        <h1>Our Research Team</h1>
-        <p>Meet the people behind our groundbreaking work</p>
+        <h1>Lab Members</h1>
+        <p>The real voyage of discovery consists not in seeking new landscapes, but in having new eyes. – Marcel Proust</p>
       </div>
-      
+
       <div className="team-intro">
         <p>
-          Our interdisciplinary team consists of researchers with backgrounds in neuroscience, 
-          computer science, psychology, and engineering. We work collaboratively to advance our 
-          understanding of the mind and brain through innovative research methods.
+          We believe that advancing the automated discovery of mind and brain — and AI for science more broadly — requires <i>close collaboration across disciplines</i>.
+          That's why our group draws on the expertise of researchers from neuroscience, psychology, computer science, engineering, physics, and other fields.
+
         </p>
       </div>
-      
+
       <div className="team-container">
         {/* Join Us Card */}
-        <Link to="/join-us" className="team-member-card join-us-card">
-          <div className="join-us-icon">+</div>
-          <h3 className="join-us-title">Join Us!</h3>
-          <p className="join-us-text">View our open positions and application process</p>
-        </Link>
-        
+
         {/* Existing Team Members */}
         {teamMembers.map(member => (
           <Link key={member.id} to={`/team/${member.id}`} className="team-member-card">
@@ -42,6 +37,13 @@ const Team: React.FC = () => {
             </div>
           </Link>
         ))}
+
+        {/* Join Us Card */}
+        <Link to="/join-us" className="team-member-card join-us-card">
+          <div className="join-us-icon">+</div>
+          <h3 className="join-us-title">Join Us!</h3>
+          <p className="join-us-text">View our open positions and application process</p>
+        </Link>
       </div>
     </div>
   );
