@@ -446,12 +446,14 @@ const Filter: React.FC<FilterProps> = ({ categories, onFilterChange }) => {
 // ===============================
 const Footer: React.FC = () => {
     return (
-        <footer>
-            <div>
-                <p>&copy; {new Date().getFullYear()} Automated Scientific Discovery of Mind and Brain. All rights reserved.</p>
-                <div>
-                    <NavLink to="/contact">Contact</NavLink>
+        <footer className="site-footer">
+            <div className="footer-container">
+                <div className="footer-copyright">
+                    <p>&copy; {new Date().getFullYear()} Automated Scientific Discovery of Mind and Brain. All rights reserved.</p>
                 </div>
+                <nav className="footer-nav">
+                    <NavLink to="/contact" className="footer-link">Contact</NavLink>
+                </nav>
             </div>
         </footer>
     );

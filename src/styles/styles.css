@@ -3321,3 +3321,76 @@ header {
 .clear-search-button:hover {
   color: #333;
 }
+
+/* Footer Styles to match the header */
+.site-footer {
+  background-color: #ffffff;
+  padding: 1.5rem 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 3rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.footer-copyright {
+  margin: 0.5rem 0;
+}
+
+.footer-copyright p {
+  margin: 0;
+  color: #555;
+  font-size: 1rem; /* Updated to match header font size */
+}
+
+.footer-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-link {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem; /* Updated to match header font size */
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #00AAFF;
+}
+
+.footer-link.active {
+  color: #00AAFF;
+}
+
+.footer-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #00AAFF;
+}
+
+/* Responsive adjustments for footer */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-nav {
+    margin-top: 1rem;
+    justify-content: center;
+  }
+}
