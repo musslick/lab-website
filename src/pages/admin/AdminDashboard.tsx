@@ -166,12 +166,10 @@ const AdminDashboard: React.FC = () => {
         {showDebugInfo && (
           <div className="debug-info">
             <h3>Debug Information</h3>
+            
             <div className="debug-actions">
               <button onClick={resetToDefaults} className="reset-button">
                 Reset to Default Data
-              </button>
-              <button onClick={handleExportDefaultData} className="export-button">
-                Export Current Data as Default
               </button>
               <button onClick={clearStorage} className="clear-button">
                 Clear All Storage
@@ -183,7 +181,88 @@ const AdminDashboard: React.FC = () => {
                 Reload Page
               </button>
             </div>
-            
+
+            {/* New Export Panel */}
+            <div className="export-panel">
+              <h4>Copy TypeScript Data Files</h4>
+              <p>Copy the code below and replace the corresponding files in your project's <code>src/data</code> folder:</p>
+
+              <div className="data-file">
+                <h5>team.ts</h5>
+                <pre>{`export const teamMembers = ${JSON.stringify(teamMembers, null, 2)};`}</pre>
+              </div>
+
+              <div className="data-file">
+                <h5>projects.ts</h5>
+                <pre>{`export const projects = ${JSON.stringify(projects, null, 2)};`}</pre>
+              </div>
+
+              <div className="data-file">
+                <h5>news.ts</h5>
+                <pre>{`export const newsItems = ${JSON.stringify(newsItems, null, 2)};`}</pre>
+              </div>
+
+              <div className="data-file">
+                <h5>publications.ts</h5>
+                <pre>{`export const publications = ${JSON.stringify(publications, null, 2)};`}</pre>
+              </div>
+
+              <div className="data-file">
+                <h5>software.ts</h5>
+                <pre>{`export const software = ${JSON.stringify(software, null, 2)};`}</pre>
+              </div>
+
+              <div className="data-file">
+                <h5>collaborators.ts</h5>
+                <pre>{`export const collaborators = ${JSON.stringify(collaborators, null, 2)};`}</pre>
+              </div>
+
+              <div className="data-file">
+                <h5>funding.ts</h5>
+                <pre>{`export const fundingSources = ${JSON.stringify(fundingSources, null, 2)};`}</pre>
+              </div>
+
+              <div className="data-file">
+                <h5>jobOpenings.ts</h5>
+                <pre>{`export const jobOpenings = ${JSON.stringify(jobOpenings, null, 2)};`}</pre>
+              </div>
+
+              <h4>Image Assets</h4>
+              <p>The following images are used in your data. Download them and place them in the corresponding folders in your project's <code>public/assets</code> directory:</p>
+
+              <div className="image-assets">
+                <h5>Team Member Images (place in public/assets/team/)</h5>
+                <ul>
+                  {teamMembers.map(member => member.imageUrl && (
+                    <li key={member.id}>
+                      <a href={member.imageUrl} download target="_blank">{member.imageUrl.split('/').pop()}</a>
+                      {' → '}<code>public{member.imageUrl}</code>
+                    </li>
+                  ))}
+                </ul>
+
+                <h5>Project Images (place in public/assets/projects/)</h5>
+                <ul>
+                  {projects.map(project => project.image && (
+                    <li key={project.id}>
+                      <a href={project.image} download target="_blank">{project.image.split('/').pop()}</a>
+                      {' → '}<code>public{project.image}</code>
+                    </li>
+                  ))}
+                </ul>
+
+                <h5>Software Images (place in public/assets/software/)</h5>
+                <ul>
+                  {software.map(sw => sw.imageUrl && (
+                    <li key={sw.id}>
+                      <a href={sw.imageUrl} download target="_blank">{sw.imageUrl.split('/').pop()}</a>
+                      {' → '}<code>public{sw.imageUrl}</code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             <div className="storage-info">
               <h4>Storage Usage</h4>
               <ul>
@@ -193,21 +272,6 @@ const AdminDashboard: React.FC = () => {
                   </li>
                 ))}
               </ul>
-            </div>
-            
-            <div className="data-preview">
-              <h4>Projects Data ({projects.length})</h4>
-              <pre>{JSON.stringify(projects, null, 2)}</pre>
-            </div>
-            
-            <div className="data-preview">
-              <h4>Team Members Data ({teamMembers.length})</h4>
-              <pre>{JSON.stringify(teamMembers, null, 2)}</pre>
-            </div>
-            
-            <div className="data-preview">
-              <h4>News Data ({newsItems.length})</h4>
-              <pre>{JSON.stringify(newsItems, null, 2)}</pre>
             </div>
           </div>
         )}
