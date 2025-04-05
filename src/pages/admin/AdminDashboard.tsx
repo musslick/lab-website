@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { cleanupStorage, resetNewsItems, repairTeamProjectAssociations } from '../../utils/debugStorage';
-import { exportAsDefaultData, downloadAsTypeScriptFiles } from '../../utils/exportDefaultData';
+import { exportAsDefaultData } from '../../utils/exportDefaultData';
 import '../../styles/admin.css';
 
 const AdminDashboard: React.FC = () => {
@@ -109,16 +109,31 @@ const AdminDashboard: React.FC = () => {
     setShowExportModal(true);
   };
 
-  // Handler for downloading TypeScript files
-  const handleDownloadAsTypeScript = () => {
-    downloadAsTypeScriptFiles();
-    setShowExportModal(false);
-  };
-
   // Function to navigate to management pages when clicking on a card
   const handleNavigate = (path: string) => {
     navigate(path);
   };
+
+  const copyToClipboard = (type: string) => {
+    const data = `export const ${type} = ${JSON.stringify(eval(type), null, 2)};`;
+    navigator.clipboard.writeText(data).then(() => {
+      alert(`${type}.ts copied to clipboard`);
+    });
+  };
+
+  const handleImageDownload = (e: React.MouseEvent, url: string) => {
+    e.preventDefault();
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop() || 'image';
+    link.click();
+  };
+
+  const downloadAllImages = () => {
+    alert('Downloading all images as ZIP is not implemented yet.');
+  };
+
+  const DATA_TYPES = ['teamMembers', 'projects', 'newsItems', 'publications', 'software', 'collaborators', 'fundingSources', 'jobOpenings'];
 
   return (
     <Layout>
@@ -152,10 +167,10 @@ const AdminDashboard: React.FC = () => {
                   Cancel
                 </button>
                 <button 
-                  onClick={handleDownloadAsTypeScript} 
+                  onClick={handleExportDefaultData} 
                   className="primary-button"
                 >
-                  Download TypeScript Files
+                  Export Data
                 </button>
               </div>
             </div>
@@ -182,84 +197,128 @@ const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            {/* New Export Panel */}
+            {/* Improved Export Panel */}
             <div className="export-panel">
-              <h4>Copy TypeScript Data Files</h4>
-              <p>Copy the code below and replace the corresponding files in your project's <code>src/data</code> folder:</p>
+              <h4>Data Export Options</h4>
+              
+              <div className="data-export-section">
+                <h5>Copy TypeScript Data Files</h5>
+                <p>Copy individual files:</p>
 
-              <div className="data-file">
-                <h5>team.ts</h5>
-                <pre>{`export const teamMembers = ${JSON.stringify(teamMembers, null, 2)};`}</pre>
+                {DATA_TYPES.map(type => (
+                  <div key={type} className="data-file">
+                    <div className="file-header">
+                      <h6>{type}.ts</h6>
+                      <button 
+                        onClick={() => copyToClipboard(type)} 
+                        className="copy-button"
+                      >
+                        Copy Code
+                      </button>
+                    </div>
+                    <pre>{`export const ${type} = ${JSON.stringify(
+                      eval(type),
+                      null,
+                      2
+                    )};`}</pre>
+                  </div>
+                ))}
               </div>
 
-              <div className="data-file">
-                <h5>projects.ts</h5>
-                <pre>{`export const projects = ${JSON.stringify(projects, null, 2)};`}</pre>
-              </div>
+              <div className="image-assets-section">
+                <h5>Download Image Assets</h5>
+                <div className="asset-categories">
+                  {/* Team Member Images */}
+                  <div className="asset-category">
+                    <h6>Team Member Images</h6>
+                    <p>Place in: <code>public/assets/team/</code></p>
+                    <div className="image-grid">
+                      {teamMembers.map(member => member.imageUrl && (
+                        <div key={member.id} className="image-preview-item">
+                          <img 
+                            src={member.imageUrl} 
+                            alt={member.name}
+                            className="image-preview"
+                          />
+                          <div className="image-info">
+                            <span>{member.imageUrl.split('/').pop()}</span>
+                            <a 
+                              href={member.imageUrl} 
+                              download 
+                              className="download-link"
+                              onClick={(e) => handleImageDownload(e, member.imageUrl)}
+                            >
+                              Download
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-              <div className="data-file">
-                <h5>news.ts</h5>
-                <pre>{`export const newsItems = ${JSON.stringify(newsItems, null, 2)};`}</pre>
-              </div>
+                  {/* Project Images */}
+                  <div className="asset-category">
+                    <h6>Project Images</h6>
+                    <p>Place in: <code>public/assets/projects/</code></p>
+                    <div className="image-grid">
+                      {projects.map(project => project.image && (
+                        <div key={project.id} className="image-preview-item">
+                          <img 
+                            src={project.image} 
+                            alt={project.title}
+                            className="image-preview"
+                          />
+                          <div className="image-info">
+                            <span>{project.image.split('/').pop()}</span>
+                            <a 
+                              href={project.image} 
+                              download 
+                              className="download-link"
+                              onClick={(e) => handleImageDownload(e, project.image!)}
+                            >
+                              Download
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-              <div className="data-file">
-                <h5>publications.ts</h5>
-                <pre>{`export const publications = ${JSON.stringify(publications, null, 2)};`}</pre>
-              </div>
+                  {/* Software Images */}
+                  <div className="asset-category">
+                    <h6>Software Images</h6>
+                    <p>Place in: <code>public/assets/software/</code></p>
+                    <div className="image-grid">
+                      {software.map(sw => sw.imageUrl && (
+                        <div key={sw.id} className="image-preview-item">
+                          <img 
+                            src={sw.imageUrl} 
+                            alt={sw.name}
+                            className="image-preview"
+                          />
+                          <div className="image-info">
+                            <span>{sw.imageUrl.split('/').pop()}</span>
+                            <a 
+                              href={sw.imageUrl} 
+                              download 
+                              className="download-link"
+                              onClick={(e) => handleImageDownload(e, sw.imageUrl!)}
+                            >
+                              Download
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-              <div className="data-file">
-                <h5>software.ts</h5>
-                <pre>{`export const software = ${JSON.stringify(software, null, 2)};`}</pre>
-              </div>
-
-              <div className="data-file">
-                <h5>collaborators.ts</h5>
-                <pre>{`export const collaborators = ${JSON.stringify(collaborators, null, 2)};`}</pre>
-              </div>
-
-              <div className="data-file">
-                <h5>funding.ts</h5>
-                <pre>{`export const fundingSources = ${JSON.stringify(fundingSources, null, 2)};`}</pre>
-              </div>
-
-              <div className="data-file">
-                <h5>jobOpenings.ts</h5>
-                <pre>{`export const jobOpenings = ${JSON.stringify(jobOpenings, null, 2)};`}</pre>
-              </div>
-
-              <h4>Image Assets</h4>
-              <p>The following images are used in your data. Download them and place them in the corresponding folders in your project's <code>public/assets</code> directory:</p>
-
-              <div className="image-assets">
-                <h5>Team Member Images (place in public/assets/team/)</h5>
-                <ul>
-                  {teamMembers.map(member => member.imageUrl && (
-                    <li key={member.id}>
-                      <a href={member.imageUrl} download target="_blank">{member.imageUrl.split('/').pop()}</a>
-                      {' → '}<code>public{member.imageUrl}</code>
-                    </li>
-                  ))}
-                </ul>
-
-                <h5>Project Images (place in public/assets/projects/)</h5>
-                <ul>
-                  {projects.map(project => project.image && (
-                    <li key={project.id}>
-                      <a href={project.image} download target="_blank">{project.image.split('/').pop()}</a>
-                      {' → '}<code>public{project.image}</code>
-                    </li>
-                  ))}
-                </ul>
-
-                <h5>Software Images (place in public/assets/software/)</h5>
-                <ul>
-                  {software.map(sw => sw.imageUrl && (
-                    <li key={sw.id}>
-                      <a href={sw.imageUrl} download target="_blank">{sw.imageUrl.split('/').pop()}</a>
-                      {' → '}<code>public{sw.imageUrl}</code>
-                    </li>
-                  ))}
-                </ul>
+                <button 
+                  onClick={downloadAllImages}
+                  className="download-all-button"
+                >
+                  Download All Images as ZIP
+                </button>
               </div>
             </div>
 

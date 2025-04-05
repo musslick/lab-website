@@ -71,35 +71,3 @@ const formatDataAsTypeScript = (type: string, data: any[]): string => {
   
   return result;
 };
-
-/**
- * Downloads the exported data as TypeScript files
- */
-export const downloadAsTypeScriptFiles = () => {
-  const { success, data, error } = exportAsDefaultData();
-  
-  if (!success || !data) {
-    alert(`Failed to export data: ${error}`);
-    return;
-  }
-  
-  // Create a ZIP file containing all the TypeScript files
-  Object.entries(data).forEach(([type, code]) => {
-    // Create a Blob containing the TypeScript code
-    const blob = new Blob([code], { type: 'text/plain' });
-    
-    // Create a download link
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${type}.ts`;
-    
-    // Add to document, click it, then remove it
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 0);
-  });
-};

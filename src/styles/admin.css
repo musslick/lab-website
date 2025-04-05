@@ -1039,63 +1039,122 @@
   border-radius: 8px;
 }
 
-.export-panel h4 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.export-panel p {
-  margin-bottom: 15px;
-  color: #666;
+.data-export-section,
+.image-assets-section {
+  margin: 20px 0;
 }
 
 .data-file {
-  margin-bottom: 20px;
+  margin: 15px 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-.data-file h5 {
-  color: #0066cc;
-  margin-bottom: 5px;
+.file-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f1f3f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.file-header h6 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.copy-button {
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  background: #f8f9fa;
 }
 
 .data-file pre {
-  background: #fff;
-  padding: 15px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  margin: 0;
+  padding: 12px;
   overflow-x: auto;
   font-size: 12px;
 }
 
-.image-assets {
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.image-preview-item {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.image-info {
+  padding: 8px;
+  background: #fff;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.download-link {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.download-all-button {
   margin-top: 20px;
+  padding: 8px 16px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.image-assets ul {
-  list-style: none;
-  padding-left: 0;
+.download-all-button:hover {
+  background: #0052a3;
 }
 
-.image-assets li {
-  margin-bottom: 8px;
+.asset-category {
+  margin: 20px 0;
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.asset-category h6 {
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+.asset-category p {
+  margin: 5px 0;
   font-size: 14px;
 }
 
-.image-assets a {
-  color: #0066cc;
-  text-decoration: none;
-}
-
-.image-assets a:hover {
-  text-decoration: underline;
-}
-
-.image-assets code {
-  background: #eee;
-  padding: 2px 6px;
+.asset-category code {
+  background: #f1f3f5;
+  padding: 2px 4px;
   border-radius: 3px;
-  font-size: 12px;
 }
 
 /* Responsive styles for topic controls */
