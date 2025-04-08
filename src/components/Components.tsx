@@ -3,7 +3,12 @@ import { NavLink, Link } from 'react-router-dom';
 import { teamMembers } from '../data/team';
 import { TeamMember as TeamMemberType } from '../data/team';
 import { Project } from '../data/projects';
-import { createGradient, generateTopicColor, createProjectGradient } from '../utils/colorUtils'; // Updated import
+import { 
+    generateTopicColor, 
+    createProjectGradient, 
+    getTopicColorsFromProject, 
+    LAB_COLOR 
+} from '../utils/colorUtils';
 import { useContent } from '../contexts/ContentContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -148,16 +153,10 @@ interface TeamGradientBannerProps {
 }
 
 const TeamGradientBanner: React.FC<TeamGradientBannerProps> = ({ teamMembers }) => {
-    // Create a gradient from all team member colors mixed with lab blue
+    // Create a consistent blue gradient instead of using team member colors
     const createTeamGradient = () => {
-        const colors = teamMembers.map(member => member.color);
-        return createGradient(colors, {
-            direction: 'to right',
-            includeHighlight: true,
-            highlightColor: '#00AAFF',
-            mixColors: true,
-            mixRatio: 0.35  // Slightly stronger mix for the banner
-        });
+        const LAB_COLOR = '#00AAFF';
+        return `linear-gradient(to right, ${LAB_COLOR}, #005580)`;
     };
 
     return (
@@ -235,9 +234,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     const colorBlockRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLAnchorElement>(null);
     
-    // Lab blue color for reference
-    const LAB_COLOR = '#00AAFF';
-
     // Handle mouse movement over the entire card
     const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (colorBlockRef.current && !isFrozen) {
@@ -267,61 +263,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         // Create a dynamic position based on mouse
         const position = `circle at ${x}% ${y}%`;
         
-        // Get the base gradient using the same function as ProjectDetails
-        const baseGradient = createProjectGradient(project, LAB_COLOR);
+        // Get topic colors from the project
+        const topicColors = getTopicColorsFromProject(project);
         
-        // Extract colors from the gradient string for dynamic positioning
-        const gradientMatch = baseGradient.match(/rgba?\([\d\s,.]+\)|#[a-f\d]+/gi) || [];
-        const topicColors = gradientMatch.length > 0 ? gradientMatch : [LAB_COLOR];
-        
-        // Generate gradient stops with percentages
-        const stops = topicColors.map((color, index) => {
-            if (index === topicColors.length - 1) {
-                return `${color} 100%`;
-            }
-            // Adjust distribution to make the gradient more dynamic and responsive to mouse
-            const percentage = Math.round(Math.pow(index / (topicColors.length - 1), 0.8) * 85);
-            return `${color} ${percentage}%`;
-        }).join(', ');
-        
-        return `radial-gradient(${position}, ${stops})`;
+        // Create a gradient with the unified function
+        return createProjectGradient(topicColors, position);
     };
 
-    // Generate topic colors from the lab blue color or use provided colors
-    const generateTopicTag = (topic: string, index: number) => {
-        // First check if we have color information in topicsWithColors
-        const topicWithColor = project.topicsWithColors?.find(t => t.name === topic);
-        
-        // Use the provided color or generate one
-        const topicColor = topicWithColor?.color || generateTopicColor(LAB_COLOR, index, project.topics?.length || 1);
-        
-        return (
-            <div key={topic} className="topic-tag">
-                <div 
-                    className="topic-color-dot" 
-                    style={{ backgroundColor: topicColor }}
-                    title={topic}
-                />
-                <span className="topic-name">{topic}</span>
-            </div>
-        );
-    };
-
-    // Function to render project category or categories
-    const renderCategories = () => {
-        if (Array.isArray(project.category)) {
-            return project.category.join(', ');
-        }
-        return project.category;
-    };
-
-    // Generate method colors from the lab blue color or use provided colors
+    // Generate method tag with color dot
     const generateMethodTag = (method: string, index: number) => {
-        // First check if we have color information in topicsWithColors
+        // Get the color from topicsWithColors if available
         const methodWithColor = project.topicsWithColors?.find(t => t.name === method);
         
-        // Use the provided color or generate one
-        const methodColor = methodWithColor?.color || generateTopicColor(LAB_COLOR, index, project.topics?.length || 1);
+        // Use the provided color or generate one based on index position
+        const methodColor = methodWithColor?.color || 
+            generateTopicColor(Math.round((index / (project.topics?.length || 1)) * 360));
         
         return (
             <div key={method} className="topic-tag">

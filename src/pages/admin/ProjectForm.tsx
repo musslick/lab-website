@@ -3,10 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { Project } from '../../data/projects';
-import { generateTopicColor, hexToHsl, hslToHex } from '../../utils/colorUtils';
-
-// Lab color (blue) - constant for reference with topic colors - MOVED TO TOP
-const LAB_COLOR = '#00AAFF';
+import { generateTopicColor, hexToHsl, hslToHex, LAB_COLOR } from '../../utils/colorUtils';
 
 // Define TopicWithColor interface to match the Project interface
 interface TopicWithColor {
@@ -48,7 +45,7 @@ const ProjectForm: React.FC = () => {
           
         return {
           name: methodName,
-          color: methodWithColor?.color || generateTopicColor(LAB_COLOR, 0, 1),
+          color: methodWithColor?.color || generateTopicColor(Math.round(Math.random() * 360)),
           hue: methodWithColor?.hue || 0  // Using the hue property
         };
       })
@@ -132,7 +129,7 @@ const ProjectForm: React.FC = () => {
           // Convert simple topics to topics with colors
           setTopics(projectToEdit.topics.map((name, index) => ({
             name,
-            color: generateTopicColor(LAB_COLOR, index, projectToEdit.topics?.length || 1),
+            color: generateTopicColor(Math.round((index / (projectToEdit.topics?.length || 1)) * 360)),
             hue: 0
           })));
         } else {
@@ -319,7 +316,7 @@ const ProjectForm: React.FC = () => {
         description,
         category: categories.length === 1 ? categories[0] : categories, // Support both single string and array
         team,
-        color: '', // This will be generated based on team members in the context
+        color: `radial-gradient(circle at center, ${LAB_COLOR} 0%, #005580 100%)`, // Use fixed gradient instead of team-based
         topics: topicNames,
         topicsWithColors: topics, // Now properly typed
         status,
@@ -375,7 +372,7 @@ const ProjectForm: React.FC = () => {
 
   // Function to generate a color for a topic based on index
   const getTopicColor = (topic: string, index: number) => {
-    return generateTopicColor(LAB_COLOR, index, topics.length);
+    return generateTopicColor(Math.round((index / topics.length) * 360));
   };
   
   return (

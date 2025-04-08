@@ -7,7 +7,7 @@ import { FundingSource, fundingSources as initialFundingSources } from '../data/
 import { Publication, publications as initialPublications } from '../data/publications';
 import { Software, software as initialSoftware } from '../data/software';
 import { JobOpening, jobOpenings as initialJobOpenings } from '../data/jobOpenings';
-import { createGradient, generateTopicColor, createProjectGradient, hexToHsl } from '../utils/colorUtils';
+import { createGradient, generateTopicColor, createProjectGradient, hexToHsl, LAB_COLOR } from '../utils/colorUtils';
 
 // Define the context type from ContentContext.tsx
 import { ContentContext } from './ContentContext';
@@ -130,11 +130,35 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
         project.id === updatedProject.id ? updatedProject : project
       )
     );
+
+    // Use lab blue color instead of gradient
+    const projectWithUpdatedColor = {
+      ...updatedProject,
+      color: LAB_COLOR,
+      _lastUpdated: Date.now()
+    };
+
+    setProjects(prevProjects => 
+      prevProjects.map(project => 
+        project.id === updatedProject.id ? projectWithUpdatedColor : project
+      )
+    );
   };
   
   const addProject = (newProject: Project): Project => {
-    setProjects(prevProjects => [...prevProjects, newProject]);
-    return newProject;
+    try {
+      // Use lab blue color instead of gradient
+      const projectWithColor = {
+        ...newProject,
+        color: LAB_COLOR
+      };
+
+      setProjects(prevProjects => [...prevProjects, projectWithColor]);
+      return projectWithColor;
+    } catch (error) {
+      console.error("Error adding project:", error);
+      throw error;
+    }
   };
   
   const deleteProject = (id: string) => {
@@ -152,6 +176,20 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     setProjects(orderedProjects);
   };
 
+  // Helper function to update project gradients
+  const updateProjectGradients = (currentProjects: Project[]): Project[] => {
+    return currentProjects.map(project => {
+      // Use the simple lab color instead of a gradient
+      return {
+        ...project,
+        color: LAB_COLOR
+      };
+    });
+  };
+
+  // Update project colors based on topics, not team members
+  const updatedProjects = updateProjectGradients(projects);
+
   // TeamMember operations
   const updateTeamMember = (updatedMember: TeamMember) => {
     setTeamMembers(prevMembers => 
@@ -166,8 +204,38 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     return newMember;
   };
   
+  const saveTeamMembers = (updatedMembers: TeamMember[]) => {
+    try {
+      localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
+      setTeamMembers(updatedMembers);
+    } catch (error) {
+      console.error("Error saving team members to localStorage:", error);
+      alert("Failed to save team members. LocalStorage might be full or unavailable.");
+    }
+  };
+
   const deleteTeamMember = (id: string) => {
-    setTeamMembers(prevMembers => prevMembers.filter(member => member.id !== id));
+    const memberToDelete = teamMembers.find(member => member.id === id);
+    const newTeamMembers = teamMembers.filter(member => member.id !== id);
+  
+    if (memberToDelete) {
+      const updatedProjects = projects.map(project => {
+        if (project.team.includes(memberToDelete.name)) {
+          const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
+          
+          return {
+            ...project,
+            team: updatedTeam,
+            color: LAB_COLOR // Use simple lab color
+          };
+        }
+        return project;
+      });
+  
+      setProjects(updatedProjects);
+    }
+  
+    saveTeamMembers(newTeamMembers);
   };
 
   // New method: reorderTeamMembers

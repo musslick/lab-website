@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
 import { TopNav, Footer } from '../components/Components';
-import { createProjectGradient } from '../utils/colorUtils';
+import { createProjectGradient, getTopicColorsFromProject } from '../utils/colorUtils';
 import '../styles/styles.css';
 
 // Function to render categories, handling both string and array formats

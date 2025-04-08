@@ -7,7 +7,7 @@ import { FundingSource, fundingSources as initialFundingSources } from '../data/
 import { Publication, publications as initialPublications } from '../data/publications';
 import { Software, software as initialSoftware } from '../data/software';
 import { JobOpening, jobOpenings as initialJobOpenings } from '../data/jobOpenings';
-import { createGradient, generateTopicColor, createProjectGradient, hexToHsl } from '../utils/colorUtils';
+import { createGradient, generateTopicColor, createProjectGradient, hexToHsl, LAB_COLOR } from '../utils/colorUtils';
 
 interface ContentContextType {
   projects: Project[];
@@ -189,32 +189,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   // Add state for team image position (default to 'center')
   const [teamImagePosition, setTeamImagePosition] = useState<string>('center');
 
-  // Helper function to generate color gradients for projects based on team members
-  const updateProjectGradients = (currentProjects: Project[], currentTeamMembers: TeamMember[]): Project[] => {
+  // Replace team-based gradient function with topic-based gradient function
+  const updateProjectGradients = (currentProjects: Project[]): Project[] => {
     return currentProjects.map(project => {
-      // Get the colors of team members assigned to this project
-      const teamColors = project.team.map(memberName => {
-        const member = currentTeamMembers.find(m => m.name === memberName);
-        return member ? member.color : '#CCCCCC'; // Default gray if member not found
-      });
-      
-      // If no team members, use a default color
-      if (teamColors.length === 0) {
-        return {
-          ...project,
-          color: 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)'
-        };
-      }
-      
-      // Generate a new gradient based on team members' colors
-      const gradient = createGradient(teamColors, {
-        includeHighlight: true,
-        highlightColor: '#00AAFF', // Lab blue always at outer edge
-        mixColors: true,
-        mixRatio: 0.3,
-        type: 'radial',
-        position: 'circle at center'
-      });
+      // Generate a fixed lab blue gradient regardless of team
+      const gradient = `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`;
       
       return {
         ...project,
@@ -253,8 +232,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
           projectsData = initialProjects;
         }
         
-        // Update project colors based on team members
-        const updatedProjects = updateProjectGradients(projectsData, teamData);
+        // Update projects with lab blue gradient instead of team colors
+        const updatedProjects = updateProjectGradients(projectsData);
         setProjects(updatedProjects);
         
         if (savedNewsItems) {
@@ -427,10 +406,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
       setTeamMembers(updatedMembers);
       
-      // When team members change, update all project colors
-      const updatedProjects = updateProjectGradients(projects, updatedMembers);
-      saveProjects(updatedProjects);
-      
+      // Don't update project colors when team members change
     } catch (error) {
       console.error("Error saving team members to localStorage:", error);
       alert("Failed to save team members. LocalStorage might be full or unavailable.");
@@ -505,7 +481,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         if (existingTopicWithColor) {
           return existingTopicWithColor;
         } else {
-          const color = generateTopicColor('#00AAFF', index, updatedProject.topics!.length);
+          // Generate a hue based on index in the array
+          const hue = Math.round((index / updatedProject.topics!.length) * 360);
+          const color = generateTopicColor(hue);
           const [h, s, l] = hexToHsl(color);
           return {
             name: topic,
@@ -521,9 +499,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       };
     }
 
+    // Use lab blue gradient instead of team-based gradient
     const projectWithUpdatedColor = {
       ...projectWithConsistentColors,
-      color: createProjectGradient(projectWithConsistentColors, '#00AAFF'),
+      color: `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`,
       _lastUpdated: Date.now()
     };
 
@@ -531,6 +510,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       project.id === updatedProject.id ? projectWithUpdatedColor : project
     );
 
+    // Only update team-project relations, not colors
     if (existingProject && !areArraysEqual(existingProject.team, updatedProject.team)) {
       const updatedTeamMembers = teamMembers.map(member => {
         if (existingProject.team.includes(member.name) && !updatedProject.team.includes(member.name)) {
@@ -574,7 +554,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
       if (newProject.topics && newProject.topics.length > 0) {
         const topicsWithColors = newProject.topics.map((topic, index) => {
-          const color = generateTopicColor('#00AAFF', index, newProject.topics!.length);
+          // Generate a hue based on index in the array
+          const hue = Math.round((index / newProject.topics!.length) * 360);
+          const color = generateTopicColor(hue);
           const [h, s, l] = hexToHsl(color);
           return {
             name: topic,
@@ -589,9 +571,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         };
       }
 
+      // Use lab blue gradient instead of team-based gradient
       const projectWithColor = {
         ...projectWithTopicColors,
-        color: createProjectGradient(projectWithTopicColors, '#00AAFF')
+        color: `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`
       };
 
       const newProjects = [...projects, projectWithColor];
@@ -686,24 +669,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         if (project.team.includes(memberToDelete.name)) {
           const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
 
-          const updatedColor = updatedTeam.length > 0 
-            ? createGradient(updatedTeam.map(name => {
-                const member = newTeamMembers.find(m => m.name === name);
-                return member ? member.color : '#CCCCCC';
-              }), {
-                includeHighlight: true,
-                highlightColor: '#00AAFF',
-                mixColors: true,
-                mixRatio: 0.3,
-                type: 'radial',
-                position: 'circle at center'
-              })
-            : 'radial-gradient(circle at center, #FF5733 0%, #00AAFF 100%)';
-
+          // Use lab blue gradient regardless of team
           return {
             ...project,
             team: updatedTeam,
-            color: updatedColor
+            color: `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`
           };
         }
         return project;
@@ -946,7 +916,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('teamImagePosition');
       setTeamMembers(initialTeamMembers);
       
-      const projectsWithGradients = updateProjectGradients(initialProjects, initialTeamMembers);
+      const projectsWithGradients = updateProjectGradients(initialProjects);
       setProjects(projectsWithGradients);
       setNewsItems(initialNewsItems);
       setCollaborators(initialCollaborators);
