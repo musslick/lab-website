@@ -1,90 +1,225 @@
 import { LAB_COLOR } from '../utils/colorUtils';
 
-// Update the Project interface to include topicsWithColors with hue instead of lightness
+// Define the Project interface to match the dashboard data structure
 export interface Project {
   id: string;
   title: string;
   description: string;
   color: string;
-  category: string | string[]; // Disciplines (can be single string or array)
+  category: string | string[]; // Supports both single string and array
   team: string[];
-  topics?: string[]; // Methods
-  topicsWithColors?: { name: string; color: string; hue: number }[]; // Methods with colors
+  topics?: string[];
+  topicsWithColors?: { name: string; color: string; hue: number }[]; // Re-add topicsWithColors
   publications?: string[];
   image?: string;
   status?: 'ongoing' | 'completed';
   startDate?: string;
   endDate?: string;
-  _lastUpdated?: number; // Added for cache busting
+  _lastUpdated?: number;
 }
 
-// Define project data with the correct status type and add methods
+// Define project data with the structure matching the dashboard
 export const projects: Project[] = [
     {
-        id: "neural-mapping",
-        title: "Neural Network Mapping",
-        description: "Mapping the complex interconnections in neural networks through advanced imaging techniques and computational models.",
-        category: "Brain Research", // Discipline
-        team: ["Sarah Johnson", "Michael Chen"],
-        topics: ["Neural Networks", "Brain Imaging", "Computational Modeling"], // Methods
-        publications: [
-          "Johnson, S. et al. (2022). Advanced techniques in neural mapping. Journal of Neuroscience, 45(3), 112-128.",
-          "Chen, M. & Johnson, S. (2021). Computational approaches to neural network visualization. Brain Research, 33(2), 45-67."
-        ],
-        status: "ongoing",
-        startDate: "2022-06-01",
-        color: LAB_COLOR
+      "id": "cognitive-ai",
+      "title": "Data-Driven Model Discovery Algorithm",
+      "description": "Developing artificial intelligence models that mimic human cognitive processes for better understanding of brain function.",
+      "category": [
+        "Other",
+        "Yes"
+      ],
+      "team": [
+        "Daniel Weinhardt",
+        "Alessandra Brondetta",
+        "Sebastian Musslick"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [
+        "White",
+        "Red",
+        "blue"
+      ],
+      "topicsWithColors": [
+        {
+          "name": "White",
+          "color": "#99fffa",
+          "hue": 177
+        },
+        {
+          "name": "Red",
+          "color": "#ff999b",
+          "hue": 359
+        },
+        {
+          "name": "blue",
+          "color": "#ac99ff",
+          "hue": 251
+        }
+      ],
+      "status": "ongoing",
+      "publications": [],
+      "_lastUpdated": 1744141152248
     },
     {
-        id: "cognitive-ai",
-        title: "Cognitive AI Models",
-        description: "Developing artificial intelligence models that mimic human cognitive processes for better understanding of brain function.",
-        category: "Artificial Intelligence", // Discipline
-        team: ["Robert Smith", "Emily Wong"],
-        topics: ["Artificial Intelligence", "Cognitive Science", "Machine Learning"], // Methods
-        publications: [
-          "Smith, R. & Wong, E. (2023). Cognitive frameworks in machine learning. AI Journal, 12(4), 89-105."
-        ],
-        status: "ongoing",
-        startDate: "2022-01-10",
-        color: LAB_COLOR
+      "id": "neural-mapping",
+      "title": "Automated Discovery of Sequential Sampling Models",
+      "description": "Mapping the complex interconnections in neural networks through advanced imaging techniques and computational models.",
+      "category": "Yes",
+      "team": [
+        "Daniel Weinhardt",
+        "Muhip Tezcan",
+        "Sebastian Musslick",
+        "Se Eun Choi"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [
+        "White",
+        "Yellow"
+      ],
+      "topicsWithColors": [
+        {
+          "name": "White",
+          "color": "#99fffa",
+          "hue": 177
+        },
+        {
+          "name": "Yellow",
+          "color": "#fff899",
+          "hue": 56
+        }
+      ],
+      "status": "ongoing",
+      "publications": [
+        "pub-003",
+        "pub-001"
+      ],
+      "_lastUpdated": 1743367023235
     },
     {
-        id: "memory-enhancement",
-        title: "Memory Enhancement Research",
-        description: "Investigating techniques to enhance memory formation and recall through targeted stimulation of neural pathways.",
-        category: "Cognitive Enhancement", // Discipline
-        team: ["David Patel", "Sarah Johnson"],
-        topics: ["Memory", "Neuroplasticity", "Brain Stimulation"], // Methods
-        publications: [],
-        status: "ongoing",
-        startDate: "2021-03-15",
-        color: LAB_COLOR
+      "id": "brain-computer",
+      "title": "Closed-Loop RL-SINDy",
+      "description": "Creating seamless interfaces between brain activity and computers for assistive technology and research applications.",
+      "category": "Other",
+      "team": [
+        "Sedighe Raeisi",
+        "Daniel Weinhardt",
+        "Se Eun Choi"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [],
+      "topicsWithColors": [],
+      "status": "ongoing",
+      "publications": [],
+      "_lastUpdated": 1743109441881
     },
     {
-        id: "brain-computer",
-        title: "Brain-Computer Interfaces",
-        description: "Creating seamless interfaces between brain activity and computers for assistive technology and research applications.",
-        category: "Interface Technology", // Discipline
-        team: ["Michael Chen", "Emily Wong"],
-        topics: ["BCI", "Assistive Technology", "Signal Processing"], // Methods
-        publications: [
-          "Chen, M. et al. (2022). Non-invasive BCI advancements. Tech & Brain Journal, 8(2), 34-49."
-        ],
-        status: "ongoing",
-        startDate: "2021-03-15",
-        color: LAB_COLOR
+      "id": "consciousness-study",
+      "title": "Understany",
+      "description": "Exploring the neural correlates of consciousness through multidisciplinary approaches and advanced neuroimaging.",
+      "category": "Other",
+      "team": [
+        "Moritz Hartstang"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [
+        "Wuhu"
+      ],
+      "topicsWithColors": [
+        {
+          "name": "Wuhu",
+          "color": "#ff9999",
+          "hue": 0
+        }
+      ],
+      "status": "ongoing",
+      "publications": [
+        "pub-001"
+      ],
+      "_lastUpdated": 1743624419847
     },
     {
-        id: "consciousness-study",
-        title: "Consciousness Studies",
-        description: "Exploring the neural correlates of consciousness through multidisciplinary approaches and advanced neuroimaging.",
-        category: "Neuroscience", // Discipline
-        team: ["Robert Smith", "David Patel"],
-        topics: ["Consciousness", "Neuroscience", "Neuroimaging"], // Methods
-        publications: [],
-        status: "ongoing",
-        startDate: "2022-01-10",
-        color: LAB_COLOR
+      "id": "project-1741440790106",
+      "title": "Landscaping",
+      "description": "a",
+      "category": "Other",
+      "team": [
+        "Pelin Kömürlüoğlu"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [],
+      "topicsWithColors": [],
+      "status": "ongoing",
+      "publications": [],
+      "_lastUpdated": 1743109403964
+    },
+    {
+      "id": "project-1741685324148",
+      "title": "Hierarchical Bayesian Model",
+      "description": "a",
+      "category": "Other",
+      "team": [
+        "Sedighe Raeisi",
+        "Se Eun Choi"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [],
+      "topicsWithColors": [],
+      "status": "ongoing",
+      "publications": [],
+      "_lastUpdated": 1743109417680
+    },
+    {
+      "id": "project-1741685438335",
+      "title": "Closed-Loop Integrative Discovery",
+      "description": "a",
+      "category": "Other",
+      "team": [
+        "Sebastian Musslick",
+        "Sedighe Raeisi",
+        "Daniel Weinhardt",
+        "Moritz Hartstang",
+        "Se Eun Choi",
+        "Pelin Kömürlüoğlu"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [],
+      "topicsWithColors": [],
+      "status": "ongoing",
+      "publications": [],
+      "_lastUpdated": 1743109376599
+    },
+    {
+      "id": "memory-enhancement",
+      "title": "LLM Simulator for Fostering Belief Flexibility",
+      "description": "Investigating techniques to enhance memory formation and recall through targeted stimulation of neural pathways.",
+      "category": "Other",
+      "team": [
+        "Alessandra Brondetta",
+        "Sedighe Raeisi",
+        "Moritz Hartstang"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [],
+      "topicsWithColors": [],
+      "status": "ongoing",
+      "publications": [],
+      "_lastUpdated": 1741813020845
+    },
+    {
+      "id": "project-1741685533429",
+      "title": "Synthetic Participant",
+      "description": "a",
+      "category": "Other",
+      "team": [
+        "Alessandra Brondetta",
+        "Muhip Tezcan",
+        "Leon Schmid"
+      ],
+      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+      "topics": [],
+      "topicsWithColors": [],
+      "status": "ongoing",
+      "publications": [],
+      "_lastUpdated": 1741813094821
     }
-];
+  ];
