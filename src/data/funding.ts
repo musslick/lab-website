@@ -10,20 +10,20 @@ export interface FundingSource {
 
 export const fundingSources: FundingSource[] = [
   {
-    id: "nsf-grant",
-    name: "National Science Foundation",
-    url: "https://www.nsf.gov",
-    grantNumber: "NSF-1234567"
+    "id": "nsf-grant",
+    "name": "National Science",
+    "url": "https://www.nsf.gov",
+    "grantNumber": "NSF-1234567"
   },
   {
-    id: "nih-grant",
-    name: "National Institutes of Health",
-    url: "https://www.nih.gov",
-    grantNumber: "NIH-R01-AB123456"
+    "id": "nih-grant",
+    "name": "National Institutes of Health",
+    "url": "https://www.nih.gov",
+    "grantNumber": "NIH-R01-AB123456"
   },
   {
-    id: "research-foundation",
-    name: "Science Research Foundation",
-    url: "https://www.example.org/srf"
+    "id": "research-foundation",
+    "name": "Science Research Foundation",
+    "url": "https://www.example.org/srf"
   }
 ];
