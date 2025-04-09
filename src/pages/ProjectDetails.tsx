@@ -109,27 +109,24 @@ const ProjectDetails: React.FC = () => {
     setIsFrozen(true);
   };
 
-  // Generate dynamic gradient based on mouse position
+  // Update the gradient generation based on topics
   const generateDynamicGradient = () => {
-    if (topicColors.length === 0) return `radial-gradient(circle at center, ${baseColor} 0%, ${baseColor} 100%)`;
+    // If no topics, return the pure lab color
+    if (!project.topics || project.topics.length === 0) {
+      return baseColor;
+    }
     
-    // Get mouse position as percentage of header dimension
+    // Get mouse position as percentage of card dimension
     const { x, y } = mousePosition;
     
     // Create a dynamic position based on mouse
     const position = `circle at ${x}% ${y}%`;
     
-    // Generate gradient stops with percentages
-    const stops = topicColors.map((color, index) => {
-      if (index === topicColors.length - 1) {
-        return `${color} 100%`;
-      }
-      // Adjust distribution to make the gradient more dynamic and responsive to mouse
-      const percentage = Math.round(Math.pow(index / (topicColors.length - 1), 0.8) * 85);
-      return `${color} ${percentage}%`;
-    }).join(', ');
+    // Get topic colors from the project
+    const topicColors = getTopicColorsFromProject(project);
     
-    return `radial-gradient(${position}, ${stops})`;
+    // Create a gradient with the unified function
+    return createProjectGradient(topicColors, position);
   };
 
   if (loading) {
