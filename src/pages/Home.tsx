@@ -268,12 +268,6 @@ const Home: React.FC = () => {
                             <span>{funding.name}</span>
                         </a>
                     ))}
-
-                    {/* "Support our research" card with plus sign in the text */}
-                    <Link to="/contact" className="collaborator-tag collaborate-cta">
-                        <div className="collaborate-icon">+</div>
-                        <span>Support our research</span>
-                    </Link>
                 </div>
             </section>
         </div>
