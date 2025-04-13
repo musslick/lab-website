@@ -164,20 +164,41 @@ const ProjectDetails: React.FC = () => {
     <>
       <TopNav />
       <div className="project-details">
-        {/* Interactive header with dynamic gradient */}
-        <div
-          ref={colorHeaderRef}
-          className="project-color-header"
-          style={{ background: generateDynamicGradient() }}
-          onMouseMove={handleMouseMove}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        ></div>
+        {/* Show project image if available, otherwise use interactive gradient header */}
+        {project.image ? (
+          <div className="project-main-image-container">
+            <img 
+              src={project.image} 
+              alt={project.title}
+              className="project-main-image"
+              onError={(e) => {
+                // If image fails to load, fallback to gradient
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                if (colorHeaderRef.current) {
+                  colorHeaderRef.current.style.display = 'flex';
+                }
+              }}
+            />
+          </div>
+        ) : (
+          <div
+            ref={colorHeaderRef}
+            className="project-color-header"
+            style={{ background: generateDynamicGradient() }}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          ></div>
+        )}
 
         <h1 className="project-title-standalone">{project.title}</h1>
 
         <div className="project-section">
-          <p>{project.description}</p>
+          {/* Split description into paragraphs on line breaks */}
+          {project.description.split('\n').map((paragraph: string, index: number) => (
+            <p key={index}>{paragraph}</p>
+          ))}
 
           {/* Display methods with their colors */}
           {project.topics && project.topics.length > 0 && (

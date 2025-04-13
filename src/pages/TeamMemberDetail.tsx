@@ -176,7 +176,9 @@ const TeamMemberDetail: React.FC = () => {
           </div>
           
           <div className="team-member-bio-extended">
-            <p>{member.bio}</p>
+            {member.bio.split('\n').map((paragraph: string, index: number) => (
+              <p key={index}>{paragraph}</p>
+            ))}
           </div>
         </div>
       </div>
@@ -199,7 +201,10 @@ const TeamMemberDetail: React.FC = () => {
                 ></div>
                 <div className="project-info">
                   <h3>{project.title}</h3>
-                  <p>{project.description}</p>
+                  <p>{project.description.length > 150 
+                      ? `${project.description.substring(0, 150)}...` 
+                      : project.description}
+                  </p>
                 </div>
               </Link>
             ))}

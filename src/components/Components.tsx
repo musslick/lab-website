@@ -230,6 +230,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     // Track mouse position for gradient effect
     const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
     const [isFrozen, setIsFrozen] = useState(false);
+    const [imageError, setImageError] = useState(false);
     
     const colorBlockRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLAnchorElement>(null);
@@ -254,6 +255,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     const handleMouseLeave = () => {
         setIsFrozen(true);
     };
+
+    // Check if project has a valid image
+    const hasValidImage = Boolean(
+        project.image && 
+        project.image.trim() !== '' &&
+        !project.image.endsWith('undefined') && 
+        !project.image.endsWith('null') &&
+        !imageError
+    );
 
     // Generate dynamic gradient based on mouse position and project topics
     const generateDynamicGradient = () => {
@@ -312,7 +322,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 ref={colorBlockRef}
                 className="project-color-block"
                 style={{ 
-                    background: generateDynamicGradient() 
+                    background: hasValidImage ? `url(${project.image}) center/cover no-repeat` : generateDynamicGradient() 
                 }}
             >
                 {/* No text overlay */}
