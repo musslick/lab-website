@@ -20,206 +20,256 @@ export interface Project {
 
 // Define project data with the structure matching the dashboard
 export const projects: Project[] = [
-    {
-      "id": "cognitive-ai",
-      "title": "Data-Driven Model Discovery Algorithm",
-      "description": "Developing artificial intelligence models that mimic human cognitive processes for better understanding of brain function.",
-      "category": [
-        "Other",
-        "Yes"
-      ],
-      "team": [
-        "Daniel Weinhardt",
-        "Alessandra Brondetta",
-        "Sebastian Musslick"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [
-        "White",
-        "Red",
-        "blue"
-      ],
-      "topicsWithColors": [
-        {
-          "name": "White",
-          "color": "#99fffa",
-          "hue": 177
-        },
-        {
-          "name": "Red",
-          "color": "#ff999b",
-          "hue": 359
-        },
-        {
-          "name": "blue",
-          "color": "#ac99ff",
-          "hue": 251
-        }
-      ],
-      "status": "ongoing",
-      "publications": [],
-      "_lastUpdated": 1744141152248
-    },
-    {
-      "id": "neural-mapping",
-      "title": "Automated Discovery of Sequential Sampling Models",
-      "description": "Mapping the complex interconnections in neural networks through advanced imaging techniques and computational models.",
-      "category": "Yes",
-      "team": [
-        "Daniel Weinhardt",
-        "Muhip Tezcan",
-        "Sebastian Musslick",
-        "Se Eun Choi"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [
-        "White",
-        "Yellow"
-      ],
-      "topicsWithColors": [
-        {
-          "name": "White",
-          "color": "#99fffa",
-          "hue": 177
-        },
-        {
-          "name": "Yellow",
-          "color": "#fff899",
-          "hue": 56
-        }
-      ],
-      "status": "ongoing",
-      "publications": [
-        "pub-003",
-        "pub-001"
-      ],
-      "_lastUpdated": 1743367023235
-    },
-    {
-      "id": "brain-computer",
-      "title": "Closed-Loop RL-SINDy",
-      "description": "Creating seamless interfaces between brain activity and computers for assistive technology and research applications.",
-      "category": "Other",
-      "team": [
-        "Sedighe Raeisi",
-        "Daniel Weinhardt",
-        "Se Eun Choi"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [],
-      "topicsWithColors": [],
-      "status": "ongoing",
-      "publications": [],
-      "_lastUpdated": 1743109441881
-    },
-    {
-      "id": "consciousness-study",
-      "title": "Understany",
-      "description": "Exploring the neural correlates of consciousness through multidisciplinary approaches and advanced neuroimaging.",
-      "category": "Other",
-      "team": [
-        "Moritz Hartstang"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [
-        "Wuhu"
-      ],
-      "topicsWithColors": [
-        {
-          "name": "Wuhu",
-          "color": "#ff9999",
-          "hue": 0
-        }
-      ],
-      "status": "ongoing",
-      "publications": [
-        "pub-001"
-      ],
-      "_lastUpdated": 1743624419847
-    },
-    {
-      "id": "project-1741440790106",
-      "title": "Landscaping",
-      "description": "a",
-      "category": "Other",
-      "team": [
-        "Pelin Kömürlüoğlu"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [],
-      "topicsWithColors": [],
-      "status": "ongoing",
-      "publications": [],
-      "_lastUpdated": 1743109403964
-    },
-    {
-      "id": "project-1741685324148",
-      "title": "Hierarchical Bayesian Model",
-      "description": "a",
-      "category": "Other",
-      "team": [
-        "Sedighe Raeisi",
-        "Se Eun Choi"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [],
-      "topicsWithColors": [],
-      "status": "ongoing",
-      "publications": [],
-      "_lastUpdated": 1743109417680
-    },
-    {
-      "id": "project-1741685438335",
-      "title": "Closed-Loop Integrative Discovery",
-      "description": "a",
-      "category": "Other",
-      "team": [
-        "Sebastian Musslick",
-        "Sedighe Raeisi",
-        "Daniel Weinhardt",
-        "Moritz Hartstang",
-        "Se Eun Choi",
-        "Pelin Kömürlüoğlu"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [],
-      "topicsWithColors": [],
-      "status": "ongoing",
-      "publications": [],
-      "_lastUpdated": 1743109376599
-    },
-    {
-      "id": "memory-enhancement",
-      "title": "LLM Simulator for Fostering Belief Flexibility",
-      "description": "Investigating techniques to enhance memory formation and recall through targeted stimulation of neural pathways.",
-      "category": "Other",
-      "team": [
-        "Alessandra Brondetta",
-        "Sedighe Raeisi",
-        "Moritz Hartstang"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [],
-      "topicsWithColors": [],
-      "status": "ongoing",
-      "publications": [],
-      "_lastUpdated": 1741813020845
-    },
-    {
-      "id": "project-1741685533429",
-      "title": "Synthetic Participant",
-      "description": "a",
-      "category": "Other",
-      "team": [
-        "Alessandra Brondetta",
-        "Muhip Tezcan",
-        "Leon Schmid"
-      ],
-      "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
-      "topics": [],
-      "topicsWithColors": [],
-      "status": "ongoing",
-      "publications": [],
-      "_lastUpdated": 1741813094821
-    }
+  {
+    "id": "project-1744367667570",
+    "title": "Automated Model Discovery",
+    "description": "Developing mechanistic models that explain behavioral and neural phenomena is a fundamental staple of cognitive science. However, as researchers collect increasingly large and complex datasets, they often lack the time, resources, or methodological tools to integrate this data into interpretable models. Moreover, the space of possible computational models is vast—far exceeding what human intuition alone can efficiently navigate.\n\nOur lab addresses this challenge by developing AI-driven methods for automated model discovery. We use techniques such as sparse identification of nonlinear dynamical systems (SINDy) and symbolic regression to extract interpretable models from noisy behavioral and neural data. These methods allow us to uncover latent cognitive dynamics underlying processes like reinforcement learning and decision-making, providing concise, human-understandable explanations of complex behavioral patterns.",
+    "category": [
+      "AI for science",
+      "reinforcement learning",
+      "decision making",
+      "cognitive control"
+    ],
+    "team": [
+      "Sebastian Musslick"
+    ],
+    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "topics": [
+      "equation discovery",
+      "knowledge distillation",
+      "SINDy",
+      "computational modeling"
+    ],
+    "topicsWithColors": [
+      {
+        "name": "equation discovery",
+        "color": "#ff9999",
+        "hue": 0
+      },
+      {
+        "name": "knowledge distillation",
+        "color": "#99ff99",
+        "hue": 120
+      },
+      {
+        "name": "SINDy",
+        "color": "#9999ff",
+        "hue": 240
+      },
+      {
+        "name": "computational modeling",
+        "color": "#ffb399",
+        "hue": 15
+      }
+    ],
+    "status": "ongoing",
+    "publications": [],
+    "image": "https://i.postimg.cc/cCm37nc5/model-discovery.png",
+    "startDate": "2023-10-01",
+    "_lastUpdated": 1744383905215
+  },
+  {
+    "id": "project-1744380957652",
+    "title": "Automated Experimental Design",
+    "description": "A central challenge in empirical research is selecting experiments that yield scientific merit. This involves identifying not only promising experimental conditions within a predefined design space, but also discovering entirely new experimental variables that expand that space. As design spaces grow in complexity and dimensionality, navigating them effectively becomes increasingly difficult—especially when trying to isolate conditions that maximize informativeness while minimizing the impact of nuisance variables.\n\nOur lab develops AI-driven tools to address this challenge. We apply methods from active learning and optimal experimental design to efficiently search complex spaces of experiments. To ensure experimental control, we also use techniques from Boolean satisfiability sampling to automate the counterbalancing of stimulus sequences and minimize confounding effects.\n\nBeyond individual experiments, our approach aims to address a deeper issue in cognitive science: empirical fragmentation. Experimental paradigms are often designed in isolation for narrow questions, limiting the ability to compare results across studies or integrate theoretical insights. By sampling from broader, high-dimensional design spaces, we aim to unify previously disjointed paradigms—enabling a more integrative understanding of human cognition.",
+    "category": [
+      "AI for science",
+      "cognitive control"
+    ],
+    "team": [],
+    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "topics": [
+      "active learning",
+      "SAT sampling",
+      "program synthesis",
+      "integrative experimental design"
+    ],
+    "topicsWithColors": [
+      {
+        "name": "active learning",
+        "color": "#ff9999",
+        "hue": 0
+      },
+      {
+        "name": "SAT sampling",
+        "color": "#ccff99",
+        "hue": 90
+      },
+      {
+        "name": "program synthesis",
+        "color": "#99ffff",
+        "hue": 180
+      },
+      {
+        "name": "integrative experimental design",
+        "color": "#cc99ff",
+        "hue": 270
+      }
+    ],
+    "status": "ongoing",
+    "publications": [],
+    "startDate": "2023-10-01",
+    "_lastUpdated": 1744383228495
+  },
+  {
+    "id": "project-1744383288085",
+    "title": "Automated Laboratories for Integrated Scientific Discovery",
+    "description": "Scientific discovery is a complex, multi-step process—spanning literature review, hypothesis generation, experimental design, data collection, analysis, and model building. In addition, scientific discovery often occurs interactively across multiple levels, ranging from the discovery of high-level taxonomies to the discovery of detailed process models. While recent advances in AI for science have made progress in automating individual steps of empirical research, these efforts typically focus on tasks in isolation, without connecting them into a unified workflow, and across levels of scientific knowledge. Our lab seeks to go beyond such task-specific automation by developing fully integrated, closed-loop systems in which AI agents collaborate across all stages of the scientific process. These systems aim to autonomously generate, test, and refine hypotheses—accelerating discovery and enabling scientific reasoning at a scale and depth that manual approaches alone cannot achieve.\n\nTo realize this vision, we develop specialized AI agents capable of performing key scientific tasks—such as literature search, experimental design, data analysis, and model building. Each agent is designed to operate both independently and in concert with others, enabling dynamic interaction across stages of the research process. A central challenge in this work is the development of shared, structured representations of scientific knowledge that allow these agents to reason collectively and update their understanding as new insights emerge.\n\nBy coordinating these agents within integrated systems, we aim to build autonomous laboratories capable of conducting full cycles of scientific inquiry—from identifying open questions in the literature to designing informative experiments, analyzing results, and refining theoretical models. We apply these systems to the discovery of hypotheses, mechanisms and theories underlying different aspects human cognition. In doing so, we hope to overcome traditional bottlenecks in empirical research and lay the groundwork for a an understanding of human cognition across different levels of explanation.",
+    "category": [
+      "AI for science",
+      "reinforcement learning"
+    ],
+    "team": [],
+    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "topics": [
+      "integrative experimental design",
+      "program synthesis",
+      "active learning",
+      "equation discovery",
+      "computational modeling",
+      "scientific knowledge representation",
+      "retrieval augmented generation"
+    ],
+    "topicsWithColors": [
+      {
+        "name": "integrative experimental design",
+        "color": "#ff9999",
+        "hue": 0
+      },
+      {
+        "name": "program synthesis",
+        "color": "#ccff99",
+        "hue": 90
+      },
+      {
+        "name": "active learning",
+        "color": "#99ffff",
+        "hue": 180
+      },
+      {
+        "name": "equation discovery",
+        "color": "#cc99ff",
+        "hue": 270
+      },
+      {
+        "name": "computational modeling",
+        "color": "#ffb399",
+        "hue": 15
+      },
+      {
+        "name": "scientific knowledge representation",
+        "color": "#fff199",
+        "hue": 52
+      },
+      {
+        "name": "retrieval augmented generation",
+        "color": "#ff99f0",
+        "hue": 309
+      }
+    ],
+    "status": "ongoing",
+    "publications": [],
+    "_lastUpdated": 1744396538987
+  },
+  {
+    "id": "project-1744383465177",
+    "title": "Human Participant Simulators for Experiment Prototyping",
+    "description": "A major bottleneck in the study of human behavior is the cost and time required to collect behavioral data from human participants. These constraints force researchers to focus on a narrow set of experimental designs, limiting the scope of scientific exploration and slowing theory development. In other scientific fields—such as physics and chemistry—this challenge has been addressed through high-fidelity simulators. For example, AlphaFold has transformed chemistry by enabling researchers to simulate protein folding, accelerating discovery by allowing in silico experimentation.\n\nIn this research area, we explore how similar simulation-based approaches can benefit cognitive science. Specifically, we investigate how large language models can serve as simulators of human participants, providing plausible, human-like responses in behavioral tasks. These simulated participants allow us to rapidly prototype and evaluate experimental designs, test hypotheses, and explore broader regions of the experimental space before collecting real-world data—bringing the benefits of simulation-driven science to the study of the mind.",
+    "category": [
+      "AI for science",
+      "decision making",
+      "cognitive control",
+      "reinforcement learning"
+    ],
+    "team": [],
+    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "topics": [
+      "integrative experimental design",
+      "large language models",
+      "computational modeling"
+    ],
+    "topicsWithColors": [
+      {
+        "name": "integrative experimental design",
+        "color": "#cc99ff",
+        "hue": 270
+      },
+      {
+        "name": "large language models",
+        "color": "#ff99c7",
+        "hue": 333
+      },
+      {
+        "name": "computational modeling",
+        "color": "#ffb399",
+        "hue": 15
+      }
+    ],
+    "status": "ongoing",
+    "publications": [],
+    "startDate": "2023-10-01",
+    "_lastUpdated": 1744539398992
+  },
+  {
+    "id": "project-1744537991200",
+    "title": "Rational Boundedness of Cognition",
+    "description": "All forms of cognition—whether biological or artificial—are constrained by the architecture that supports them. No brain or machine can perform an infinite number of computations in parallel, and these fundamental limitations shape the way intelligent systems perceive, decide, and act. This idea is central to general theories of cognition, such as bounded rationality and bounded optimality. Yet, there remains little consensus on what exactly these cognitive bounds are—and more importantly, why they exist in the first place.\n\nIn this research area, we investigate the origins of cognitive constraints by drawing on insights from neuroscience, psychology, and machine learning. We focus on identifying fundamental computational dilemmas that arise in neural processing systems—for example, the tradeoff between sharing neural representations to support efficient learning and separating them to enable interference-free parallel processing. These tradeoffs may explain why certain cognitive limitations, such as the difficulty of performing multiple tasks at once, appear to be deeply embedded in both biological neural systems, and the degree to which they may translate to artificial systems as well. \n\nBy uncovering the computational logic behind cognitive constraints (e.g., in multitasking, task switching, and cognitive fatigue), we aim to provide a principled, mechanistic account of why cognition is bounded—one that applies to both natural and artificial intelligence and helps unify our understanding of their shared limitations.",
+    "category": [
+      "cognitive control",
+      "decision making",
+      "machine learning"
+    ],
+    "team": [],
+    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "topics": [
+      "computational modeling",
+      "mathematical analysis"
+    ],
+    "topicsWithColors": [
+      {
+        "name": "computational modeling",
+        "color": "#ff9999",
+        "hue": 0
+      },
+      {
+        "name": "mathematical analysis",
+        "color": "#99ffff",
+        "hue": 180
+      }
+    ],
+    "status": "ongoing",
+    "publications": [],
+    "startDate": "2023-10-01"
+  },
+  {
+    "id": "project-1744383751212",
+    "title": "Cognitive Control & Mental Effort",
+    "description": "Why does thinking hard feel so tiring? Even a day spent sitting at a desk can leave us feeling mentally exhausted. This sense of mental effort is deeply connected to the concept of cognitive control –– our brain’s ability to stay focused and adapt behavior in a changing world. It’s what helps us stay on task, resist distractions, and solve problems, and it plays a central role in everything from attention and memory to learning and decision-making.\n\nBut surprisingly, we still don’t fully understand how mental effort works. Why does it feel effortful? Why do we sometimes lose focus, even when we’re trying hard? And how do we decide when it’s worth putting in the mental effort at all?\n\nIn our lab, we study these questions by combining large-scale behavioral experiments with computational modeling and automated scientific discovery. Our goal is to uncover the reasons for why humans are limited in their ability to exert cognitive control, why allocating control feels effortful, and how people decide how to allocate cognitive control.",
+    "category": [
+      "cognitive control",
+      "decision making"
+    ],
+    "team": [],
+    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "topics": [
+      "computational modeling",
+      "integrative experimental design"
+    ],
+    "topicsWithColors": [
+      {
+        "name": "computational modeling",
+        "color": "#ffb399",
+        "hue": 15
+      },
+      {
+        "name": "integrative experimental design",
+        "color": "#cc99ff",
+        "hue": 270
+      }
+    ],
+    "status": "ongoing",
+    "publications": [],
+    "startDate": "2023-10-01",
+    "_lastUpdated": 1744537982730
+  }
   ];

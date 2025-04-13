@@ -9,23 +9,23 @@ const Projects: React.FC = () => {
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>('All');
   const [selectedMethod, setSelectedMethod] = useState<string>('All');
   const [keywordSearch, setKeywordSearch] = useState<string>('');
-  
+
   // Get unique disciplines
-  const allDisciplines = projects.flatMap(project => 
-    Array.isArray(project.category) 
-      ? project.category 
+  const allDisciplines = projects.flatMap(project =>
+    Array.isArray(project.category)
+      ? project.category
       : [project.category]
   );
   const uniqueDisciplines = ['All', ...Array.from(new Set(allDisciplines))];
-  
+
   // Get unique methods across all projects
   const allMethods = projects.flatMap(project => project.topics || []);
   const uniqueMethods = ['All', ...Array.from(new Set(allMethods))];
 
   // Filter projects by selected discipline, method, and keyword search
   const filteredProjects = projects
-    .filter(project => 
-      selectedDiscipline === 'All' || 
+    .filter(project =>
+      selectedDiscipline === 'All' ||
       (typeof project.category === 'string' && project.category === selectedDiscipline) ||
       (Array.isArray(project.category) && project.category.includes(selectedDiscipline))
     )
@@ -34,7 +34,7 @@ const Projects: React.FC = () => {
       if (!keywordSearch.trim()) return true;
       const searchTerms = keywordSearch.toLowerCase().trim().split(/\s+/);
       const projectText = `${project.title} ${project.description}`.toLowerCase();
-      
+
       // Project must match at least one search term
       return searchTerms.some(term => projectText.includes(term));
     });
@@ -60,17 +60,17 @@ const Projects: React.FC = () => {
   return (
     <div className="projects-page">
       <div className="projects-header">
-        <h1>Our Research Projects</h1>
-        <p>Explore the cutting-edge research happening in our lab</p>
+        <h1>Research Areas</h1>
+        <p>Our lab develops and applies AI systems to automate scientific discovery—exploring spaces of experiments, models, and theories that extend beyond the cognitive limits of human researchers. We use these tools to investigate fundamental faculties of human cognition, including cognitive control, learning, and decision-making.</p>
       </div>
 
       <div className="filter-container">
         <div className="tag-filter">
-          <h3>Filter by Discipline</h3>
+          <h3>Filter by Topic</h3>
           <div className="tag-list">
             {uniqueDisciplines.map(discipline => (
-              <button 
-                key={discipline} 
+              <button
+                key={discipline}
                 className={`tag-button ${selectedDiscipline === discipline ? 'active' : ''}`}
                 onClick={() => setSelectedDiscipline(discipline)}
               >
@@ -79,13 +79,13 @@ const Projects: React.FC = () => {
             ))}
           </div>
         </div>
-        
+
         <div className="tag-filter">
           <h3>Filter by Method</h3>
           <div className="tag-list">
             {uniqueMethods.map(method => (
-              <button 
-                key={method} 
+              <button
+                key={method}
                 className={`tag-button ${selectedMethod === method ? 'active' : ''}`}
                 onClick={() => setSelectedMethod(method)}
               >
@@ -96,7 +96,7 @@ const Projects: React.FC = () => {
         </div>
 
         <div className="tag-filter">
-          <h3>Search Research Projects</h3>
+          <h3>Search Research Areas</h3>
           <div className="search-container">
             <input
               type="text"
@@ -107,7 +107,7 @@ const Projects: React.FC = () => {
               className="keyword-search"
             />
             {keywordSearch && (
-              <button 
+              <button
                 onClick={clearSearch}
                 className="clear-search-button"
                 aria-label="Clear search"
@@ -118,7 +118,7 @@ const Projects: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="projects-grid">
         {filteredProjects.length > 0 ? (
           filteredProjects.map((project: Project) => (
