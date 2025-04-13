@@ -31,7 +31,11 @@ export const projects: Project[] = [
       "cognitive control"
     ],
     "team": [
-      "Sebastian Musslick"
+      "Sebastian Musslick",
+      "Sedighe Raeisi",
+      "Daniel Weinhardt",
+      "Muhip Tezcan",
+      "Se Eun Choi"
     ],
     "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
     "topics": [
@@ -66,7 +70,7 @@ export const projects: Project[] = [
     "publications": [],
     "image": "https://i.postimg.cc/cCm37nc5/model-discovery.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744383905215
+    "_lastUpdated": 1744541911782
   },
   {
     "id": "project-1744380957652",
@@ -76,7 +80,12 @@ export const projects: Project[] = [
       "AI for science",
       "cognitive control"
     ],
-    "team": [],
+    "team": [
+      "Sebastian Musslick",
+      "Sedighe Raeisi",
+      "Pelin Kömürlüoğlu",
+      "Se Eun Choi"
+    ],
     "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
     "topics": [
       "active learning",
@@ -109,7 +118,7 @@ export const projects: Project[] = [
     "status": "ongoing",
     "publications": [],
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744383228495
+    "_lastUpdated": 1744541951933
   },
   {
     "id": "project-1744383288085",
@@ -117,9 +126,17 @@ export const projects: Project[] = [
     "description": "Scientific discovery is a complex, multi-step process—spanning literature review, hypothesis generation, experimental design, data collection, analysis, and model building. In addition, scientific discovery often occurs interactively across multiple levels, ranging from the discovery of high-level taxonomies to the discovery of detailed process models. While recent advances in AI for science have made progress in automating individual steps of empirical research, these efforts typically focus on tasks in isolation, without connecting them into a unified workflow, and across levels of scientific knowledge. Our lab seeks to go beyond such task-specific automation by developing fully integrated, closed-loop systems in which AI agents collaborate across all stages of the scientific process. These systems aim to autonomously generate, test, and refine hypotheses—accelerating discovery and enabling scientific reasoning at a scale and depth that manual approaches alone cannot achieve.\n\nTo realize this vision, we develop specialized AI agents capable of performing key scientific tasks—such as literature search, experimental design, data analysis, and model building. Each agent is designed to operate both independently and in concert with others, enabling dynamic interaction across stages of the research process. A central challenge in this work is the development of shared, structured representations of scientific knowledge that allow these agents to reason collectively and update their understanding as new insights emerge.\n\nBy coordinating these agents within integrated systems, we aim to build autonomous laboratories capable of conducting full cycles of scientific inquiry—from identifying open questions in the literature to designing informative experiments, analyzing results, and refining theoretical models. We apply these systems to the discovery of hypotheses, mechanisms and theories underlying different aspects human cognition. In doing so, we hope to overcome traditional bottlenecks in empirical research and lay the groundwork for a an understanding of human cognition across different levels of explanation.",
     "category": [
       "AI for science",
-      "reinforcement learning"
+      "reinforcement learning",
+      "machine learning"
     ],
-    "team": [],
+    "team": [
+      "Sebastian Musslick",
+      "Sedighe Raeisi",
+      "Daniel Weinhardt",
+      "Moritz Hartstang",
+      "Se Eun Choi",
+      "Leon Schmid"
+    ],
     "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
     "topics": [
       "integrative experimental design",
@@ -169,7 +186,7 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
-    "_lastUpdated": 1744396538987
+    "_lastUpdated": 1744541974881
   },
   {
     "id": "project-1744383465177",
@@ -181,7 +198,11 @@ export const projects: Project[] = [
       "cognitive control",
       "reinforcement learning"
     ],
-    "team": [],
+    "team": [
+      "Sebastian Musslick",
+      "Alessandra Brondetta",
+      "Moritz Hartstang"
+    ],
     "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
     "topics": [
       "integrative experimental design",
@@ -208,7 +229,7 @@ export const projects: Project[] = [
     "status": "ongoing",
     "publications": [],
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744539398992
+    "_lastUpdated": 1744541993513
   },
   {
     "id": "project-1744537991200",
@@ -219,7 +240,10 @@ export const projects: Project[] = [
       "decision making",
       "machine learning"
     ],
-    "team": [],
+    "team": [
+      "Sebastian Musslick",
+      "Alessandra Brondetta"
+    ],
     "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
     "topics": [
       "computational modeling",
@@ -239,7 +263,8 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
-    "startDate": "2023-10-01"
+    "startDate": "2023-10-01",
+    "_lastUpdated": 1744542005872
   },
   {
     "id": "project-1744383751212",
@@ -249,7 +274,11 @@ export const projects: Project[] = [
       "cognitive control",
       "decision making"
     ],
-    "team": [],
+    "team": [
+      "Sebastian Musslick",
+      "Alessandra Brondetta",
+      "Moritz Hartstang"
+    ],
     "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
     "topics": [
       "computational modeling",
@@ -270,6 +299,6 @@ export const projects: Project[] = [
     "status": "ongoing",
     "publications": [],
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744537982730
+    "_lastUpdated": 1744542024513
   }
   ];
