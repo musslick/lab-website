@@ -6,7 +6,6 @@ export interface Collaborator {
 }
 
 export const collaborators: Collaborator[] = [
-  export const collaborators = [
     {
       "id": "uni-science",
       "name": "Autonomous Empirical Research Group",
@@ -43,5 +42,4 @@ export const collaborators: Collaborator[] = [
       "url": "https://www.dfki.de/web/ueber-uns/standorte-kontakt/osnabrueck-oldenburg",
       "logo": "https://www.designtagebuch.de/wp-content/uploads/mediathek//2023/11/dfki-logo.jpg"
     }
-  ];
 ];
