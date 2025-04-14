@@ -17,7 +17,7 @@ const TeamMemberDetail: React.FC = () => {
       if (id) {
         const updatedMember = getTeamMemberById(id);
         setMember(updatedMember);
-        
+
         // Update projects list
         if (updatedMember?.projects) {
           const projects = updatedMember.projects
@@ -25,23 +25,23 @@ const TeamMemberDetail: React.FC = () => {
             .filter(project => project !== undefined);
           setMemberProjects(projects);
         }
-        
+
         // Find publications where this team member is an author
         if (updatedMember) {
           // Get the last name of the team member for matching in publications
           const lastName = updatedMember.name.split(' ').pop()?.toLowerCase() || '';
-          
+
           // Filter publications where the member appears as an author
-          const relatedPublications = publications.filter(publication => 
-            publication.authors.some(author => 
+          const relatedPublications = publications.filter(publication =>
+            publication.authors.some(author =>
               author.toLowerCase().includes(lastName)
             )
           );
-          
+
           // Sort by year (newest first)
           const sortedPublications = [...relatedPublications].sort((a, b) => b.year - a.year);
-          setMemberPublications(sortedPublications); 
-          
+          setMemberPublications(sortedPublications);
+
           // Group publications by year
           const publicationsByYear = sortedPublications.reduce((acc, publication) => {
             const year = publication.year.toString();
@@ -51,11 +51,11 @@ const TeamMemberDetail: React.FC = () => {
             acc[year].push(publication);
             return acc;
           }, {} as Record<string, typeof sortedPublications>);
-          
+
           setPublicationsByYear(publicationsByYear);
-          
+
           // Find software developed by this team member
-          const relatedSoftware = software.filter(sw => 
+          const relatedSoftware = software.filter(sw =>
             sw.developers.includes(updatedMember.name)
           );
           setMemberSoftware(relatedSoftware);
@@ -78,7 +78,7 @@ const TeamMemberDetail: React.FC = () => {
 
     window.addEventListener('project-updated', handleProjectUpdate);
     window.addEventListener('publication-updated', handlePublicationUpdate);
-    
+
     return () => {
       window.removeEventListener('project-updated', handleProjectUpdate);
       window.removeEventListener('publication-updated', handlePublicationUpdate);
@@ -95,7 +95,7 @@ const TeamMemberDetail: React.FC = () => {
   const generateProjectGradient = (project: any) => {
     // Get topic colors from the project
     const topicColors = getTopicColorsFromProject(project);
-    
+
     // Create a gradient with the unified function
     return createProjectGradient(topicColors, 'circle at center');
   };
@@ -111,8 +111,8 @@ const TeamMemberDetail: React.FC = () => {
       <div className="team-member-profile">
         <div className="team-member-profile-image">
           {member.imageUrl ? (
-            <img 
-              src={member.imageUrl} 
+            <img
+              src={member.imageUrl}
               alt={member.name}
               className="team-member-large-image"
               onError={() => {
@@ -131,7 +131,7 @@ const TeamMemberDetail: React.FC = () => {
         <div className="team-member-profile-info">
           <h1>{member.name}</h1>
           <h2 className="team-member-role">{member.role}</h2>
-          
+
           {/* Contact information section */}
           <div className="team-member-contact">
             {member.email && (
@@ -142,13 +142,13 @@ const TeamMemberDetail: React.FC = () => {
                 </a>
               </div>
             )}
-            
+
             {member.github && (
               <div className="contact-item">
                 <span className="contact-icon">🐙 </span>
-                <a 
-                  href={`https://github.com/${member.github}`} 
-                  target="_blank" 
+                <a
+                  href={`https://github.com/${member.github}`}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="team-member-github"
                 >
@@ -156,15 +156,15 @@ const TeamMemberDetail: React.FC = () => {
                 </a>
               </div>
             )}
-            
+
             {member.cvUrl && (
               <div className="contact-item">
                 <span className="contact-icon">📄 </span>
-                <a 
-                  href={member.cvUrl.startsWith('data:') 
-                    ? URL.createObjectURL(dataURLtoBlob(member.cvUrl)) 
+                <a
+                  href={member.cvUrl.startsWith('data:')
+                    ? URL.createObjectURL(dataURLtoBlob(member.cvUrl))
                     : member.cvUrl}
-                  target="_blank" 
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="team-member-cv"
                   download={member.cvUrl.startsWith('data:') ? `${member.name.replace(/\s+/g, '_')}_CV.pdf` : false}
@@ -174,7 +174,7 @@ const TeamMemberDetail: React.FC = () => {
               </div>
             )}
           </div>
-          
+
           <div className="team-member-bio-extended">
             {member.bio.split('\n').map((paragraph: string, index: number) => (
               <p key={index}>{paragraph}</p>
@@ -188,21 +188,21 @@ const TeamMemberDetail: React.FC = () => {
           <h2>Projects</h2>
           <div className="team-member-projects-grid">
             {memberProjects.map(project => (
-              <Link 
-                key={project.id} 
+              <Link
+                key={project.id}
                 to={`/projects/${project.id}`}
                 className="team-member-project-card"
               >
-                <div 
+                <div
                   className="project-color-indicator"
-                  style={{ 
+                  style={{
                     background: generateProjectGradient(project)
                   }}
                 ></div>
                 <div className="project-info">
                   <h3>{project.title}</h3>
-                  <p>{project.description.length > 150 
-                      ? `${project.description.substring(0, 150)}...` 
+                  <p>{project.description.length > 150
+                      ? `${project.description.substring(0, 150)}...`
                       : project.description}
                   </p>
                 </div>
@@ -211,7 +211,7 @@ const TeamMemberDetail: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {/* Software section - updated to match existing software design */}
       {memberSoftware.length > 0 && (
         <div className="team-member-section">
@@ -223,9 +223,9 @@ const TeamMemberDetail: React.FC = () => {
                   <h3 className="software-name">{sw.name}</h3>
                   {sw.featured && <span className="software-featured">Featured</span>}
                 </div>
-                
+
                 <p className="software-description">{sw.description}</p>
-                
+
                 {sw.technologies && sw.technologies.length > 0 && (
                   <div className="software-tech-tags">
                     {sw.technologies.map((tech: string) => (
@@ -233,13 +233,13 @@ const TeamMemberDetail: React.FC = () => {
                     ))}
                   </div>
                 )}
-                
+
                 {sw.developers && sw.developers.length > 0 && sw.developers.length > 1 && (
                   <p className="software-developed-by">
                     Co-developed with: {sw.developers.filter((dev: string) => dev !== member.name).join(', ')}
                   </p>
                 )}
-                
+
                 <div className="software-meta">
                   {sw.license && (
                     <span className="software-license">{sw.license}</span>
@@ -255,7 +255,7 @@ const TeamMemberDetail: React.FC = () => {
                     </p>
                   )}
                 </div>
-                
+
                 <div className="software-links">
                   <a href={sw.repoUrl} target="_blank" rel="noopener noreferrer" className="software-link repo-link">
                     Repository
@@ -271,7 +271,7 @@ const TeamMemberDetail: React.FC = () => {
                     </a>
                   )}
                 </div>
-                
+
                 {sw.projectId && (
                   <div className="software-related-project">
                     <Link to={`/projects/${sw.projectId}`} className="project-link">
@@ -294,9 +294,9 @@ const TeamMemberDetail: React.FC = () => {
               <div key={publication.id} className="publication-item">
                 <h4 className="publication-title">
                   {publication.url ? (
-                    <a 
-                      href={publication.url} 
-                      target="_blank" 
+                    <a
+                      href={publication.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                     >
                       {publication.title}
@@ -329,7 +329,7 @@ const TeamMemberDetail: React.FC = () => {
                 )}
                 {publication.doi && (
                   <p className="publication-doi">
-                    DOI: <a 
+                    DOI: <a
                       href={`https://doi.org/${publication.doi}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -353,19 +353,19 @@ function dataURLtoBlob(dataURL: string): Blob {
   const parts = dataURL.split(',');
   const mime = parts[0].match(/:(.*?);/)?.[1] || 'application/octet-stream';
   const base64 = parts[1];
-  
+
   // Convert base64 to raw binary data
   const binaryString = atob(base64);
-  
+
   // Create an array buffer of the right size
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
-  
+
   // Fill the array buffer with the binary data
   for (let i = 0; i < len; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
-  
+
   // Create a Blob from the array buffer with the correct MIME type
   return new Blob([bytes], { type: mime });
 }

@@ -192,7 +192,7 @@ const Home: React.FC = () => {
                         See all news <span className="arrow-icon">→</span>
                     </Link>
                     <Link to="/projects" className="see-more-link">
-                        See all projects <span className="arrow-icon">→</span>
+                        See all research areas <span className="arrow-icon">→</span>
                     </Link>
                     <Link to="/publications" className="see-more-link">
                         See all publications <span className="arrow-icon">→</span>

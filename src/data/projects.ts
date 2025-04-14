@@ -117,8 +117,9 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
+    "image": "https://i.postimg.cc/0NyP1hcn/experimental-design.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744541951933
+    "_lastUpdated": 1744645669040
   },
   {
     "id": "project-1744383288085",
@@ -186,7 +187,8 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
-    "_lastUpdated": 1744541974881
+    "image": "https://i.postimg.cc/02TXR40S/integrated-discovery.png",
+    "_lastUpdated": 1744646027034
   },
   {
     "id": "project-1744383465177",
@@ -228,13 +230,14 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
+    "image": "https://i.postimg.cc/NfxbJF9S/synthetic-participants.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744541993513
+    "_lastUpdated": 1744649858704
   },
   {
     "id": "project-1744537991200",
     "title": "Rational Boundedness of Cognition",
-    "description": "All forms of cognition—whether biological or artificial—are constrained by the architecture that supports them. No brain or machine can perform an infinite number of computations in parallel, and these fundamental limitations shape the way intelligent systems perceive, decide, and act. This idea is central to general theories of cognition, such as bounded rationality and bounded optimality. Yet, there remains little consensus on what exactly these cognitive bounds are—and more importantly, why they exist in the first place.\n\nIn this research area, we investigate the origins of cognitive constraints by drawing on insights from neuroscience, psychology, and machine learning. We focus on identifying fundamental computational dilemmas that arise in neural processing systems—for example, the tradeoff between sharing neural representations to support efficient learning and separating them to enable interference-free parallel processing. These tradeoffs may explain why certain cognitive limitations, such as the difficulty of performing multiple tasks at once, appear to be deeply embedded in both biological neural systems, and the degree to which they may translate to artificial systems as well. \n\nBy uncovering the computational logic behind cognitive constraints (e.g., in multitasking, task switching, and cognitive fatigue), we aim to provide a principled, mechanistic account of why cognition is bounded—one that applies to both natural and artificial intelligence and helps unify our understanding of their shared limitations.",
+    "description": "All forms of cognition—whether biological or artificial—are constrained by the architecture that supports them. No brain or machine can perform an infinite number of computations in parallel, and these fundamental limitations shape the way intelligent systems perceive, decide, and act. This idea is central to general theories of cognition, such as bounded rationality and bounded optimality. Yet, there remains little consensus on what exactly these cognitive bounds are—and more importantly, why they exist in the first place.\n\nIn this research area, we investigate the origins of cognitive constraints by drawing on insights from neuroscience, psychology, and machine learning. We focus on identifying fundamental computational dilemmas that arise in neural processing systems—for example, the tradeoff between sharing neural representations to support efficient learning and separating them to enable interference-free parallel processing. These tradeoffs may explain why certain cognitive limitations, such as the difficulty of performing multiple tasks at once, appear to be deeply embedded in both biological neural systems, and the degree to which they may translate to artificial systems as well. \n\nBy studying the computational logic behind cognitive constraints (e.g., in multitasking, task switching, and cognitive fatigue), we aim to provide a principled, mechanistic account of why cognition is bounded—one that applies to both natural and artificial intelligence and helps unify our understanding of their shared limitations.",
     "category": [
       "cognitive control",
       "decision making",
@@ -263,13 +266,14 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
+    "image": "https://i.postimg.cc/XqK1rBhc/rational-boundedness.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744542005872
+    "_lastUpdated": 1744656500911
   },
   {
     "id": "project-1744383751212",
     "title": "Cognitive Control & Mental Effort",
-    "description": "Why does thinking hard feel so tiring? Even a day spent sitting at a desk can leave us feeling mentally exhausted. This sense of mental effort is deeply connected to the concept of cognitive control –– our brain’s ability to stay focused and adapt behavior in a changing world. It’s what helps us stay on task, resist distractions, and solve problems, and it plays a central role in everything from attention and memory to learning and decision-making.\n\nBut surprisingly, we still don’t fully understand how mental effort works. Why does it feel effortful? Why do we sometimes lose focus, even when we’re trying hard? And how do we decide when it’s worth putting in the mental effort at all?\n\nIn our lab, we study these questions by combining large-scale behavioral experiments with computational modeling and automated scientific discovery. Our goal is to uncover the reasons for why humans are limited in their ability to exert cognitive control, why allocating control feels effortful, and how people decide how to allocate cognitive control.",
+    "description": "Why does thinking hard feel so tiring? Even a day spent sitting at a desk can leave us feeling mentally exhausted. This sense of mental effort is deeply connected to the concept of cognitive control –– our brain’s ability to stay focused and adapt behavior in a changing world. It’s what helps us stay on task, resist distractions, and solve problems, and it plays a central role in everything from attention and memory to learning and decision-making. But surprisingly, we still don’t fully understand how mental effort works. Why does it feel effortful? Why do we sometimes lose focus, even when we’re trying hard? And how do we decide when it’s worth putting in the mental effort at all?\n\nIn our lab, we study these questions by combining large-scale behavioral experiments with computational modeling and automated scientific discovery. Our goal is to uncover the reasons for why humans are limited in their ability to exert cognitive control, why allocating control feels effortful, and how people decide how to allocate cognitive control.",
     "category": [
       "cognitive control",
       "decision making"
@@ -298,7 +302,8 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
+    "image": "https://i.postimg.cc/bYW5nczG/mental-effort.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744542024513
+    "_lastUpdated": 1744659961849
   }
   ];
