@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
 import { TopNav, Footer } from '../components/Components';
-import { createProjectGradient, getTopicColorsFromProject } from '../utils/colorUtils';
+import { createProjectGradient, getTopicColorsFromProject, generateTopicColor } from '../utils/colorUtils';
 import '../styles/styles.css';
 
 // Function to render categories, handling both string and array formats
@@ -23,7 +23,7 @@ const renderDisciplines = (disciplines: string | string[]) => {
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { projects, teamMembers, publications, software } = useContent();
+  const { projects, teamMembers, publications, software, topicColorRegistry } = useContent();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [projectTeam, setProjectTeam] = useState<any[]>([]);
@@ -48,9 +48,25 @@ const ProjectDetails: React.FC = () => {
       // Extract or generate topic colors for the dynamic gradient
       let colors: string[] = [];
 
-      // If the project has topicsWithColors, use those
-      if (currentProject.topicsWithColors && currentProject.topicsWithColors.length > 0) {
-        colors = currentProject.topicsWithColors.map((t: any) => t.color);
+      // If the project has topics, get their colors from the registry
+      if (currentProject.topics && currentProject.topics.length > 0) {
+        colors = currentProject.topics.map((topicName: string) => {
+          // First try to get the color from the centralized registry
+          if (topicColorRegistry && topicColorRegistry[topicName]) {
+            return topicColorRegistry[topicName].color;
+          }
+          
+          // If not found in registry, fallback to project's topicsWithColors
+          const topicWithColor = currentProject.topicsWithColors?.find((t: any) => t.name === topicName);
+          if (topicWithColor?.color) {
+            return topicWithColor.color;
+          }
+          
+          // Last resort - generate a color
+          const index = currentProject.topics ? currentProject.topics.indexOf(topicName) : 0;
+          const total = currentProject.topics ? currentProject.topics.length : 1;
+          return generateTopicColor(Math.round((index / total) * 360));
+        });
       }
       // Otherwise, extract colors from the gradient string
       else if (currentProject.color && typeof currentProject.color === 'string') {
@@ -86,7 +102,7 @@ const ProjectDetails: React.FC = () => {
     }
 
     setLoading(false);
-  }, [id, projects, teamMembers, software, baseColor]);
+  }, [id, projects, teamMembers, software, baseColor, topicColorRegistry]);
 
   // Handle mouse movement over the header
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -109,23 +125,20 @@ const ProjectDetails: React.FC = () => {
     setIsFrozen(true);
   };
 
-  // Update the gradient generation based on topics
+  // Generate dynamic gradient using topic colors from registry
   const generateDynamicGradient = () => {
     // If no topics, return the pure lab color
     if (!project.topics || project.topics.length === 0) {
       return baseColor;
     }
 
-    // Get mouse position as percentage of card dimension
+    // Get mouse position as percentage of header dimension
     const { x, y } = mousePosition;
 
     // Create a dynamic position based on mouse
     const position = `circle at ${x}% ${y}%`;
 
-    // Get topic colors from the project
-    const topicColors = getTopicColorsFromProject(project);
-
-    // Create a gradient with the unified function
+    // Create a gradient using the collected colors
     return createProjectGradient(topicColors, position);
   };
 
@@ -204,11 +217,23 @@ const ProjectDetails: React.FC = () => {
           {project.topics && project.topics.length > 0 && (
             <div className="project-detail-topics">
               {project.topics.map((method: string, index: number) => {
-                // Find color from topicsWithColors if available
-                const methodWithColor = project.topicsWithColors?.find(
-                  (t: any) => t.name === method
-                );
-                const methodColor = methodWithColor ? methodWithColor.color : '#CCCCCC';
+                // First try to get the color from the centralized registry
+                let methodColor;
+                
+                if (topicColorRegistry && topicColorRegistry[method]) {
+                  methodColor = topicColorRegistry[method].color;
+                } else {
+                  // If not in registry, check project's topicsWithColors
+                  const methodWithColor = project.topicsWithColors?.find(
+                    (t: any) => t.name === method
+                  );
+                  methodColor = methodWithColor?.color;
+                }
+                
+                // If we still don't have a color, use a default
+                if (!methodColor) {
+                  methodColor = generateTopicColor(Math.round((index / (project.topics.length || 1)) * 360));
+                }
 
                 return (
                   <div key={method} className="project-detail-topic">

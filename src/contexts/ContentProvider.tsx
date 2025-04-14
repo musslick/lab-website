@@ -10,7 +10,7 @@ import { JobOpening, jobOpenings as initialJobOpenings } from '../data/jobOpenin
 import { createGradient, generateTopicColor, createProjectGradient, hexToHsl, LAB_COLOR } from '../utils/colorUtils';
 
 // Define the context type from ContentContext.tsx
-import { ContentContext } from './ContentContext';
+import { ContentContext, TopicColor } from './ContentContext';
 
 // Create the provider component
 export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -23,6 +23,7 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [publications, setPublications] = useState<Publication[]>([]);
   const [software, setSoftware] = useState<Software[]>([]);
   const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
+  const [topicColorRegistry, setTopicColorRegistry] = useState<Record<string, TopicColor>>({});
   
   // State for featured items
   const [featuredProject, setFeaturedProject] = useState<string | null>(null);
@@ -88,6 +89,32 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     if (savedTeamImagePosition) {
       setTeamImagePosition(savedTeamImagePosition);
     }
+    
+    // Load topic color registry
+    const savedTopicColors = localStorage.getItem('topicColorRegistry');
+    if (savedTopicColors) {
+      setTopicColorRegistry(JSON.parse(savedTopicColors));
+    } else {
+      // Initialize with topic colors from projects
+      const registry: Record<string, TopicColor> = {};
+      
+      initialProjects.forEach(project => {
+        if (project.topicsWithColors) {
+          project.topicsWithColors.forEach(topic => {
+            if (!registry[topic.name]) {
+              registry[topic.name] = {
+                name: topic.name,
+                color: topic.color,
+                hue: topic.hue
+              };
+            }
+          });
+        }
+      });
+      
+      setTopicColorRegistry(registry);
+      localStorage.setItem('topicColorRegistry', JSON.stringify(registry));
+    }
   }, []);
 
   // Update localStorage when state changes
@@ -122,19 +149,113 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
   useEffect(() => {
     localStorage.setItem('jobOpenings', JSON.stringify(jobOpenings));
   }, [jobOpenings]);
+  
+  useEffect(() => {
+    localStorage.setItem('topicColorRegistry', JSON.stringify(topicColorRegistry));
+  }, [topicColorRegistry]);
+
+  // Topic color management functions
+  const updateTopicColor = (name: string, color: string) => {
+    const [hue] = hexToHsl(color);
+    
+    setTopicColorRegistry(prev => ({
+      ...prev,
+      [name]: {
+        name,
+        color,
+        hue
+      }
+    }));
+    
+    // Update all projects that use this topic
+    setProjects(prevProjects => 
+      prevProjects.map(project => {
+        if (project.topics?.includes(name) && project.topicsWithColors) {
+          const updatedTopicsWithColors = project.topicsWithColors.map(topic => 
+            topic.name === name ? { 
+              ...topic, 
+              color, 
+              hue 
+            } : topic
+          );
+          
+          return {
+            ...project,
+            topicsWithColors: updatedTopicsWithColors
+          };
+        }
+        return project;
+      })
+    );
+  };
+  
+  const addTopicColor = (name: string, color: string) => {
+    const [hue] = hexToHsl(color);
+    
+    setTopicColorRegistry(prev => ({
+      ...prev,
+      [name]: {
+        name,
+        color,
+        hue
+      }
+    }));
+  };
+  
+  const removeTopicColor = (name: string) => {
+    setTopicColorRegistry(prev => {
+      const newRegistry = { ...prev };
+      delete newRegistry[name];
+      return newRegistry;
+    });
+  };
+  
+  const getTopicColorByName = (name: string): TopicColor | undefined => {
+    return topicColorRegistry[name];
+  };
 
   // Project operations
   const updateProject = (updatedProject: Project) => {
-    setProjects(prevProjects => 
-      prevProjects.map(project => 
-        project.id === updatedProject.id ? updatedProject : project
-      )
-    );
-
-    // Use lab blue color instead of gradient
+    // Apply topic colors from registry to ensure consistency
+    const projectWithUpdatedTopicColors = {
+      ...updatedProject
+    };
+    
+    // Update topicsWithColors based on the registry
+    if (updatedProject.topics) {
+      const updatedTopicsWithColors = updatedProject.topics.map(topic => {
+        const registryColor = topicColorRegistry[topic];
+        
+        // Use registered color or generate a new one
+        if (registryColor) {
+          return {
+            name: topic,
+            color: registryColor.color,
+            hue: registryColor.hue
+          };
+        } else {
+          // Generate color and add to registry
+          const hue = Math.round(Math.random() * 360);
+          const color = generateTopicColor(hue);
+          
+          // Add to registry for future use
+          addTopicColor(topic, color);
+          
+          return {
+            name: topic,
+            color,
+            hue
+          };
+        }
+      });
+      
+      projectWithUpdatedTopicColors.topicsWithColors = updatedTopicsWithColors;
+    }
+    
+    // Use lab blue linear gradient instead of radial
     const projectWithUpdatedColor = {
-      ...updatedProject,
-      color: LAB_COLOR,
+      ...projectWithUpdatedTopicColors,
+      color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`,
       _lastUpdated: Date.now()
     };
 
@@ -147,10 +268,43 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
   
   const addProject = (newProject: Project): Project => {
     try {
-      // Use lab blue color instead of gradient
+      // Process topics and apply registered colors
+      const projectWithTopicColors = { ...newProject };
+      
+      if (newProject.topics) {
+        const topicsWithColors = newProject.topics.map(topic => {
+          const registryColor = topicColorRegistry[topic];
+          
+          // Use registered color or generate a new one
+          if (registryColor) {
+            return {
+              name: topic,
+              color: registryColor.color,
+              hue: registryColor.hue
+            };
+          } else {
+            // Generate color and add to registry
+            const hue = Math.round(Math.random() * 360);
+            const color = generateTopicColor(hue);
+            
+            // Add to registry for future use
+            addTopicColor(topic, color);
+            
+            return {
+              name: topic,
+              color,
+              hue
+            };
+          }
+        });
+        
+        projectWithTopicColors.topicsWithColors = topicsWithColors;
+      }
+      
+      // Use lab blue linear gradient instead of radial
       const projectWithColor = {
-        ...newProject,
-        color: LAB_COLOR
+        ...projectWithTopicColors,
+        color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
       };
 
       setProjects(prevProjects => [...prevProjects, projectWithColor]);
@@ -179,10 +333,10 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Helper function to update project gradients
   const updateProjectGradients = (currentProjects: Project[]): Project[] => {
     return currentProjects.map(project => {
-      // Use the simple lab color instead of a gradient
+      // Use a simple lab blue linear gradient instead of radial
       return {
         ...project,
-        color: LAB_COLOR
+        color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
       };
     });
   };
@@ -371,6 +525,7 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       localStorage.removeItem('fundingSources');
       localStorage.removeItem('teamImage');
       localStorage.removeItem('teamImagePosition');
+      localStorage.removeItem('topicColorRegistry');
       
       setProjects(initialProjects);
       setTeamMembers(initialTeamMembers);
@@ -391,6 +546,23 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       
       // Reset team image position
       setTeamImagePosition('center');
+      
+      // Reset topic color registry
+      const registry: Record<string, TopicColor> = {};
+      initialProjects.forEach(project => {
+        if (project.topicsWithColors) {
+          project.topicsWithColors.forEach(topic => {
+            if (!registry[topic.name]) {
+              registry[topic.name] = {
+                name: topic.name,
+                color: topic.color,
+                hue: topic.hue
+              };
+            }
+          });
+        }
+      });
+      setTopicColorRegistry(registry);
       
       alert('Data has been reset to defaults.');
     }
@@ -496,6 +668,7 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       software,
       jobOpenings,
       fundingSources,
+      topicColorRegistry,
       updateProject,
       addProject,
       deleteProject,
@@ -522,6 +695,10 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       updateFundingSource,
       addFundingSource,
       deleteFundingSource,
+      updateTopicColor,
+      addTopicColor,
+      removeTopicColor,
+      getTopicColorByName,
       resetToDefaults,
       getTeamMemberById,
       getProjectById,

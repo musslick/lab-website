@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useContent } from '../../contexts/ContentContext';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useContent, TopicColor } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { Project } from '../../data/projects';
-import { generateTopicColor, hexToHsl, hslToHex, LAB_COLOR } from '../../utils/colorUtils';
+import { generateTopicColor, hexToHsl, hslToHex, LAB_COLOR, getOpenMojiUrl } from '../../utils/colorUtils';
+
+const MAX_EMOJIS = 3; // Maximum number of emojis allowed per project
 
 // Define TopicWithColor interface to match the Project interface
 interface TopicWithColor {
@@ -15,7 +17,14 @@ interface TopicWithColor {
 const ProjectForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { projects, teamMembers, updateProject, addProject, deleteProject } = useContent();
+  const { 
+    projects, 
+    teamMembers, 
+    updateProject, 
+    addProject, 
+    deleteProject,
+    topicColorRegistry, // Get the centralized topic color registry
+  } = useContent();
 
   // Form fields
   const [title, setTitle] = useState('');
@@ -32,13 +41,55 @@ const ProjectForm: React.FC = () => {
   const [publications, setPublications] = useState<string[]>([]);
   const [publicationInput, setPublicationInput] = useState('');
   const [projectId, setProjectId] = useState('');
-  const [previewHue, setPreviewHue] = useState<number>(0);
-  
-  // Extract all unique topics from existing projects
+  const [emojiHexcodes, setEmojiHexcodes] = useState<string[]>([]);
+  const [emojiSearch, setEmojiSearch] = useState('');
+  const [popularEmojis, setPopularEmojis] = useState<string[]>([
+    '1F4BB', // laptop
+    '1F4CA', // chart
+    '1F4D0', // math
+    '1F9E0', // brain
+    '1F50D', // magnifying glass
+    '1F680', // rocket
+    '1F310', // globe
+    '1F9EA', // test tube
+    '1F52C', // microscope
+    '1F4DA', // books
+    '1F4C8', // chart increasing
+    '1F916', // robot face
+    '1F9B4', // bone
+    '1F9EC', // dna
+    '1F3EB', // school
+    '1F9D1', // person
+    '1F4AC', // speech bubble
+    '1F4C4', // document
+    '1F4F0', // newspaper
+    '1F5C3', // card box
+    '1F5C4', // file cabinet,
+  ]);
+
+  // Extract all unique topics from existing projects and the registry
   const existingMethods = React.useMemo(() => {
+    // Start with topics from the centralized registry
+    const registryTopics = Object.values(topicColorRegistry).map(topic => ({
+      name: topic.name,
+      color: topic.color,
+      hue: topic.hue
+    }));
+    
+    // Add topics from projects that might not be in the registry yet
     const allMethods = projects.flatMap(project => 
       (project.topics || []).map(methodName => {
-        // Look for this method in any existing project to get its color
+        // First check if the topic exists in the registry
+        const registryTopic = topicColorRegistry[methodName];
+        if (registryTopic) {
+          return {
+            name: methodName,
+            color: registryTopic.color,
+            hue: registryTopic.hue
+          };
+        }
+        
+        // Otherwise, look for this method in any existing project
         const methodWithColor = projects
           .flatMap(p => p.topicsWithColors || [])
           .find(t => t && t.name === methodName);
@@ -46,14 +97,17 @@ const ProjectForm: React.FC = () => {
         return {
           name: methodName,
           color: methodWithColor?.color || generateTopicColor(Math.round(Math.random() * 360)),
-          hue: methodWithColor?.hue || 0  // Using the hue property
+          hue: methodWithColor?.hue || 0
         };
       })
     );
     
+    // Combine registry topics with project topics
+    const combinedTopics = [...registryTopics, ...allMethods];
+    
     // Remove duplicates by name
     const uniqueMethods = Array.from(
-      allMethods.reduce((map, method) => {
+      combinedTopics.reduce((map, method) => {
         if (!map.has(method.name)) {
           map.set(method.name, method);
         }
@@ -62,7 +116,7 @@ const ProjectForm: React.FC = () => {
     ).map(([_, method]) => method);
     
     return uniqueMethods.sort((a, b) => a.name.localeCompare(b.name));
-  }, [projects]);
+  }, [projects, topicColorRegistry]);
   
   // Extract all unique categories from existing projects
   const existingDisciplines = React.useMemo(() => {
@@ -116,22 +170,38 @@ const ProjectForm: React.FC = () => {
         setTeam(projectToEdit.team || []);
         setImage(projectToEdit.image || '');
         
-        // Handle topics with colors if available, otherwise convert simple topics
-        if (projectToEdit.topicsWithColors && projectToEdit.topicsWithColors.length > 0) {
-          // Convert topicsWithColors to the correct format if needed
-          const formattedTopics: TopicWithColor[] = projectToEdit.topicsWithColors.map(topic => ({
-            name: topic.name,
-            color: topic.color,
-            hue: topic.hue || 0  // Ensure hue is defined
-          }));
-          setTopics(formattedTopics);
-        } else if (projectToEdit.topics) {
-          // Convert simple topics to topics with colors
-          setTopics(projectToEdit.topics.map((name, index) => ({
-            name,
-            color: generateTopicColor(Math.round((index / (projectToEdit.topics?.length || 1)) * 360)),
-            hue: 0
-          })));
+        // Handle topics - use registry colors where possible
+        if (projectToEdit.topics) {
+          const topicsWithUpdatedColors = projectToEdit.topics.map(topicName => {
+            // First check if the topic exists in the registry
+            const registryTopic = topicColorRegistry[topicName];
+            if (registryTopic) {
+              return {
+                name: topicName,
+                color: registryTopic.color,
+                hue: registryTopic.hue
+              };
+            }
+            
+            // If not in registry, check if it has colors in the project
+            const existingTopicWithColor = projectToEdit.topicsWithColors?.find(t => t.name === topicName);
+            if (existingTopicWithColor) {
+              return {
+                name: topicName,
+                color: existingTopicWithColor.color,
+                hue: existingTopicWithColor.hue || 0
+              };
+            }
+            
+            // Otherwise generate a default color
+            return {
+              name: topicName,
+              color: generateTopicColor(Math.round(Math.random() * 360)),
+              hue: 0
+            };
+          });
+          
+          setTopics(topicsWithUpdatedColors);
         } else {
           setTopics([]);
         }
@@ -140,11 +210,18 @@ const ProjectForm: React.FC = () => {
         setStartDate(projectToEdit.startDate || '');
         setEndDate(projectToEdit.endDate || '');
         setPublications(projectToEdit.publications || []);
+        
+        // Set emoji data - convert from single to array if needed
+        if (projectToEdit.emojiHexcodes) {
+          setEmojiHexcodes(projectToEdit.emojiHexcodes);
+        } else {
+          setEmojiHexcodes([]);
+        }
       } else {
         setError(`Could not find project with ID: ${id}`);
       }
     }
-  }, [id, isNewProject, projects, LAB_COLOR]);
+  }, [id, isNewProject, projects, topicColorRegistry]);
   
   // Team members selection
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -152,25 +229,34 @@ const ProjectForm: React.FC = () => {
     setTeam(selected);
   };
 
-  // Generate topic color based on lab color and selected lightness
-  const generateTopicColorWithHue = (hue: number): string => {
-    // Use fixed saturation (100) and lightness (80)
-    return hslToHex(hue, 100, 80);
-  };
-
-  // Topic management
+  // Topic management - modified to use registry colors
   const handleAddMethod = () => {
     if (topicInput.trim() && !topics.some(t => t.name === topicInput.trim())) {
-      // Use the preview hue value instead of a random hue
-      const newColor = generateTopicColorWithHue(previewHue);
-      setTopics(prevTopics => [...prevTopics, {
-        name: topicInput.trim(),
-        color: newColor,
-        hue: previewHue
-      }]);
+      const topicName = topicInput.trim();
+      
+      // Check if topic exists in the registry
+      const registryTopic = topicColorRegistry[topicName];
+      
+      if (registryTopic) {
+        // Use color from the registry
+        setTopics(prevTopics => [...prevTopics, {
+          name: topicName,
+          color: registryTopic.color,
+          hue: registryTopic.hue
+        }]);
+      } else {
+        // Generate a new color for the topic that will be added to registry later
+        const newHue = Math.floor(Math.random() * 360);
+        const newColor = generateTopicColor(newHue);
+        
+        setTopics(prevTopics => [...prevTopics, {
+          name: topicName,
+          color: newColor,
+          hue: newHue
+        }]);
+      }
+      
       setTopicInput('');
-      // Reset preview hue for the next method
-      setPreviewHue(Math.floor(Math.random() * 360));
     }
   };
   
@@ -190,7 +276,7 @@ const ProjectForm: React.FC = () => {
       } else {
         // If not found, create a new one with default color
         const newHue = Math.floor(Math.random() * 360); // Random hue
-        const newColor = generateTopicColorWithHue(newHue);
+        const newColor = generateTopicColor(newHue);
         setTopics(prevTopics => [...prevTopics, {
           name: selectedMethodName,
           color: newColor,
@@ -203,44 +289,6 @@ const ProjectForm: React.FC = () => {
     }
   };
   
-  // Handle changing topic hue
-  const handleHueChange = (e: React.ChangeEvent<HTMLInputElement>, topicIndex: number) => {
-    const hue = parseInt(e.target.value);
-    const updatedTopics = [...topics];
-    
-    // Use the fixed saturation (100) and lightness (80) values
-    const color = hslToHex(hue, 100, 80);
-    
-    updatedTopics[topicIndex] = {
-      ...updatedTopics[topicIndex],
-      color: color,
-      hue: hue, // Keep track of the hue value for the slider
-    };
-    
-    setTopics(updatedTopics);
-  };
-  
-  // Update color for a specific method
-  const updateMethodColor = (methodName: string, hue: number) => {
-    setTopics(prevTopics => prevTopics.map(topic => {
-      if (topic.name === methodName) {
-        const newColor = generateTopicColorWithHue(hue);
-        return {
-          ...topic,
-          color: newColor,
-          hue
-        };
-      }
-      return topic;
-    }));
-  };
-  
-  // Handle preview hue slider change
-  const handlePreviewHueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const hue = parseInt(e.target.value);
-    setPreviewHue(hue);
-  };
-
   // Category management
   const handleAddDiscipline = () => {
     if (categoryInput.trim() && !categories.includes(categoryInput.trim())) {
@@ -320,7 +368,8 @@ const ProjectForm: React.FC = () => {
         topics: topicNames,
         topicsWithColors: topics, // Now properly typed
         status,
-        publications
+        publications,
+        emojiHexcodes // Add the emoji hexcodes array
       };
       
       // Only add fields if they have values
@@ -357,6 +406,27 @@ const ProjectForm: React.FC = () => {
       }, 1000);
     }
   };
+
+  const handleEmojiSelect = (hexcode: string) => {
+    // If emoji is already selected, remove it
+    if (emojiHexcodes.includes(hexcode)) {
+      setEmojiHexcodes(emojiHexcodes.filter(code => code !== hexcode));
+      return;
+    }
+    
+    // Add emoji if not at maximum
+    if (emojiHexcodes.length < MAX_EMOJIS) {
+      setEmojiHexcodes([...emojiHexcodes, hexcode]);
+    } else {
+      alert(`You can only select up to ${MAX_EMOJIS} emojis per project.`);
+    }
+  };
+
+  const handleRemoveEmoji = (index: number) => {
+    const newEmojis = [...emojiHexcodes];
+    newEmojis.splice(index, 1);
+    setEmojiHexcodes(newEmojis);
+  };
   
   if (isDeleting) {
     return (
@@ -369,11 +439,6 @@ const ProjectForm: React.FC = () => {
       </Layout>
     );
   }
-
-  // Function to generate a color for a topic based on index
-  const getTopicColor = (topic: string, index: number) => {
-    return generateTopicColor(Math.round((index / topics.length) * 360));
-  };
   
   return (
     <Layout>
@@ -555,7 +620,22 @@ const ProjectForm: React.FC = () => {
           </div>
           
           <div className="form-group">
-            <label>Methods</label>
+            <label>Methods/Topics</label>
+            
+            {/* Information notice about centralized color management */}
+            <div className="topic-colors-notice" style={{ 
+              backgroundColor: '#e6f7ff', 
+              border: '1px solid #91d5ff',
+              borderRadius: '4px',
+              padding: '10px',
+              marginBottom: '15px'
+            }}>
+              <p style={{ margin: 0 }}>
+                <strong>Note:</strong> Topic/method colors are now managed centrally for consistency across all projects.
+                To change topic colors, please use the <Link to="/admin/topic-colors">Topic Colors</Link> management page.
+              </p>
+            </div>
+            
             <div className="topic-selection-container">
               {/* Dropdown for selecting existing methods */}
               <div className="existing-topics-dropdown">
@@ -572,7 +652,7 @@ const ProjectForm: React.FC = () => {
                 </select>
               </div>
               
-              {/* Input for adding new methods with color control */}
+              {/* Input for adding new methods */}
               <div className="topic-input-container">
                 <input
                   type="text"
@@ -594,70 +674,24 @@ const ProjectForm: React.FC = () => {
                   Add
                 </button>
               </div>
-              
-              {/* Color hue control - Updated to use previewHue state */}
-              <div className="topic-color-control">
-                <label>Method Color</label>
-                <div className="color-slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="359"
-                    value={previewHue}
-                    onChange={handlePreviewHueChange}
-                    className="hue-slider"
-                  />
-                  <div 
-                    className="color-preview"
-                    style={{
-                      backgroundColor: generateTopicColorWithHue(previewHue),
-                      width: '30px',
-                      height: '30px',
-                      borderRadius: '4px',
-                      marginLeft: '10px'
-                    }}
-                  ></div>
-                </div>
-                <span className="hue-value">Hue: {previewHue}°</span>
-              </div>
             </div>
             
+            {/* Display selected methods with their colors (no editing) */}
             <div className="topics-container">
-              {topics.map((topic, index) => (
+              {topics.map((topic) => (
                 <div 
                   key={topic.name} 
                   className="topic-badge"
                   style={{ borderLeft: `4px solid ${topic.color}` }}
                 >
-                  <span style={{ marginRight: '8px' }}>{topic.name}</span>
-                  <div className="topic-controls">
-                    <input 
-                      type="range"
-                      min="0"
-                      max="359"
-                      value={topic.hue}
-                      onChange={(e) => updateMethodColor(topic.name, parseInt(e.target.value))}
-                      className="topic-hue-slider"
-                      title="Adjust color hue"
-                    />
-                    <div 
-                      className="topic-color-preview"
-                      style={{
-                        backgroundColor: topic.color,
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '3px',
-                        marginRight: '6px'
-                      }}
-                    ></div>
-                    <button 
-                      type="button" 
-                      className="tag-remove" 
-                      onClick={() => handleRemoveMethod(topic.name)}
-                    >
-                      ×
-                    </button>
-                  </div>
+                  <span>{topic.name}</span>
+                  <button 
+                    type="button" 
+                    className="tag-remove" 
+                    onClick={() => handleRemoveMethod(topic.name)}
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
@@ -694,6 +728,91 @@ const ProjectForm: React.FC = () => {
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="projectEmojis">Project Emojis (up to {MAX_EMOJIS})</label>
+            <div className="emoji-note">
+              <p><small>Note: Emojis will appear in black and white style for a clean, professional look.</small></p>
+            </div>
+            <div className="emoji-selection-container">
+              <div className="selected-emojis">
+                {emojiHexcodes.length > 0 ? (
+                  <div className="emoji-preview-grid">
+                    {emojiHexcodes.map((hexcode, index) => (
+                      <div key={index} className="selected-emoji-item">
+                        <img 
+                          src={getOpenMojiUrl(hexcode)}
+                          alt="Selected emoji" 
+                          className="emoji-preview-img"
+                        />
+                        <button
+                          type="button"
+                          className="remove-emoji-btn"
+                          onClick={() => handleRemoveEmoji(index)}
+                          title="Remove emoji"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="emoji-placeholder">No emojis selected. Choose up to {MAX_EMOJIS}.</p>
+                )}
+              </div>
+              
+              <div className="emoji-picker">
+                <h4>Popular Emojis:</h4>
+                <div className="emoji-grid">
+                  {popularEmojis.map(hexcode => (
+                    <button
+                      key={hexcode}
+                      type="button"
+                      className={`emoji-item ${emojiHexcodes.includes(hexcode) ? 'selected' : ''}`}
+                      onClick={() => handleEmojiSelect(hexcode)}
+                    >
+                      <img 
+                        src={getOpenMojiUrl(hexcode)} 
+                        alt={`Emoji ${hexcode}`} 
+                        title={`Hexcode: ${hexcode}`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="emoji-custom-input">
+                  <label>
+                    <small>Add emoji by hexcode (e.g., 1F600):</small>
+                  </label>
+                  <div className="emoji-input-row">
+                    <input
+                      type="text"
+                      placeholder="Enter emoji hexcode"
+                      value={emojiSearch}
+                      onChange={(e) => setEmojiSearch(e.target.value.toUpperCase())}
+                      className="emoji-hexcode-input"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        if (emojiSearch) {
+                          handleEmojiSelect(emojiSearch);
+                          setEmojiSearch('');
+                        }
+                      }}
+                      className="add-emoji-btn"
+                      disabled={!emojiSearch || emojiHexcodes.length >= MAX_EMOJIS}
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <small className="emoji-help-text">
+                    Find more emoji hexcodes at <a href="https://openmoji.org/" target="_blank" rel="noopener noreferrer">OpenMoji.org</a>
+                  </small>
+                </div>
+              </div>
             </div>
           </div>
           

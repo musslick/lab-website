@@ -9,160 +9,171 @@ import { Software, software as initialSoftware } from '../data/software';
 import { JobOpening, jobOpenings as initialJobOpenings } from '../data/jobOpenings';
 import { createGradient, generateTopicColor, createProjectGradient, hexToHsl, LAB_COLOR } from '../utils/colorUtils';
 
+// Define the topic color structure
+export interface TopicColor {
+  name: string;
+  color: string;
+  hue: number;
+}
+
+// Define the Content Context type
 interface ContentContextType {
+  // Data arrays
   projects: Project[];
   teamMembers: TeamMember[];
   newsItems: NewsItem[];
   collaborators: Collaborator[];
+  fundingSources: FundingSource[];
   publications: Publication[];
   software: Software[];
   jobOpenings: JobOpening[];
-  fundingSources: FundingSource[];
-  updateProject: (updatedProject: Project) => void;
-  addProject: (newProject: Project) => Project;
+  topicColorRegistry: Record<string, TopicColor>;
+
+  // Project operations
+  updateProject: (project: Project) => void;
+  addProject: (project: Project) => Project;
   deleteProject: (id: string) => void;
   reorderProjects: (projectIds: string[]) => void;
-  reorderTeamMembers: (teamMemberIds: string[]) => void; // New method for reordering team members
-  updateTeamMember: (updatedMember: TeamMember) => void;
-  addTeamMember: (newMember: TeamMember) => TeamMember;
-  deleteTeamMember: (id: string) => void;
-  updateNewsItem: (updatedNewsItem: NewsItem) => void;
-  addNewsItem: (newNewsItem: NewsItem) => NewsItem;
-  deleteNewsItem: (id: string) => void;
-  updateCollaborator: (updatedCollaborator: Collaborator) => void;
-  addCollaborator: (newCollaborator: Collaborator) => Collaborator;
-  deleteCollaborator: (id: string) => void;
-  updatePublication: (updatedPublication: Publication) => void;
-  addPublication: (newPublication: Publication) => Publication;
-  deletePublication: (id: string) => void;
-  updateSoftware: (updatedSoftware: Software) => void;
-  addSoftware: (newSoftware: Software) => Software;
-  deleteSoftware: (id: string) => void;
-  updateJobOpening: (updatedJobOpening: JobOpening) => void;
-  addJobOpening: (newJobOpening: JobOpening) => JobOpening;
-  deleteJobOpening: (id: string) => void;
-  updateFundingSource: (updatedFunding: FundingSource) => void;
-  addFundingSource: (newFunding: FundingSource) => FundingSource;
-  deleteFundingSource: (id: string) => void;
-  resetToDefaults: () => void;
-  getTeamMemberById: (id: string) => TeamMember | undefined;
   getProjectById: (id: string) => Project | undefined;
+  
+  // Team member operations
+  updateTeamMember: (teamMember: TeamMember) => void;
+  addTeamMember: (teamMember: TeamMember) => TeamMember;
+  deleteTeamMember: (id: string) => void;
+  reorderTeamMembers: (teamMemberIds: string[]) => void;
+  getTeamMemberById: (id: string) => TeamMember | undefined;
+  
+  // News item operations
+  updateNewsItem: (newsItem: NewsItem) => void;
+  addNewsItem: (newsItem: NewsItem) => NewsItem;
+  deleteNewsItem: (id: string) => void;
   getNewsItemById: (id: string) => NewsItem | undefined;
+  
+  // Collaborator operations
+  updateCollaborator: (collaborator: Collaborator) => void;
+  addCollaborator: (collaborator: Collaborator) => Collaborator;
+  deleteCollaborator: (id: string) => void;
   getCollaboratorById: (id: string) => Collaborator | undefined;
+  
+  // Publication operations
+  updatePublication: (publication: Publication) => void;
+  addPublication: (publication: Publication) => Publication;
+  deletePublication: (id: string) => void;
   getPublicationById: (id: string) => Publication | undefined;
+  
+  // Software operations
+  updateSoftware: (software: Software) => void;
+  addSoftware: (software: Software) => Software;
+  deleteSoftware: (id: string) => void;
   getSoftwareById: (id: string) => Software | undefined;
+  
+  // Job opening operations
+  updateJobOpening: (jobOpening: JobOpening) => void;
+  addJobOpening: (jobOpening: JobOpening) => JobOpening;
+  deleteJobOpening: (id: string) => void;
   getJobOpeningById: (id: string) => JobOpening | undefined;
+  
+  // Funding source operations
+  updateFundingSource: (fundingSource: FundingSource) => void;
+  addFundingSource: (fundingSource: FundingSource) => FundingSource;
+  deleteFundingSource: (id: string) => void;
   getFundingSourceById: (id: string) => FundingSource | undefined;
-
-  // Add these new methods
+  
+  // Topic color operations
+  updateTopicColor: (name: string, color: string) => void;
+  addTopicColor: (name: string, color: string) => void;
+  removeTopicColor: (name: string) => void;
+  getTopicColorByName: (name: string) => TopicColor | undefined;
+  
+  // Global operations
+  resetToDefaults: () => void;
+  
+  // Featured items operations
   setFeaturedProject: (projectId: string) => void;
   setFeaturedNewsItem: (newsItemId: string) => void;
   setFeaturedPublication: (publicationId: string) => void;
-  getFeaturedItems: () => {
-    projectId: string | null;
-    newsItemId: string | null;
-    publicationId: string | null;
-  };
-
-  // Add team image methods
+  getFeaturedItems: () => { projectId: string | null; newsItemId: string | null; publicationId: string | null };
+  
+  // Team image operations
   getTeamImage: () => string;
   updateTeamImage: (imageUrl: string) => void;
-
-  // Add new methods for image positioning
   getTeamImagePosition: () => string;
   updateTeamImagePosition: (position: string) => void;
 }
 
-// Export the ContentContext
+// Create the context with a default value
 export const ContentContext = createContext<ContentContextType>({
   projects: [],
   teamMembers: [],
   newsItems: [],
   collaborators: [],
+  fundingSources: [],
   publications: [],
   software: [],
   jobOpenings: [],
-  fundingSources: [],
+  topicColorRegistry: {},
+  
   updateProject: () => {},
-  addProject: () => ({ id: '', title: '', description: '', category: '', team: [], color: '' }),
+  addProject: () => ({ id: '', title: '', description: '', color: '', category: '', team: [] }),
   deleteProject: () => {},
-  reorderProjects: () => {}, // Default implementation for reorderProjects
-  reorderTeamMembers: () => {}, // Add default implementation
+  reorderProjects: () => {},
+  getProjectById: () => undefined,
+  
   updateTeamMember: () => {},
-  addTeamMember: () => ({ id: '', name: '', role: '', bio: '', imageUrl: '', color: '', projects: [] }),
+  addTeamMember: () => ({ id: '', name: '', role: '', bio: '', imageUrl: '', color: '' }),
   deleteTeamMember: () => {},
+  reorderTeamMembers: () => {},
+  getTeamMemberById: () => undefined,
+  
   updateNewsItem: () => {},
-  addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '', tags: [] }),
+  addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '' }),
   deleteNewsItem: () => {},
+  getNewsItemById: () => undefined,
+  
   updateCollaborator: () => {},
   addCollaborator: () => ({ id: '', name: '', url: '' }),
   deleteCollaborator: () => {},
+  getCollaboratorById: () => undefined,
+  
   updatePublication: () => {},
-  addPublication: () => ({ 
-    id: '', 
-    title: '', 
-    authors: [], 
-    journal: '', 
-    year: 0, 
-    type: 'journal', 
-    citation: '' 
-  }),
+  addPublication: () => ({ id: '', title: '', authors: [], journal: '', year: 0, citation: '', type: 'journal' }),
   deletePublication: () => {},
+  getPublicationById: () => undefined,
+  
   updateSoftware: () => {},
-  addSoftware: () => ({
-    id: '',
-    name: '',
-    description: '',
-    repoUrl: '',
-    technologies: [],
-    developers: [],
-    license: ''
-  }),
+  addSoftware: () => ({ id: '', name: '', description: '', repoUrl: '', technologies: [], developers: [], license: '' }),
   deleteSoftware: () => {},
+  getSoftwareById: () => undefined,
+  
   updateJobOpening: () => {},
-  addJobOpening: () => ({
-    id: '',
-    title: '',
-    description: '',
-    requirements: [],
-    type: 'full-time',
-    location: '',
-    postedDate: '',
-    isOpen: true,
-  }),
+  addJobOpening: () => ({ id: '', title: '', description: '', requirements: [], type: 'full-time', location: '', postedDate: '', isOpen: true }),
   deleteJobOpening: () => {},
+  getJobOpeningById: () => undefined,
+  
   updateFundingSource: () => {},
   addFundingSource: () => ({ id: '', name: '', url: '' }),
   deleteFundingSource: () => {},
-  resetToDefaults: () => {},
-  getTeamMemberById: () => undefined,
-  getProjectById: () => undefined,
-  getNewsItemById: () => undefined,
-  getCollaboratorById: () => undefined,
-  getPublicationById: () => undefined,
-  getSoftwareById: () => undefined,
-  getJobOpeningById: () => undefined,
   getFundingSourceById: () => undefined,
-
-  // Add these new methods to the default context
+  
+  updateTopicColor: () => {},
+  addTopicColor: () => {},
+  removeTopicColor: () => {},
+  getTopicColorByName: () => undefined,
+  
+  resetToDefaults: () => {},
+  
   setFeaturedProject: () => {},
   setFeaturedNewsItem: () => {},
   setFeaturedPublication: () => {},
-  getFeaturedItems: () => ({
-    projectId: null,
-    newsItemId: null,
-    publicationId: null
-  }),
-
-  // Add default implementations
+  getFeaturedItems: () => ({ projectId: null, newsItemId: null, publicationId: null }),
+  
   getTeamImage: () => '/assets/lab_team.jpeg',
   updateTeamImage: () => {},
-
-  // Add default implementations for image positioning
   getTeamImagePosition: () => 'center',
   updateTeamImagePosition: () => {},
 });
 
+// Create a hook to use the content context
 export const useContent = () => useContext(ContentContext);
 
 interface ContentProviderProps {
@@ -178,6 +189,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [software, setSoftware] = useState<Software[]>([]);
   const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
   const [fundingSources, setFundingSources] = useState<FundingSource[]>([]);
+  const [topicColorRegistry, setTopicColorRegistry] = useState<Record<string, TopicColor>>({});
 
   // Add state for featured items
   const [featuredProject, setFeaturedProject] = useState<string | null>(null);
@@ -189,11 +201,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   // Add state for team image position (default to 'center')
   const [teamImagePosition, setTeamImagePosition] = useState<string>('center');
 
-  // Replace team-based gradient function with topic-based gradient function
+  // Replace radial gradient function with linear gradient function
   const updateProjectGradients = (currentProjects: Project[]): Project[] => {
     return currentProjects.map(project => {
-      // Generate a fixed lab blue gradient regardless of team
-      const gradient = `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`;
+      // Generate a fixed lab blue linear gradient regardless of team
+      const gradient = `linear-gradient(to right, #00AAFF 0%, #005580 100%)`;
       
       return {
         ...project,
@@ -214,6 +226,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedSoftware = localStorage.getItem('software');
         const savedJobOpenings = localStorage.getItem('jobOpenings');
         const savedFundingSources = localStorage.getItem('fundingSources');
+        const savedTopicColorRegistry = localStorage.getItem('topicColorRegistry');
   
         let projectsData: Project[];
         let teamData: TeamMember[];
@@ -271,6 +284,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
           setFundingSources(JSON.parse(savedFundingSources));
         } else {
           setFundingSources(initialFundingSources);
+        }
+
+        if (savedTopicColorRegistry) {
+          setTopicColorRegistry(JSON.parse(savedTopicColorRegistry));
         }
 
         // Load featured items
@@ -390,6 +407,39 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }
   };
 
+  // Topic color management functions
+  const updateTopicColor = (name: string, color: string) => {
+    const existingTopic = topicColorRegistry[name];
+    const hue = existingTopic ? existingTopic.hue : hexToHsl(color)[0];
+    const updatedTopicColorRegistry = {
+      ...topicColorRegistry,
+      [name]: { name, color, hue }
+    };
+    setTopicColorRegistry(updatedTopicColorRegistry);
+    localStorage.setItem('topicColorRegistry', JSON.stringify(updatedTopicColorRegistry));
+  };
+
+  const addTopicColor = (name: string, color: string) => {
+    const hue = hexToHsl(color)[0];
+    const updatedTopicColorRegistry = {
+      ...topicColorRegistry,
+      [name]: { name, color, hue }
+    };
+    setTopicColorRegistry(updatedTopicColorRegistry);
+    localStorage.setItem('topicColorRegistry', JSON.stringify(updatedTopicColorRegistry));
+  };
+
+  const removeTopicColor = (name: string) => {
+    const updatedTopicColorRegistry = { ...topicColorRegistry };
+    delete updatedTopicColorRegistry[name];
+    setTopicColorRegistry(updatedTopicColorRegistry);
+    localStorage.setItem('topicColorRegistry', JSON.stringify(updatedTopicColorRegistry));
+  };
+
+  const getTopicColorByName = (name: string): TopicColor | undefined => {
+    return topicColorRegistry[name];
+  };
+
   // Save changes to localStorage
   const saveProjects = (updatedProjects: Project[]) => {
     try {
@@ -499,10 +549,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       };
     }
 
-    // Use lab blue gradient instead of team-based gradient
+    // Use lab blue linear gradient instead of team-based gradient
     const projectWithUpdatedColor = {
       ...projectWithConsistentColors,
-      color: `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`,
+      color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`,
       _lastUpdated: Date.now()
     };
 
@@ -571,10 +621,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         };
       }
 
-      // Use lab blue gradient instead of team-based gradient
+      // Use lab blue linear gradient instead of team-based gradient
       const projectWithColor = {
         ...projectWithTopicColors,
-        color: `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`
+        color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
       };
 
       const newProjects = [...projects, projectWithColor];
@@ -669,11 +719,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         if (project.team.includes(memberToDelete.name)) {
           const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
 
-          // Use lab blue gradient regardless of team
+          // Use lab blue linear gradient regardless of team
           return {
             ...project,
             team: updatedTeam,
-            color: `radial-gradient(circle at center, #00AAFF 0%, #005580 100%)`
+            color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
           };
         }
         return project;
@@ -914,6 +964,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('fundingSources');
       localStorage.removeItem('teamImage');
       localStorage.removeItem('teamImagePosition');
+      localStorage.removeItem('topicColorRegistry');
       setTeamMembers(initialTeamMembers);
       
       const projectsWithGradients = updateProjectGradients(initialProjects);
@@ -924,6 +975,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       setSoftware(initialSoftware);
       setJobOpenings(initialJobOpenings);
       setFundingSources(initialFundingSources);
+      setTopicColorRegistry({});
 
       // Reset featured items
       setFeaturedProject(initialProjects.length > 0 ? initialProjects[0].id : null);
@@ -970,6 +1022,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       software,
       jobOpenings,
       fundingSources,
+      topicColorRegistry,
       updateProject,
       addProject,
       deleteProject,
@@ -1005,6 +1058,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       getSoftwareById,
       getJobOpeningById,
       getFundingSourceById,
+
+      // Topic color management
+      updateTopicColor,
+      addTopicColor,
+      removeTopicColor,
+      getTopicColorByName,
 
       // Add the new methods
       setFeaturedProject: handleSetFeaturedProject,

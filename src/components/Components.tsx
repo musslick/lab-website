@@ -226,36 +226,18 @@ interface ProjectCardProps {
     project: Project;
 }
 
+// Change OpenMoji URL to black and white version instead of color
+const OPENMOJI_BASE_URL = 'https://openmoji.org/data/black/svg/';
+
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
-    // Track mouse position for gradient effect
-    const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
-    const [isFrozen, setIsFrozen] = useState(false);
     const [imageError, setImageError] = useState(false);
+    
+    // Get the topic color registry from context
+    const { topicColorRegistry } = useContent();
     
     const colorBlockRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLAnchorElement>(null);
     
-    // Handle mouse movement over the entire card
-    const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (colorBlockRef.current && !isFrozen) {
-            const rect = colorBlockRef.current.getBoundingClientRect();
-            // Calculate relative position in percentage
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            setMousePosition({ x, y });
-        }
-    };
-
-    // Reset frozen state when entering card
-    const handleMouseEnter = () => {
-        setIsFrozen(false);
-    };
-
-    // Freeze gradient when leaving card
-    const handleMouseLeave = () => {
-        setIsFrozen(true);
-    };
-
     // Check if project has a valid image
     const hasValidImage = Boolean(
         project.image && 
@@ -265,29 +247,59 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         !imageError
     );
 
-    // Generate dynamic gradient based on mouse position and project topics
-    const generateDynamicGradient = () => {
-        // Get mouse position as percentage of card dimension
-        const { x, y } = mousePosition;
-        
-        // Create a dynamic position based on mouse
-        const position = `circle at ${x}% ${y}%`;
-        
-        // Get topic colors from the project
-        const topicColors = getTopicColorsFromProject(project);
-        
-        // Create a gradient with the unified function
-        return createProjectGradient(topicColors, position);
+    // Check if project has valid emojis
+    const hasEmojis = Boolean(
+        project.emojiHexcodes && 
+        project.emojiHexcodes.length > 0
+    );
+
+    // Get OpenMoji URLs if available
+    const getEmojiUrls = (): string[] => {
+        if (hasEmojis && project.emojiHexcodes) {
+            return project.emojiHexcodes.map(hex => `${OPENMOJI_BASE_URL}${hex}.svg`);
+        }
+        return [];
     };
 
-    // Generate method tag with color dot
-    const generateMethodTag = (method: string, index: number) => {
-        // Get the color from topicsWithColors if available
-        const methodWithColor = project.topicsWithColors?.find(t => t.name === method);
+    // Generate static gradient based on project topics
+    const generateStaticGradient = () => {
+        // Get topic colors from the registry for this project's topics
+        const topicColors = project.topics?.map(topicName => {
+            // First try to get the color from the centralized registry
+            if (topicColorRegistry && topicColorRegistry[topicName]) {
+                return topicColorRegistry[topicName].color;
+            }
+            
+            // If not found in registry, fallback to project's topicsWithColors
+            const topicWithColor = project.topicsWithColors?.find(t => t.name === topicName);
+            if (topicWithColor?.color) {
+                return topicWithColor.color;
+            }
+            
+            // Last resort - generate a color
+            const index = project.topics?.indexOf(topicName) || 0;
+            const total = project.topics?.length || 1;
+            return generateTopicColor(Math.round((index / total) * 360));
+        }) || [];
         
-        // Use the provided color or generate one based on index position
-        const methodColor = methodWithColor?.color || 
-            generateTopicColor(Math.round((index / (project.topics?.length || 1)) * 360));
+        // Create a gradient with a fixed direction
+        return createProjectGradient(topicColors, '135deg'); // Fixed diagonal direction
+    };
+
+    // Generate method tag with color dot - now using the registry
+    const generateMethodTag = (method: string, index: number) => {
+        let methodColor;
+        
+        if (topicColorRegistry && topicColorRegistry[method]) {
+            methodColor = topicColorRegistry[method].color;
+        } else {
+            const methodWithColor = project.topicsWithColors?.find(t => t.name === method);
+            methodColor = methodWithColor?.color;
+        }
+        
+        if (!methodColor) {
+            methodColor = generateTopicColor(Math.round((index / (project.topics?.length || 1)) * 360));
+        }
         
         return (
             <div key={method} className="topic-tag">
@@ -314,18 +326,29 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             to={`/projects/${project.id}`} 
             className="project-card"
             ref={cardRef}
-            onMouseMove={handleMouseMove}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
         >
             <div 
                 ref={colorBlockRef}
                 className="project-color-block"
                 style={{ 
-                    background: hasValidImage ? `url(${project.image}) center/cover no-repeat` : generateDynamicGradient() 
+                    background: hasValidImage ? 
+                        `url(${project.image}) center/cover no-repeat` : 
+                        generateStaticGradient()
                 }}
             >
-                {/* No text overlay */}
+                {hasEmojis && (
+                    <div className="project-emoji-container">
+                        {getEmojiUrls().map((url, index) => (
+                            <img 
+                                key={index}
+                                src={url} 
+                                alt={`Project Emoji ${index+1}`} 
+                                className="project-emoji"
+                                onError={() => console.error(`Failed to load emoji at ${url}`)}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
             <div className="project-content">
                 <h3 className="project-title">{project.title}</h3>
@@ -335,11 +358,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                         : project.description}
                 </p>
                 
-                {/* Wrap discipline and method info in a metadata div */}
                 <div className="project-metadata">
                     <span className="project-category">{renderDisciplines()}</span>
                     
-                    {/* Display methods instead of team members */}
                     <div className="project-topics">
                         {project.topics?.map((method, index) => 
                             generateMethodTag(method, index)

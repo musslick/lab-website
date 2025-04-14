@@ -12,6 +12,7 @@ export interface Project {
   topicsWithColors?: { name: string; color: string; hue: number }[]; // Re-add topicsWithColors
   publications?: string[];
   image?: string;
+  emojiHexcodes?: string[]; // Changed from emojiHexcode (singular) to emojiHexcodes (array)
   status?: 'ongoing' | 'completed';
   startDate?: string;
   endDate?: string;

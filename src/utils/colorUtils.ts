@@ -1,6 +1,8 @@
 // Lab color constant - used across the application
 export const LAB_COLOR = '#00AAFF';
 export const LAB_COLOR_DARK = '#005580';
+export const TOPIC_COLOR_SATURATION = 70; // Default saturation for topics
+export const TOPIC_COLOR_LIGHTNESS = 80; // Set lightness to 80 for all topics
 
 /**
  * Converts a hex color to HSL components
@@ -81,12 +83,35 @@ export function hslToHex(h: number, s: number, l: number): string {
 }
 
 /**
- * Generates a topic color based on the provided hue
+ * Generates a topic color based on hue with fixed saturation and lightness
+ * @param hue - The hue value (0-360)
+ * @returns Hex color string
  */
-export function generateTopicColor(hue: number): string {
-  // Use a fixed saturation and lightness for consistent, vibrant colors
-  return hslToHex(hue, 100, 80);
-}
+export const generateTopicColor = (hue: number): string => {
+  return hslToHex(hue, TOPIC_COLOR_SATURATION, TOPIC_COLOR_LIGHTNESS);
+};
+
+// Extract saturation and lightness from LAB_COLOR to keep consistent
+const [LAB_HUE, LAB_SATURATION, LAB_LIGHTNESS] = hexToHsl(LAB_COLOR);
+
+/**
+ * Creates a color with specific hue but using consistent saturation and lightness
+ * @param hue The hue value (0-360)
+ * @returns A hex color string
+ */
+export const createTopicColorWithLabValues = (hue: number): string => {
+  return hslToHex(hue, TOPIC_COLOR_SATURATION, TOPIC_COLOR_LIGHTNESS);
+};
+
+/**
+ * Updates a color's hue while preserving consistent saturation and lightness
+ * @param color Current color in hex
+ * @param newHue New hue value (0-360)
+ * @returns Updated hex color
+ */
+export const updateColorHue = (color: string, newHue: number): string => {
+  return hslToHex(newHue, TOPIC_COLOR_SATURATION, TOPIC_COLOR_LIGHTNESS);
+};
 
 /**
  * Creates a gradient from multiple colors
@@ -109,44 +134,49 @@ export function createGradient(
 }
 
 /**
- * Creates a unified project gradient for both cards and detail pages
- * 
- * @param topicColors Array of topic colors to include in the gradient
- * @param position The position for the radial gradient (e.g., 'circle at center')
- * @param options Additional options to customize the gradient
- * @returns A CSS gradient string
+ * Creates a project gradient with colors arranged by hue from left to right
+ * @param colors Array of hex colors to use in the gradient
+ * @param direction Direction of the linear gradient (e.g. 'to right')
+ * @returns CSS gradient string
  */
-export function createProjectGradient(
-  topicColors: string[] = [], 
-  position: string = 'circle at center',
-  options: {
-    baseColor?: string, 
-    endColor?: string,
-    distribution?: number
-  } = {}
-): string {
-  // Default options
-  const baseColor = options.baseColor || LAB_COLOR;
-  const endColor = options.endColor || LAB_COLOR_DARK;
-  const distribution = options.distribution || 50; // Percent of gradient to use for topic colors
-
-  // If no topic colors, use the default lab blue color (not gradient)
-  if (topicColors.length === 0) {
-    return baseColor;
+export const createProjectGradient = (colors: string[], direction: string = 'to right'): string => {
+  if (!colors || colors.length === 0) {
+    // Default to lab blue gradient
+    return `linear-gradient(${direction}, ${LAB_COLOR} 0%, #005580 100%)`;
   }
   
-  // Otherwise create a gradient with topic colors
-  // Base color is on the outside (100%)
-  // Topic colors are distributed in the inner area (0% to distribution%)
-  const colorStops = topicColors.map((color, index, array) => {
-    // Distribute colors between 0% and distribution% to leave space for base color on the outside
-    const percentage = Math.round((index / Math.max(1, array.length - 1)) * distribution);
-    return `${color} ${percentage}%`;
-  }).join(', ');
+  if (colors.length === 1) {
+    // For a single color, create a simple gradient from the color to a darker version
+    return `linear-gradient(${direction}, ${colors[0]} 0%, ${darkenColor(colors[0], 30)} 100%)`;
+  }
   
-  // Use baseColor at the outside (100%)
-  return `radial-gradient(${position}, ${colorStops}, ${baseColor} 100%)`;
-}
+  // Sort colors by hue value - lower hues (reds) on the left, higher hues (purples) on the right
+  const sortedColors = [...colors].sort((a, b) => {
+    const [hueA] = hexToHsl(a);
+    const [hueB] = hexToHsl(b);
+    return hueA - hueB;
+  });
+  
+  // Create stops with even spacing
+  const stops = sortedColors.map((color, index) => {
+    const percent = (index / (sortedColors.length - 1)) * 100;
+    return `${color} ${percent}%`;
+  });
+  
+  return `linear-gradient(${direction}, ${stops.join(', ')})`;
+};
+
+/**
+ * Darkens a hex color by the specified percentage
+ * @param color Hex color string
+ * @param percent Percent to darken (0-100)
+ * @returns Darker hex color
+ */
+export const darkenColor = (color: string, percent: number): string => {
+  const [h, s, l] = hexToHsl(color);
+  // Reduce lightness but maintain hue and saturation
+  return hslToHex(h, s, Math.max(0, l - (percent / 100) * l));
+};
 
 /**
  * Get topic colors from a project
@@ -165,3 +195,29 @@ export function getTopicColorsFromProject(
   }
   return [];
 }
+
+// OpenMoji base URL - change to black and white version
+export const OPENMOJI_BASE_URL = "https://openmoji.org/data/black/svg/";
+
+/**
+ * Get the OpenMoji URL for a given emoji hexcode
+ * @param hexcode The hexcode of the emoji (e.g. "1F600" for 😀)
+ * @returns The full URL to the OpenMoji SVG (black and white version)
+ */
+export const getOpenMojiUrl = (hexcode: string): string => {
+  if (!hexcode) return "";
+  // Ensure the hexcode is properly formatted without any prefixes
+  const cleanHexcode = hexcode.replace(/^U\+/i, "").toUpperCase();
+  return `${OPENMOJI_BASE_URL}${cleanHexcode}.svg`;
+};
+
+/**
+ * Extract just the hexcode from an OpenMoji URL
+ * @param url The full OpenMoji URL
+ * @returns Just the hexcode part
+ */
+export const getHexcodeFromUrl = (url: string): string => {
+  if (!url) return "";
+  const match = url.match(/\/([0-9A-F]+)\.svg$/i);
+  return match ? match[1] : "";
+};

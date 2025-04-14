@@ -31,6 +31,7 @@ import FeaturedItemsForm from './pages/admin/FeaturedItemsForm';
 import FundingSourcesList from './pages/admin/FundingSourcesList';
 import FundingSourceForm from './pages/admin/FundingSourceForm';
 import TeamImageForm from './pages/admin/TeamImageForm';
+import TopicColorsForm from './pages/admin/TopicColorsForm';
 import { AuthProvider } from './contexts/AuthContext';
 import { ContentProvider } from './contexts/ContentContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -132,6 +133,12 @@ const App: React.FC = () => {
               <Route path="/admin/team-image" element={
                 <RequireAuth>
                   <TeamImageForm />
+                </RequireAuth>
+              } />
+              {/* Topic Colors Management Route */}
+              <Route path="/admin/topic-colors" element={
+                <RequireAuth>
+                  <TopicColorsForm />
                 </RequireAuth>
               } />
             </Routes>

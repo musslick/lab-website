@@ -19,7 +19,8 @@ const AdminDashboard: React.FC = () => {
     software, 
     jobOpenings, 
     resetToDefaults,
-    getFeaturedItems
+    getFeaturedItems,
+    topicColorRegistry
   } = useContent();
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [storageInfo, setStorageInfo] = useState<{ key: string; size: number }[]>([]);
@@ -28,6 +29,9 @@ const AdminDashboard: React.FC = () => {
   
   // Get current featured items
   const featuredItems = getFeaturedItems();
+
+  // Count topic colors in the registry
+  const topicColorsCount = Object.keys(topicColorRegistry || {}).length;
 
   useEffect(() => {
     // Calculate storage usage
@@ -496,6 +500,27 @@ const AdminDashboard: React.FC = () => {
             <div className="admin-card-content">
               <p className="admin-stats-number">{jobOpenings.length}</p>
               <p>Open positions</p>
+            </div>
+          </div>
+          
+          {/* Topic Colors Card - New card for managing topic colors centrally */}
+          <div 
+            className="admin-card"
+            onClick={() => handleNavigate('/admin/topic-colors')}
+          >
+            <div className="admin-card-header">
+              <h2>Topic Colors</h2>
+              <Link 
+                to="/admin/topic-colors" 
+                className="card-action-button"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Manage
+              </Link>
+            </div>
+            <div className="admin-card-content">
+              <p className="admin-stats-number">{topicColorsCount}</p>
+              <p>Topic/method colors used across projects</p>
             </div>
           </div>
 
