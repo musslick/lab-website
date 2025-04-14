@@ -60,23 +60,23 @@ export const publications: Publication[] = [
   },
   {
     "id": "pub-003",
-    "title": "Wow ",
-    "journal": "AI Journal",
-    "year": 2023,
+    "title": "SweetBean: A declarative language for behavioral experiments with human and artificial participants",
+    "journal": "Journal of Open Source Software",
+    "year": 2025,
     "type": "journal",
     "authors": [
-      "Hartstang, M.",
-      "Weinhardt, D."
+      "Strittmatter, Y.",
+      "Musslick, S."
     ],
-    "citation": "Smith, R. & Wong, E. (2023). Cognitive frameworks in machine learning. AI Journal, 12(4), 89-105.",
-    "doi": "10.1000/def789",
-    "url": "https://doi.org/10.1000/def789",
-    "abstract": "This paper introduces cognitive frameworks for improving machine learning models. By incorporating principles from human cognition, we demonstrate enhanced model performance across multiple tasks.",
-    "projectId": "consciousness-study",
+    "citation": "Strittmatter, Y., & Musslick, S. (2025). SweetBean: A declarative language for behavioral experiments with human and artificial participants. Journal of Open Source Software, 10(107), 7703.",
+    "doi": "10.21105/joss.07703",
+    "url": "https:/https://doi.org/10.21105/joss.07703/doi.org/10.1000/def789",
+    "abstract": "Sweetbean is an open-source, domain-specific declarative programming language built in Python, designed to simplify the synthesis of web-based behavioral experiments. It allows researchers to specify a behavioral experiment in declarative form as a sequence of events. Once specified, sweetbean can compile the experiment into a jsPsych experiment (Leeuw et al., 2023) for web-based behavioral study with human participants. In addition, sweetbean can generate prompts for conducting the same experiment with a large language model (LLM), enabling automated alignment of LLMs with human behavior.",
+    "projectId": "project-1744383465177",
     "keywords": [
-      "Artificial Intelligence",
-      "Cognitive Science",
-      "Machine Learning"
+      "LLM",
+      "web-based experiments",
+      "behavioral experimentation"
     ]
   },
   {

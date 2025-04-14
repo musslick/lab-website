@@ -29,11 +29,11 @@ h1, h2, h3, h4, h5, h6, button, .nav-links, .logo-text {
 }
 
 /* Global rule to remove underlines */
-h1::after, 
-h2::after, 
-h3::after, 
-h4::after, 
-h5::after, 
+h1::after,
+h2::after,
+h3::after,
+h4::after,
+h5::after,
 h6::after {
   display: none !important;
 }
@@ -53,7 +53,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, li, a {
 }
 
 /* Exceptions for specific elements that need different colors */
-.project-excerpt, 
+.project-excerpt,
 .feed-item .date,
 .hero-section .subtitle {
   color: #666; /* Keep some secondary text in grey */
@@ -286,7 +286,7 @@ header {
   .page-header h1 {
     font-size: 1.8rem;
   }
-  
+
   .page-header p {
     font-size: 1rem;
   }
@@ -762,7 +762,7 @@ header {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .job-dates {
     flex-direction: column;
     gap: 5px;
@@ -791,7 +791,7 @@ header {
 }
 
 .team-member-color-header {
-  height: 200px;
+  height: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -851,15 +851,15 @@ header {
   margin-bottom: 20px;
 }
 
-.team-member-email, 
-.team-member-github, 
+.team-member-email,
+.team-member-github,
 .team-member-cv {
   color: #000000;
   text-decoration: none;
 }
 
-.team-member-email:hover, 
-.team-member-github:hover, 
+.team-member-email:hover,
+.team-member-github:hover,
 .team-member-cv:hover {
   text-decoration: underline;
 }
@@ -929,17 +929,17 @@ header {
     align-items: center;
     text-align: center;
   }
-  
+
   .team-member-profile-info {
     text-align: center;
   }
-  
+
   .team-member-profile-info h1,
   .team-member-role,
   .team-member-bio-extended p {
     text-align: center;
   }
-  
+
   .team-member-projects-grid {
     grid-template-columns: 1fr;
   }
@@ -1602,12 +1602,12 @@ header {
     flex-direction: column;
     gap: 5px;
   }
-  
+
   .software-links {
     flex-direction: row;
     flex-wrap: wrap;
   }
-  
+
   .software-link {
     flex: 1 1 auto;
     min-width: 120px;
@@ -1737,7 +1737,7 @@ header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .software-links {
     margin-top: 0.5rem;
   }
@@ -1844,12 +1844,12 @@ header {
     flex-direction: column;
     gap: 30px;
   }
-  
+
   .home-page .project-card {
     margin-bottom: 0; /* Remove default margin since we're using flex gap */
     width: 100%;
   }
-  
+
   /* Prevent hover transforms on mobile */
   .home-page .project-card:hover {
     transform: none !important;
@@ -1865,7 +1865,7 @@ header {
   .hero-section h1 {
     font-size: 5.5rem;
   }
-  
+
   .hero-logo {
     width: 350px; /* Increased from 250px to maintain larger size */
     height: 350px; /* Maintain aspect ratio */
@@ -1883,13 +1883,13 @@ header {
   .hero-section h1 {
     font-size: 4.5rem;
   }
-  
+
   .hero-logo {
     width: 300px; /* Increased from 200px */
     height: 300px;
     margin-right: 30px;
   }
-  
+
   .hero-title-wrapper {
     margin-bottom: 20px;
   }
@@ -1899,25 +1899,25 @@ header {
   .hero-section {
     padding: 40px 20px 80px; /* Reduced top padding for mobile */
   }
-  
+
   .hero-title-wrapper {
     flex-direction: column; /* Stack logo above title */
     align-items: center; /* Center items horizontally */
     margin-bottom: 30px;
   }
-  
+
   .hero-logo {
     width: 250px; /* Increased from 150px to keep logo more visible */
     height: 250px;
     margin-right: 0; /* Remove right margin */
     margin-bottom: 40px; /* Increased from 30px for better spacing between logo and title */
   }
-  
+
   .hero-section h1 {
     font-size: 3.5rem;
     text-align: center; /* Center text on mobile */
   }
-  
+
   .hero-text {
     font-size: 1.4rem;
     text-align: center; /* Center text on mobile */
@@ -1929,31 +1929,31 @@ header {
     grid-template-columns: 1fr;
     gap: 30px; /* Increased gap for better separation when stacked */
   }
-  
+
   /* Make sure featured cards stack properly with enough space between them */
   .home-page .project-card {
     margin-bottom: 30px; /* Increased from 15px for better spacing when stacked */
     width: 100%; /* Ensure full width */
   }
-  
+
   /* Ensure the last card doesn't have extra bottom margin */
   .home-page .project-card:last-child {
     margin-bottom: 0;
   }
-  
+
   /* Remove any transforms that might be applied to featured cards by default */
   .home-page .project-card.featured {
     transform: none !important; /* Use !important to override any hover transforms */
     margin-bottom: 30px;
   }
-  
+
   /* Reset any scale transforms on featured cards for mobile view */
   .news-card.featured {
     transform: none !important; /* Use !important to override other transforms */
     border: 2px solid #00AAFF;
     margin-bottom: 30px;
   }
-  
+
   /* Prevent hover transforms from affecting card position on mobile */
   .home-page .project-card:hover {
     transform: none !important; /* Override the translateY hover effect */
@@ -1965,13 +1965,13 @@ header {
     font-size: 2.8rem;
     letter-spacing: -1px;
   }
-  
+
   .hero-logo {
     width: 200px; /* Increased from 120px */
     height: 200px;
     margin-bottom: 30px; /* Increased from 25px */
   }
-  
+
   .hero-text {
     text-align: center;
   }
@@ -2398,7 +2398,7 @@ header {
 
 /* Primary page headings - h1 */
 .page-header h1,
-.projects-header h1, 
+.projects-header h1,
 .feed-header h1,
 .about-header h1,
 .team-page .projects-header h1,
@@ -2457,7 +2457,7 @@ header {
   .project-title-standalone {
     font-size: 1.8rem;
   }
-  
+
   .featured-projects h2,
   .collaborators h2,
   .about-section h2,
@@ -2679,7 +2679,7 @@ header {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-  
+
   .contact-info {
     padding-right: 0;
   }
@@ -2788,12 +2788,12 @@ header {
     align-items: flex-start; /* Left-align on mobile */
     gap: 15px;
   }
-  
+
   .see-all-links-container .see-more-link {
     max-width: 100%; /* Full width on smaller screens */
     text-align: left; /* Left-align text on mobile */
   }
-  
+
   .see-more-container,
   .see-all-links-container {
     padding: 0 5px;
@@ -2807,7 +2807,7 @@ header {
     align-items: center;
     gap: 15px;
   }
-  
+
   .see-more-container,
   .see-all-links-container {
     padding: 0 5px;
@@ -2951,7 +2951,7 @@ header {
     flex-direction: column;
     gap: 20px;
   }
-  
+
   .tag-filter {
     flex-basis: 100%;
   }
@@ -3130,12 +3130,12 @@ header {
     flex-direction: column;
     gap: 5px;
   }
-  
+
   .publication-meta span {
     margin-right: 0;
   }
-  
-  .publication-project, 
+
+  .publication-project,
   .publication-doi {
     margin-top: 10px;
   }
@@ -3368,7 +3368,7 @@ header {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .footer-nav {
     margin-top: 1rem;
     justify-content: center;

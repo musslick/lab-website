@@ -18,62 +18,76 @@ export interface Software {
 export const software: Software[] = [
   {
     "id": "brain-mapper",
-    "name": "Mapper",
-    "description": "An open-source tool for visualizing complex neural networks and brain connectivity patterns. BrainMapper provides researchers with intuitive interfaces to analyze large-scale neuroimaging data.",
+    "name": "AutoRA: Automated Research Assistant for closed-loop empirical research.",
+    "description": "Automated Research Assistant (autora) is a Python package for automating and integrating empirical research processes, such as experimental design, data collection, and model discovery. With this package, users can define an empirical research problem and specify the methods they want to employ for solving it. autora is designed as a declarative language in that it provides a vocabulary and set of abstractions to describe and execute scientific processes and to integrate them into a closed-loop system for scientific discovery. The package interfaces with other tools for automating scientific practices, such as scikit-learn for model discovery, sweetpea and sweetbean for experimental design, firebase_admin for executing web-based experiments, and autodoc for documenting the empirical research process. While initially developed for the behavioral sciences, autora is designed as a general framework for closed-loop scientific discovery, with applications in other empirical disciplines. ",
     "repoUrl": "https://github.com/automated-lab/brain-mapper",
     "technologies": [
       "Python",
-      "TensorFlow",
-      "D3.js",
-      "WebGL"
+      "Google Firebase",
+      "Google Firestore",
+      "Prolific"
     ],
     "developers": [
       "Sebastian Musslick"
     ],
     "license": "MIT",
-    "documentationUrl": "https://brain-mapper.docs.automated-lab.org",
-    "projectId": "consciousness-study",
+    "imageUrl": "https://autoresearch.github.io/autora/img/overview.png",
+    "demoUrl": "https://autoresearch.github.io/autora/examples/closed-loop-basic/",
+    "documentationUrl": "https://autoresearch.github.io/autora/",
+    "projectId": "project-1744383288085",
     "featured": true,
-    "releaseDate": "2022-05-15",
-    "lastUpdate": "2023-08-01"
+    "releaseDate": "2022-08-26"
   },
   {
     "id": "cogni-sim",
-    "name": "CogniSi",
-    "description": "A cognitive architecture simulator that allows researchers to model and test theories of cognitive processing. CogniSim bridges the gap between artificial intelligence models and theories of human cognition.",
+    "name": "SweetBean: ​A declarative language for behavioral experiments with human and artificial participants.",
+    "description": "SweetBean is an open-source, domain-specific declarative programming language built in Python, designed to simplify the synthesis of web-based behavioral experiments. It allows researchers to specify a behavioral experiment in declarative form as a sequence of events. Once specified, SweetBean can compile the experiment into a jsPsych experiment for web-based behavioral study with human participants. In addition, ​SweetBean can generate prompts for conducting the same experiment with a large language model (LLM), enabling automated alignment of LLMs with human behavior.\n\nThe SweetBean package integrates with other tools that automate aspects of behavioral research, such as SweetPea for automating experimental design, or AutoRA for orchestrating closed-loop behavioral research studies. Together, these tools form an ecosystem for advancing behavioral research through automated scientific discovery.",
     "repoUrl": "https://github.com/automated-lab/cogni-sim",
     "technologies": [
-      "JavaScript",
-      "React",
       "Python",
-      "PyTorch"
+      "JavaScript"
     ],
     "developers": [
-      "Robert Smith",
-      "Emily Wong"
+      "Sebastian Musslick"
     ],
-    "license": "Apache 2.0",
-    "imageUrl": "/assets/software/cognisim.png",
-    "demoUrl": "https://demos.automated-lab.org/cognisim",
-    "projectId": "cognitive-ai",
-    "releaseDate": "2022-11-03"
+    "license": "MIT",
+    "demoUrl": "https:/https://autoresearch.github.io/sweetbean/Basic%20Tutorials//demos.automated-lab.org/cognisim",
+    "documentationUrl": "https://autoresearch.github.io/sweetbean/",
+    "projectId": "project-1744383465177",
+    "releaseDate": "2024-12-10"
   },
   {
     "id": "neuro-bci",
-    "name": "NeuroBCI",
-    "description": "A signal processing library specialized for brain-computer interfaces. NeuroBCI offers robust algorithms for filtering, feature extraction, and classification of neural signals in real-time applications.",
+    "name": "SweetPea: A declarative language for factorial experimental design.",
+    "description": "Experimental design is a key ingredient of reproducible empirical research. Yet, given the increasing complexity of experimental designs, researchers often struggle to implement ones that allow them to measure their variables of interest without confounds. SweetPea is an open-source declarative language in Python, in which researchers can describe their desired experiment as a set of factors and constraints. The language leverages advances in areas of computer science to sample experiment sequences in an unbiased way. SweetPea is a standalone package. However, the Autonomous Empirical Research Group leverages SweetPea to automate the design of novel experiments.",
     "repoUrl": "https://github.com/automated-lab/neuro-bci",
     "technologies": [
-      "C++",
-      "Python",
-      "CUDA"
+      "Python"
     ],
     "developers": [
-      "Michael Chen",
-      "Emily Wong"
+      "Sebastian Musslick"
     ],
-    "license": "GPL v3",
-    "projectId": "brain-computer",
-    "lastUpdate": "2023-06-30"
+    "license": "MIT",
+    "demoUrl": "https://sites.google.com/view/sweetpea-ai/tutorials",
+    "documentationUrl": "https://sweetpea-org.github.io/",
+    "projectId": "project-1744380957652",
+    "releaseDate": "2018-09-20"
+  },
+  {
+    "id": "software-1744661083211",
+    "name": "EEG-GAN",
+    "description": "EEG-GAN is a data augmentation tool for electroencephalography (EEG). It leverages a Generative Adversarial Network (GAN) to obtain trial-level synthetic EEG samples from naturalistic samples that are conditioned on experimental manipulations. The resulting samples can be used to enhance the classification of EEG-Data with any classifier.",
+    "repoUrl": "https://github.com/AutoResearch/EEG-GAN",
+    "technologies": [
+      "Python",
+      "EEG"
+    ],
+    "developers": [
+      "Sebastian Musslick",
+      "Daniel Weinhardt"
+    ],
+    "license": "MIT",
+    "documentationUrl": "https://autoresearch.github.io/EEG-GAN/",
+    "releaseDate": "2023-03-28"
   }
 ];
