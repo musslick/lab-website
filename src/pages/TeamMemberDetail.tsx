@@ -185,7 +185,7 @@ const TeamMemberDetail: React.FC = () => {
 
       {memberProjects.length > 0 && (
         <div className="team-member-projects-section">
-          <h2>Projects</h2>
+          <h2>Research Areas</h2>
           <div className="team-member-projects-grid">
             {memberProjects.map(project => (
               <Link
