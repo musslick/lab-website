@@ -122,13 +122,13 @@ const Publications: React.FC = () => {
 
         {projectsWithPublications.length > 0 && (
           <div className="tag-filter">
-            <h3>Filter by Project</h3>
+            <h3>Filter by Research Area</h3>
             <div className="tag-list">
               <button
                 className={`tag-button ${selectedProject === 'All' ? 'active' : ''}`}
                 onClick={() => setSelectedProject('All')}
               >
-                All Projects
+                All Research Areas
               </button>
               {projectsWithPublications.map(project => (
                 <button
@@ -204,7 +204,7 @@ const Publications: React.FC = () => {
 
               {publication.projectId && (
                 <div className="publication-project">
-                  <span>Related Project: </span>
+                  <span>Related Research Area: </span>
                   <Link to={`/projects/${publication.projectId}`}>
                     {getProjectTitle(publication.projectId)}
                   </Link>

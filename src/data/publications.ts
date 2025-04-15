@@ -360,5 +360,22 @@ export const publications: Publication[] = [
     "equation discovery",
     "symbolic regression"
   ]
-  }
+},
+  {
+  "id": "pub-1744728564846",
+  "title": "On the Benefits of Heterogeneity in Cognitive Stability and Flexibility for Collaborative Task Switching",
+  "journal": "Proceedings of the Annual Meeting of the Cognitive Science Society 48",
+  "year": 2024,
+  "type": "conference proceeding",
+  "authors": [
+    "Brondetta, A.",
+    "Bizyaeva, A.",
+    "Licas, M.",
+    "Petri, G.",
+    "Musslick, S."
+  ],
+  "citation": "Brondetta, A., Bizyaeva, A., Lucas, M., Petri, G., & Musslick, S. (2024). On the Benefits of Heterogeneity in Cognitive Stability and Flexibility for Collaborative Task Switching. In Proceedings of the 46th Annual Meeting of the Cognitive Science Society (pp. 5872– 5878).",
+  "url": "https://escholarship.org/uc/item/6b47b61g",
+  "projectId": "project-1744537991200"
+}
 ];
