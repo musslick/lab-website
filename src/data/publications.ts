@@ -16,47 +16,61 @@ export interface Publication {
 export const publications: Publication[] = [
   {
     "id": "pub-001",
-    "title": "Advance",
-    "journal": "Journal of Neuroscience",
-    "year": 2022,
+    "title": "Automating the practice of science: Opportunities, challenges, and implications",
+    "journal": "Proceedings of the National Academy of Sciences",
+    "year": 2025,
     "type": "journal",
     "authors": [
       "Musslick, S.",
-      "Raeisi, S.",
-      "Hartstang, M.",
-      "Brondetta, A."
+      "Bartlett, L., K.",
+      "Chandramouli, S. H.",
+      "Dubova, M.",
+      "Gobet, F.",
+      "Griffiths, T. L. ",
+      "Hullman, J.",
+      "King, R. D.",
+      "Kutz, N. J.",
+      "Lucas, C. G.",
+      "Mahesh, S.",
+      "Pestilli, F.",
+      "Sloman, S. J.",
+      "Holmes, W. R."
     ],
-    "citation": "Johnson, S., Chen, M., & Smith, R. (2022). Advanced techniques in neural mapping. Journal of Neuroscience, 45(3), 112-128.",
-    "doi": "10.1000/xyz123",
-    "url": "https://doi.org/10.1000/xyz123",
-    "abstract": "This paper presents novel approaches to mapping neural networks using advanced imaging techniques combined with computational models. The results demonstrate improved accuracy in identifying network interconnections.",
-    "projectId": "consciousness-study",
+    "citation": "Musslick, S., Bartlett, L. K., Chandramouli, S. H., Dubova, M., Gobet, F., Griffiths, T. L., ... & Holmes, W. R. (2025). Automating the practice of science: Opportunities, challenges, and implications. Proceedings of the National Academy of Sciences, 122(5), e2401238121.",
+    "doi": "10.1073/pnas.2401238121",
+    "url": "https://doi.org/10.1073/pnas.2401238121",
+    "projectId": "project-1744383288085",
     "keywords": [
-      "Neural Networks",
-      "Brain Imaging",
-      "Test"
+      "automated scientific practice",
+      "automated model discovery",
+      "automated experimental design"
     ]
   },
   {
     "id": "pub-002",
-    "title": "Computational approaches to neural network visualization",
-    "authors": [
-      "Chen, M.",
-      "Johnson, S."
-    ],
-    "journal": "Brain Research",
-    "year": 2021,
-    "doi": "10.1000/abc456",
-    "url": "https://doi.org/10.1000/abc456",
-    "abstract": "This research explores new computational methods for visualizing complex neural networks. We present algorithms that improve the interpretability of neural structures and their functional relationships.",
-    "keywords": [
-      "Neural Networks",
-      "Visualization",
-      "Algorithms"
-    ],
+    "title": "Alternative models of funding curiosity-driven research",
+    "journal": "Proceedings of the National Academy of Sciences",
+    "year": 2025,
     "type": "journal",
-    "citation": "Chen, M. & Johnson, S. (2021). Computational approaches to neural network visualization. Brain Research, 33(2), 45-67.",
-    "projectId": "neural-mapping"
+    "authors": [
+      "Gigerenzer, G.",
+      "Allen, C.",
+      "Gaillard, S.",
+      "Goldstone, G. L.",
+      "Haaf, J.",
+      "Holmes, W. R.",
+      "Kashima, Y.",
+      "Motz, B.",
+      "Musslick, S.",
+      "Stefan, A."
+    ],
+    "citation": "Gigerenzer, G., Allen, C., Gaillard, S., Goldstone, R. L., Haaf, J., Holmes, W. R., ... & Stefan, A. (2025). Alternative models of funding curiosity-driven research. Proceedings of the National Academy of Sciences, 122(5), e2401237121.",
+    "doi": "10.1073/pnas.2401237121",
+    "url": "https://doi.org/10.1073/pnas.2401237121",
+    "projectId": "neural-mapping",
+    "keywords": [
+      "scientific practice"
+    ]
   },
   {
     "id": "pub-003",
@@ -70,8 +84,7 @@ export const publications: Publication[] = [
     ],
     "citation": "Strittmatter, Y., & Musslick, S. (2025). SweetBean: A declarative language for behavioral experiments with human and artificial participants. Journal of Open Source Software, 10(107), 7703.",
     "doi": "10.21105/joss.07703",
-    "url": "https:/https://doi.org/10.21105/joss.07703/doi.org/10.1000/def789",
-    "abstract": "Sweetbean is an open-source, domain-specific declarative programming language built in Python, designed to simplify the synthesis of web-based behavioral experiments. It allows researchers to specify a behavioral experiment in declarative form as a sequence of events. Once specified, sweetbean can compile the experiment into a jsPsych experiment (Leeuw et al., 2023) for web-based behavioral study with human participants. In addition, sweetbean can generate prompts for conducting the same experiment with a large language model (LLM), enabling automated alignment of LLMs with human behavior.",
+    "url": "https://joss.theoj.org/papers/10.21105/joss.07703",
     "projectId": "project-1744383465177",
     "keywords": [
       "LLM",
@@ -81,44 +94,64 @@ export const publications: Publication[] = [
   },
   {
     "id": "pub-004",
-    "title": "Non-invasive BCI advancements",
-    "journal": "Tech & Brain Journal",
-    "year": 2022,
+    "title": "The misalignment of incentives in academic publishing and implications for journal reform",
+    "journal": "Proceedings of the National Academy of Sciences",
+    "year": 2025,
     "type": "journal",
     "authors": [
+      "Trueblood, S. J.",
+      "Allison, D. B.",
+      "Field, S. M.",
+      "Fishbach, A.",
+      "Gaillard, S. DM.",
+      "Gigerenzer, G.",
+      "Holmes, W. R.",
+      "Lewandowsky, S.",
+      "Matzke, D.",
+      "Murphy, M. C.",
       "Musslick, S.",
-      "Raeisi, S."
+      "Popov, V.",
+      "Roskies, A. L.",
+      "Schure, J. T.",
+      "Teodorescu, A. R."
     ],
-    "citation": "Chen, M., Patel, D., & Wong, E. (2022). Non-invasive BCI advancements. Tech & Brain Journal, 8(2), 34-49.",
-    "doi": "10.1000/ghi101",
-    "url": "https://doi.org/10.1000/ghi101",
-    "abstract": "This study presents recent advancements in non-invasive brain-computer interfaces. We demonstrate improved signal acquisition and processing techniques that enhance the accuracy and usability of BCI systems.",
+    "citation": "Trueblood, J. S., Allison, D. B., Field, S. M., Fishbach, A., Gaillard, S. D., Gigerenzer, G., ... & Teodorescu, A. R. (2025). The misalignment of incentives in academic publishing and implications for journal reform. Proceedings of the National Academy of Sciences, 122(5), e2401231121.",
+    "doi": "10.1073/pnas.2401231121",
+    "url": "https://doi.org/10.1073/pnas.2401231121",
     "projectId": "brain-computer",
     "keywords": [
-      "BCI",
-      "Assistive Technology",
-      "Signal Processing"
+      "scientific practice"
     ]
   },
   {
     "id": "pub-005",
-    "title": "Neuroplasticity mechanisms in memory formation",
-    "authors": [
-      "Patel, D.",
-      "Johnson, S."
-    ],
-    "journal": "Neurobiology Review",
-    "year": 2021,
-    "doi": "10.1000/jkl202",
-    "url": "https://doi.org/10.1000/jkl202",
-    "abstract": "This review examines the neuroplastic mechanisms underlying memory formation and retrieval. We synthesize recent findings and present a unified model of memory processes across different brain regions.",
-    "keywords": [
-      "Memory",
-      "Neuroplasticity",
-      "Brain Stimulation"
-    ],
+    "title": "Is Ockham’s razor losing its edge? New perspectives on the principle of model parsimony",
+    "journal": "Proceedings of the National Academy of Sciences",
+    "year": 2025,
     "type": "journal",
-    "citation": "Patel, D. & Johnson, S. (2021). Neuroplasticity mechanisms in memory formation. Neurobiology Review, 27(1), 78-95.",
-    "projectId": "memory-enhancement"
+    "authors": [
+      "Dubova, M.",
+      "Chandramouli, S.",
+      "Gigerenzer, G.",
+      "Grünwald, P.",
+      "Holmes, W. R.",
+      "Lombrozo, T.",
+      "Marelli, M.",
+      "Musslick, S.",
+      "Nicenboim, B.",
+      "Ross, L. N.",
+      "Shiffrin, S.",
+      "White, M.",
+      "Wagenmakers, E.",
+      "Bürkner, P.",
+      "Sloman, S. J."
+    ],
+    "citation": "Dubova, M., Chandramouli, S., Gigerenzer, G., Grünwald, P., Holmes, W., Lombrozo, T., ... & Sloman, S. J. (2025). Is Ockham’s razor losing its edge? New perspectives on the principle of model parsimony. Proceedings of the National Academy of Sciences, 122(5), e2401230121.",
+    "doi": "10.1073/pnas.2401230121",
+    "url": "https://doi.org/10.1073/pnas.2401230121",
+    "projectId": "project-1744367667570",
+    "keywords": [
+      "scientific practice"
+    ]
   }
 ];
