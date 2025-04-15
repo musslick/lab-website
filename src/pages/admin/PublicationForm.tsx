@@ -13,7 +13,7 @@ const PublicationForm: React.FC = () => {
   const [title, setTitle] = useState('');
   const [journal, setJournal] = useState('');
   const [year, setYear] = useState(new Date().getFullYear());
-  const [type, setType] = useState<'journal article' | 'conference proceeding' | 'book' | 'book chapter' | 'preprint' | 'thesis' | 'commentary'>('journal article');
+  const [type, setType] = useState<'journal article' | 'conference proceeding' | 'workshop contribution' | 'book' | 'book chapter' | 'preprint' | 'thesis' | 'commentary'>('journal article');
   const [authors, setAuthors] = useState<string[]>(['']);
   const [doi, setDoi] = useState('');
   const [url, setUrl] = useState('');

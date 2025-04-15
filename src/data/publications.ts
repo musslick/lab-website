@@ -8,7 +8,7 @@ export interface Publication {
   url?: string;
   abstract?: string;
   keywords?: string[];
-  type: 'journal article' | 'conference proceeding' | 'book' | 'book chapter' | 'preprint' | 'thesis' | 'commentary';
+  type: 'journal article' | 'conference proceeding' | 'workshop contribution' | 'book' | 'book chapter' | 'preprint' | 'thesis' | 'commentary';
   citation: string;
   projectId?: string;
 }
@@ -266,5 +266,99 @@ export const publications: Publication[] = [
         "cognitive stability",
         "tradeoff"
       ]
-    }
+    },
+    {
+  "id": "pub-1744719584837",
+  "title": "Examining cognitive flexibility and stability through the lens of dynamical systems",
+  "journal": "Current Opinion in Behavioral Sciences",
+  "year": 2024,
+  "type": "journal article",
+  "authors": [
+    "Musslick, S.",
+    "Bizyaeva, A."
+  ],
+  "citation": "Musslick, S., & Bizyaeva, A. (2024). Examining cognitive flexibility and stability through the lens of dynamical systems. Current Opinion in Behavioral Sciences, 57, 101375.",
+  "doi": "10.1016/j.cobeha.2024.101375",
+  "url": "https://doi.org/10.1016/j.cobeha.2024.101375",
+  "projectId": "project-1744383751212",
+  "keywords": [
+    "tradeoff",
+    "rational boundedness",
+    "cognitive control"
+  ]
+},
+{
+  "id": "pub-1744719753012",
+  "title": "Closed-loop scientific discovery in the behavioral sciences",
+  "journal": "PsyArXiv",
+  "year": 2024,
+  "type": "preprint",
+  "authors": [
+    "Musslick, S.",
+    "Strittmatter, S.",
+    "Dubova, M."
+  ],
+  "citation": "Musslick, S., Strittmatter, Y., & Dubova, M. (2024). Closed-loop scientific discovery in the behavioral sciences. PsyArXiv.",
+  "doi": "10.31234/osf.io/c2ytb",
+  "url": "https://doi.org/10.31234/osf.io/c2ytb",
+  "projectId": "project-1744383288085",
+  "keywords": [
+    "automated scientific discovery"
+  ]
+},
+{
+  "id": "pub-1744719929858",
+  "title": "Task performance errors and rewards affect voluntary task choices",
+  "journal": "Psychological Research",
+  "year": 2024,
+  "type": "journal article",
+  "authors": [
+    "Spitzer, M. W. H.",
+    "Musslick, S.",
+    "Janz, J.",
+    "Kiesel, A.",
+    "Dignath, D."
+  ],
+  "citation": "Spitzer, M. W. H., Musslick, S., Janz, J., Kiesel, A., & Dignath, D. (2024). Task performance errors and rewards affect voluntary task choices. Psychological Research, 88(3), 892-909.",
+  "doi": "10.1007/s00426-023-01908-7",
+  "url": "https://doi.org/10.1007/s00426-023-01908-7",
+  "projectId": "project-1744383751212"
+},
+{
+  "id": "pub-1744721577387",
+  "title": "Explore your experimental designs and theories before you exploit them!",
+  "journal": "Behavioral and Brain Sciences",
+  "year": 2024,
+  "type": "commentary",
+  "authors": [
+    "Dubova, M.",
+    "Sloman, S. J.",
+    "Andrew, B.",
+    "Nassar, M. R."
+  ],
+  "citation": "Dubova, M., Sloman, S. J., Andrew, B., Nassar, M. R., & Musslick, S. (2024). Explore your experimental designs and theories before you exploit them!. Behavioral and Brain Sciences, 47.",
+  "doi": "10.1017/S0140525X23002303",
+  "url": "https://doi.org/10.1017/S0140525X23002303",
+  "projectId": "project-1744380957652"
+},
+{
+  "id": "pub-1744722944290",
+  "title": "Computational discovery of human reinforcement learning dynamics from choice behavior",
+  "journal": "NeurIPS 2024 Workshop on Behavioral Machine Learning",
+  "year": 2024,
+  "type": "workshop contribution",
+  "authors": [
+    "Weinhardt, D.",
+    "Eckstein, M.",
+    "Musslick, S."
+  ],
+  "citation": "Weinhardt, D., Eckstein, M. K., & Musslick, S. (2024). Computational discovery of human reinforcement learning dynamics from choice behavior. In NeurIPS 2024 Workshop on Behavioral Machine Learning.",
+  "url": "https://openreview.net/forum?id=x2WDZrpgmB",
+  "projectId": "project-1744367667570",
+  "keywords": [
+    "SINDy",
+    "equation discovery",
+    "symbolic regression"
+  ]
+  }
 ];
