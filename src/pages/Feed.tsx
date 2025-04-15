@@ -6,16 +6,16 @@ import '../styles/styles.css';
 const Feed: React.FC = () => {
   const { newsItems } = useContent();
   const [selectedTag, setSelectedTag] = useState<string>('All');
-  
+
   // Get unique tags
   const allTags = newsItems.flatMap(item => item.tags || []);
   const uniqueTags = ['All', ...Array.from(new Set(allTags))];
-  
+
   // Filter news by selected tag
-  const filteredNews = selectedTag === 'All' 
-    ? newsItems 
+  const filteredNews = selectedTag === 'All'
+    ? newsItems
     : newsItems.filter(item => item.tags?.includes(selectedTag));
-  
+
   // Sort news by date (newest first), with featured items at the top
   const sortedNews = [...filteredNews].sort((a, b) => {
     // First sort by featured status
@@ -27,10 +27,10 @@ const Feed: React.FC = () => {
 
   // Format date for display
   const formatDate = (dateString: string): string => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
@@ -39,15 +39,15 @@ const Feed: React.FC = () => {
     <div className="projects-page">
       <div className="projects-header">
         <h1>Latest News</h1>
-        <p>Stay updated with the latest news from our lab</p>
+        <p>Stay updated with the latest news from our lab.</p>
       </div>
 
       <div className="tag-filter">
         <h3>Filter by Tag</h3>
         <div className="tag-list">
           {uniqueTags.map(tag => (
-            <button 
-              key={tag} 
+            <button
+              key={tag}
               className={`tag-button ${selectedTag === tag ? 'active' : ''}`}
               onClick={() => setSelectedTag(tag)}
             >
@@ -56,7 +56,7 @@ const Feed: React.FC = () => {
           ))}
         </div>
       </div>
-      
+
       <div className="news-grid" style={{ marginTop: '30px' }}>
         {sortedNews.length > 0 ? (
           sortedNews.map(item => (
@@ -82,8 +82,8 @@ const Feed: React.FC = () => {
                 {item.tags && item.tags.length > 0 && (
                   <div className="news-tags">
                     {item.tags.map(tag => (
-                      <span 
-                        key={tag} 
+                      <span
+                        key={tag}
                         className="news-tag"
                         onClick={() => setSelectedTag(tag)}
                       >

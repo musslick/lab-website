@@ -32,11 +32,11 @@ export const newsItems: NewsItem[] = [
     "author": "Sebastian Musslick",
     "featured": true,
     "tags": [
-      "Funding",
-      "Workshop",
-      "Hackathon",
       "AI for science",
-      "Automated Scientific Discovery"
+      "automated scientific discovery",
+      "workshop",
+      "hackathon",
+      "funding"
     ],
     "imageUrl": "https://i.postimg.cc/Y2RwQtJ4/New-Logo-3.png"
   },
@@ -48,7 +48,7 @@ export const newsItems: NewsItem[] = [
     "author": "Sebastian Musslick",
     "featured": false,
     "tags": [
-      "Team Update"
+      "team update"
     ],
     "imageUrl": "https://raw.githubusercontent.com/morilori/automated-lab/refs/heads/main/src/assets/team/Moritz.jpg?token=GHSAT0AAAAAACOGSZUKDUAKOWDPJ2J6PXZYZ76U6RQ"
   }
