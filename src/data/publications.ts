@@ -153,5 +153,78 @@ export const publications: Publication[] = [
     "keywords": [
       "scientific practice"
     ]
+  },
+  {
+    "id": "pub-1744708691267",
+    "title": "AutoRA: Automated research assistant for closed-loop empirical research",
+    "journal": "Journal of Open Source Software",
+    "year": 2024,
+    "type": "journal",
+    "authors": [
+      "Strittmatter, Y.",
+      "Musslick, S."
+    ],
+    "citation": "Musslick, S., Andrew, B., Williams, C. C., Li, S., Marinescu, I., Dubova, M., ... & Holland, J. G. (2024). AutoRA: Automated research assistant for closed-loop empirical research. Journal of Open Source Software, 9(104), 6839.",
+    "doi": "10.21105/joss.06839",
+    "url": "https://doi.org/10.21105/joss.06839",
+    "projectId": "project-1744383288085",
+    "keywords": [
+      "software",
+      "Prolific",
+      "Firebase",
+      "Firestore",
+      "web-based experiments"
+    ]
+  },
+  {
+    "id": "pub-1744710390287",
+    "title": "Large language models surpass human experts in predicting neuroscience results",
+    "journal": "Nature human behaviour",
+    "year": 2025,
+    "type": "journal",
+    "authors": [
+      "Luo, X.",
+      "Rechardt, A",
+      "Sun, G.",
+      "Nejad, K. K.",
+      "Yáñez, F.",
+      "Yilmaz, B.",
+      "Lee, K.",
+      "Cohen, A. O.",
+      "Borghesani, V.  ",
+      "Pashkov, A.",
+      "Marinazzo, D.",
+      "Nicholas, J.",
+      "Salatiello, A.",
+      "Sucholutsky, I.",
+      "Minervini, P.",
+      "Razavi, S.",
+      "Rocca, R.",
+      "Yusifov, E.",
+      "Okalova, T.",
+      "Gu, N.",
+      "Ferianc, M.",
+      "Khona, M.",
+      "Patil, K. R.",
+      "Lee, P.-S.",
+      "Mata, R.",
+      "Myers, N. E.",
+      "Bizley, J. K.",
+      "Musslick, S.",
+      "Bilgin, I. P.",
+      "Niso, G.",
+      "Ales, J. M",
+      "Gaebler, M.",
+      "Murty, N. A. R. ",
+      "Loued-Khenissi, L.",
+      "Behler, A. ",
+      "Hall, C. M.",
+      "Dafflon, J. ",
+      "Bao, S. D.",
+      "Love, B. C"
+    ],
+    "citation": "Luo, X., Rechardt, A., Sun, G., Nejad, K. K., Yáñez, F., Yilmaz, B., ... & Love, B. C. (2024). Large language models surpass human experts in predicting neuroscience results. Nature human behaviour, 1-11.",
+    "doi": "10.1038/s41562-024-02046-9",
+    "url": "https://doi.org/10.1038/s41562-024-02046-9"
   }
 ];
