@@ -64,7 +64,7 @@ const Software: React.FC = () => {
                 </div>
 
                 <div className="software-developed-by">
-                  <strong>Developing Team Members:</strong> {item.developers.join(', ')}
+                  <strong>Contributing Team Members:</strong> {item.developers.join(', ')}
                 </div>
 
                 <div className="software-meta">
