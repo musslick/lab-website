@@ -363,7 +363,7 @@ export const publications: Publication[] = [
 },
   {
   "id": "pub-1744728564846",
-  "title": "On the Benefits of Heterogeneity in Cognitive Stability and Flexibility for Collaborative Task Switching",
+  "title": "On the benefits of heterogeneity in Cognitive stability and flexibility for collaborative task switching",
   "journal": "Proceedings of the 48th Annual Meeting of the Cognitive Science Society",
   "year": 2024,
   "type": "conference proceeding",
@@ -380,7 +380,7 @@ export const publications: Publication[] = [
 },
 {
   "id": "pub-1744736334974",
-  "title": "Improving Concepts in Cognitive Science",
+  "title": "Improving concepts in cognitive science",
   "journal": "Proceedings of the 48th Annual Meeting of the Cognitive Science Society",
   "year": 2024,
   "type": "conference proceeding",
@@ -417,7 +417,7 @@ export const publications: Publication[] = [
 },
 {
   "id": "pub-1744736825251",
-  "title": "Meta-Control",
+  "title": "Meta-control",
   "journal": "Encyclopedia of the Human Brain, Second Edition: Volumes 1-5",
   "year": 2024,
   "type": "book chapter",
