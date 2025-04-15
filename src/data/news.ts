@@ -12,57 +12,44 @@ export interface NewsItem {
 export const newsItems: NewsItem[] = [
   {
     "id": "news-1",
-    "title": "New Study on Neural Network Mapping Published",
-    "content": "Our team's research on advanced neural network mapping techniques has been published in the Journal of Neuroscience. The study details novel methods for visualizing complex neural interconnections with unprecedented clarity.",
-    "date": "2023-10-15",
-    "author": "Sedighe Raeisi",
-    "featured": false,
-    "tags": [
-      "Team Update"
-    ]
-  },
-  {
-    "id": "news-2",
-    "title": "Grant Awarded for Brain-Computer Interface Research",
-    "content": "We're excited to announce that our lab has received a major grant to advance research on non-invasive brain-computer interfaces. This funding will support our work on developing more responsive and intuitive systems for neural signal processing.",
-    "date": "2023-09-22",
-    "author": "Michael Chen",
-    "tags": [
-      "Funding",
-      "BCI"
-    ]
-  },
-  {
-    "id": "news-3",
-    "title": "New Team Members Join the Lab",
-    "content": "We're pleased to welcome two new doctoral students and a postdoctoral researcher to our team this fall. Their expertise in computational neuroscience and machine learning will be valuable additions to our ongoing projects.",
-    "date": "2023-09-05",
+    "title": "DFG Grant Award: Toward an integrative understanding of the flexibility-stability-balance",
+    "content": "Our laboratory together with the laboratory of Gesine Dreisbach (Regensburg University) got awarded a DFG grant on the topic \"Toward an integrative understanding of the flexibility-stability-balance and its underlying mechanisms via computational modeling and behavioral experimentation\", amounting to a total support of 438.000 Euro.\n\nIn this grant, we will use a combination of dynamical systems modeling and behavioral experimentation to better understand the mechanisms that underlie the regulation of cognitive stability and flexibility in human task switching.\n\nWe are excited for the opportunity to collaborate on this grant with the laboratory of Gesine Dreisbach who will conduct behavioral experiments that provide the empirical foundation for computational models of cognitive stability and flexibility.",
+    "date": "2025-03-11",
     "author": "Sebastian Musslick",
     "featured": false,
     "tags": [
-      "Team Update",
-      "Test"
-    ]
+      "funding",
+      "cognitive control",
+      "computational modeling"
+    ],
+    "imageUrl": "https://www.uni-bonn.de/de/forschung-lehre/forschungsprofil/transdisziplinaere-forschungsbereiche/tra-4-individuals/programme/german-research-foundation/logo-dfg.jpg/@@images/image/leadimagesize"
   },
   {
-    "id": "news-4",
-    "title": "Upcoming Workshop on Cognitive AI Models",
-    "content": "Our lab will be hosting a workshop on cognitive AI models in neuroscience research next month. The event will feature presentations from leading experts in the field and hands-on sessions with our latest tools.",
-    "date": "2023-08-18",
-    "author": "Robert Smith",
+    "id": "news-2",
+    "title": "Grant Award: Workshop on Automated Scientific Discovery of Mind and Brain",
+    "content": "We are fortunate to have received support from Lower Saxony's Ministry of Science and Culture for a workshop on “AI for Discovery of Mind and Brain” (PROFIL International, MWK, 28.204 Euro) for hosting a Workshop at Princeton University together with our collaborators there, Younes Strittmatter and Jonathan D. Cohen.\n\nThis workshop will host a series of tutorials on open-software scientific software for automating scientific discovery in cognitive science, and present cutting-edge research on AI for cognitive science and automated scientific discovery.\n\nStay tuned for more details!",
+    "date": "2025-04-11",
+    "author": "Sebastian Musslick",
+    "featured": true,
     "tags": [
-      "Event",
-      "AI"
-    ]
+      "Funding",
+      "Workshop",
+      "Hackathon",
+      "AI for science",
+      "Automated Scientific Discovery"
+    ],
+    "imageUrl": "https://i.postimg.cc/Y2RwQtJ4/New-Logo-3.png"
   },
   {
-    "id": "news-5",
-    "title": "Collaboration with National Research Institute Announced",
-    "content": "We're excited to announce a new collaboration with the National Research Institute on Brain Sciences. This partnership will focus on developing shared resources and methodologies for advanced neuroimaging analysis.",
-    "date": "2023-07-30",
-    "author": "Sarah Johnson",
+    "id": "news-3",
+    "title": "Moritz Hartstang joining the lab as PhD student",
+    "content": "We're excited to welcome Moritz Hartstang as a doctoral student to our lab. Moritz has background in Design and Cognitive Science and will be focusing on automated systems for improving the understanding of scientific texts.",
+    "date": "2025-04-03",
+    "author": "Sebastian Musslick",
+    "featured": false,
     "tags": [
-      "Collaboration"
-    ]
+      "Team Update"
+    ],
+    "imageUrl": "https://raw.githubusercontent.com/morilori/automated-lab/refs/heads/main/src/assets/team/Moritz.jpg?token=GHSAT0AAAAAACOGSZUKDUAKOWDPJ2J6PXZYZ76U6RQ"
   }
 ];

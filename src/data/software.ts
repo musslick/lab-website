@@ -18,7 +18,7 @@ export interface Software {
 export const software: Software[] = [
   {
     "id": "brain-mapper",
-    "name": "AutoRA: Automated Research Assistant for closed-loop empirical research.",
+    "name": "AutoRA: Automated research assistant for closed-loop empirical research.",
     "description": "Automated Research Assistant (autora) is a Python package for automating and integrating empirical research processes, such as experimental design, data collection, and model discovery. With this package, users can define an empirical research problem and specify the methods they want to employ for solving it. autora is designed as a declarative language in that it provides a vocabulary and set of abstractions to describe and execute scientific processes and to integrate them into a closed-loop system for scientific discovery. The package interfaces with other tools for automating scientific practices, such as scikit-learn for model discovery, sweetpea and sweetbean for experimental design, firebase_admin for executing web-based experiments, and autodoc for documenting the empirical research process. While initially developed for the behavioral sciences, autora is designed as a general framework for closed-loop scientific discovery, with applications in other empirical disciplines. ",
     "repoUrl": "https://github.com/automated-lab/brain-mapper",
     "technologies": [
