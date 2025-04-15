@@ -364,7 +364,7 @@ export const publications: Publication[] = [
   {
   "id": "pub-1744728564846",
   "title": "On the Benefits of Heterogeneity in Cognitive Stability and Flexibility for Collaborative Task Switching",
-  "journal": "Proceedings of the Annual Meeting of the Cognitive Science Society 48",
+  "journal": "Proceedings of the 48th Annual Meeting of the Cognitive Science Society",
   "year": 2024,
   "type": "conference proceeding",
   "authors": [
@@ -377,5 +377,58 @@ export const publications: Publication[] = [
   "citation": "Brondetta, A., Bizyaeva, A., Lucas, M., Petri, G., & Musslick, S. (2024). On the Benefits of Heterogeneity in Cognitive Stability and Flexibility for Collaborative Task Switching. In Proceedings of the 46th Annual Meeting of the Cognitive Science Society (pp. 5872– 5878).",
   "url": "https://escholarship.org/uc/item/6b47b61g",
   "projectId": "project-1744537991200"
+},
+{
+  "id": "pub-1744736334974",
+  "title": "Improving Concepts in Cognitive Science",
+  "journal": "Proceedings of the 48th Annual Meeting of the Cognitive Science Society",
+  "year": 2024,
+  "type": "conference proceeding",
+  "authors": [
+    "Dubova, M.",
+    "Barrett, L. F.",
+    "Goldstone, R.",
+    "Musslick, S.",
+    "Poldrack, R."
+  ],
+  "citation": "Dubova, M., Barrett, L. F., Goldstone, R., Musslick, S., & Poldrack, R. (2024). Improving Concepts in Cognitive Science. In Proceedings of the 46th Annual Meeting of the Cognitive Science Society (pp. 1– 2).",
+  "url": "https://escholarship.org/uc/item/72v1s5bh"
+},
+{
+  "id": "pub-1744736607819",
+  "title": "A meta-learning framework for rationalizing cognitive fatigue in neural systems",
+  "journal": "Proceedings of the 48th Annual Meeting of the Cognitive Science Society",
+  "year": 2024,
+  "type": "conference proceeding",
+  "authors": [
+    "Li, Y.",
+    "Carrasco-Davis, R.",
+    "Strittmatter, Y.",
+    "Sarao Mannelli, S.",
+    "Musslick, S."
+  ],
+  "citation": "Li, Y., Carrasco-Davis, R., Strittmatter, Y., Sarao Mannelli, S., & Musslick, S. (2024). A meta-learning framework for rationalizing cognitive fatigue in neural systems. In Proceedings of the 46th Annual Meeting of the Cognitive Science Society (pp. 1598– 1606).",
+  "url": "https://escholarship.org/uc/item/8pn5q3kx",
+  "projectId": "project-1744537991200",
+  "keywords": [
+    "cognitive control",
+    "meta-control"
+  ]
+},
+{
+  "id": "pub-1744736825251",
+  "title": "Meta-Control",
+  "journal": "Encyclopedia of the Human Brain, Second Edition: Volumes 1-5",
+  "year": 2024,
+  "type": "book chapter",
+  "authors": [
+    "Musslick, S.",
+    "Goschke, T.",
+    "Cohen, J. D."
+  ],
+  "citation": "Musslick, S., Cohen, J. D., & Goschke, T. (2024). Meta-control. In Encyclopedia of the Human Brain, Second Edition: Volumes 1-5 (pp. V3-269). Elsevier.",
+  "doi": "10.1016/B978-0-12-820480-1.00058-9",
+  "url": "https://doi.org/10.1016/B978-0-12-820480-1.00058-9",
+  "projectId": "project-1744383751212"
 }
 ];
