@@ -8,12 +8,12 @@ const PublicationForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { publications, projects, teamMembers, updatePublication, addPublication, deletePublication, updateTeamMember, updateProject } = useContent();
-  
+
   // Form state
   const [title, setTitle] = useState('');
   const [journal, setJournal] = useState('');
   const [year, setYear] = useState(new Date().getFullYear());
-  const [type, setType] = useState<'journal' | 'conference' | 'book' | 'preprint' | 'thesis'>('journal');
+  const [type, setType] = useState<'journal article' | 'conference proceeding' | 'book' | 'book chapter' | 'preprint' | 'thesis' | 'commentary'>('journal article');
   const [authors, setAuthors] = useState<string[]>(['']);
   const [doi, setDoi] = useState('');
   const [url, setUrl] = useState('');
@@ -23,10 +23,10 @@ const PublicationForm: React.FC = () => {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState('');
   const [pubId, setPubId] = useState('');
-  
+
   // NEW: Add state for team member selection
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('');
-  
+
   // UI state
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -34,7 +34,7 @@ const PublicationForm: React.FC = () => {
 
   // Determine if we're in create mode or edit mode
   const isNewPublication = !id || id === 'new';
-  
+
   // Initialize a new publication ID only once when creating a new publication
   useEffect(() => {
     if (isNewPublication && !pubId) {
@@ -43,7 +43,7 @@ const PublicationForm: React.FC = () => {
       console.log("Created new publication ID:", newId);
     }
   }, [isNewPublication, pubId]);
-  
+
   useEffect(() => {
     if (!isNewPublication) {
       // Only load existing data for edit mode
@@ -75,11 +75,11 @@ const PublicationForm: React.FC = () => {
     newAuthors[index] = value;
     setAuthors(newAuthors);
   };
-  
+
   const handleAddAuthor = () => {
     setAuthors([...authors, '']);
   };
-  
+
   const handleRemoveAuthor = (index: number) => {
     if (authors.length > 1) {
       const newAuthors = [...authors];
@@ -92,45 +92,45 @@ const PublicationForm: React.FC = () => {
   const handleAddTeamMemberAsAuthor = () => {
     if (selectedTeamMember) {
       const member = teamMembers.find(m => m.id === selectedTeamMember);
-      
+
       if (member) {
         // Format team member name as "LastName, F." format typically used in publications
         const nameParts = member.name.split(' ');
         const lastName = nameParts[nameParts.length - 1];
         const firstInitial = nameParts[0][0];
         const formattedName = `${lastName}, ${firstInitial}.`;
-        
+
         // Check if this author is already in the list
         if (!authors.some(author => author.includes(lastName))) {
           setAuthors([...authors, formattedName]);
-          
+
           // IMMEDIATE UPDATE: Update the member's publications list to include this publication
           if (pubId) {
-            const updatedMember = { 
+            const updatedMember = {
               ...member,
               publications: [...(member.publications || []), pubId]
             };
-            
+
             // Remove duplicates if any
             updatedMember.publications = [...new Set(updatedMember.publications)];
-            
+
             // Update the team member with the new publication reference
             updateTeamMember(updatedMember);
-            
+
             // FORCE AN UPDATE EVENT: Let other components know about this change immediately
             window.dispatchEvent(new CustomEvent('publication-updated', {
-              detail: { 
-                publicationId: pubId, 
+              detail: {
+                publicationId: pubId,
                 teamMemberId: member.id,
                 timestamp: Date.now(),
                 action: 'add-author'
               }
             }));
-            
+
             console.log(`Updated team member ${member.name} with publication: ${pubId}`);
           }
         }
-        
+
         // Reset selection
         setSelectedTeamMember('');
       }
@@ -144,11 +144,11 @@ const PublicationForm: React.FC = () => {
       setKeywordInput('');
     }
   };
-  
+
   const handleRemoveKeyword = (keywordToRemove: string) => {
     setKeywords(prevKeywords => prevKeywords.filter(keyword => keyword !== keywordToRemove));
   };
-  
+
   const handleKeywordKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -159,24 +159,24 @@ const PublicationForm: React.FC = () => {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate required fields
     if (!title || !journal || !authors.length || !year || !type || !citation) {
       setError('Please fill in all required fields');
       return;
     }
-    
+
     // Remove empty author entries
     const filteredAuthors = authors.filter(author => author.trim() !== '');
-    
+
     if (filteredAuthors.length === 0) {
       setError('Please add at least one author');
       return;
     }
-    
+
     // Clear any previous errors
     setError(null);
-    
+
     try {
       // Construct the publication object
       const publicationData: Publication = {
@@ -188,47 +188,47 @@ const PublicationForm: React.FC = () => {
         authors: filteredAuthors,
         citation
       };
-      
+
       // Add optional fields if they exist
       if (doi) publicationData.doi = doi;
       if (url) publicationData.url = url;
       if (abstract) publicationData.abstract = abstract;
       if (projectId) publicationData.projectId = projectId;
       if (keywords.length > 0) publicationData.keywords = [...keywords];
-      
+
       console.log("Saving publication:", publicationData);
-      
+
       // Track the old project ID for reference
       const oldPublication = isNewPublication ? null : publications.find(pub => pub.id === pubId);
       const oldProjectId = oldPublication?.projectId;
-      
+
       // Get the team member IDs that match the authors
       const teamMembersInPublication = teamMembers.filter(member => {
         // Check if any author contains the team member's last name
         const lastName = member.name.split(' ').pop()?.toLowerCase() || '';
-        return filteredAuthors.some(author => 
+        return filteredAuthors.some(author =>
           author.toLowerCase().includes(lastName)
         );
       });
-      
+
       if (isNewPublication) {
         const addedPublication = addPublication(publicationData);
         console.log("Added new publication with ID:", addedPublication.id);
-        
+
         // Update team members with publication reference
         teamMembersInPublication.forEach(member => {
           // Check if the publication is already in the member's publications array
           const memberPublications = member.publications || [];
           if (!memberPublications.includes(addedPublication.id)) {
-            const updatedMember = { 
-              ...member, 
+            const updatedMember = {
+              ...member,
               publications: [...memberPublications, addedPublication.id]
             };
             updateTeamMember(updatedMember);
             console.log(`Added publication ${addedPublication.id} to team member ${member.name}`);
           }
         });
-        
+
         // If project is associated, update the project's publications list
         if (projectId) {
           const project = projects.find(p => p.id === projectId);
@@ -242,10 +242,10 @@ const PublicationForm: React.FC = () => {
             console.log(`Added publication ${addedPublication.id} to project ${projectId}`);
           }
         }
-        
+
         // IMMEDIATE UPDATE: Ensure the UI is updated right away
         window.dispatchEvent(new CustomEvent('publication-updated', {
-          detail: { 
+          detail: {
             publicationId: addedPublication.id,
             teamMemberIds: teamMembersInPublication.map(m => m.id),
             timestamp: Date.now(),
@@ -255,7 +255,7 @@ const PublicationForm: React.FC = () => {
       } else {
         updatePublication(publicationData);
         console.log("Updated existing publication:", publicationData.id);
-        
+
         // Handle project association changes
         if (oldProjectId !== projectId) {
           // If publication was removed from a project
@@ -270,7 +270,7 @@ const PublicationForm: React.FC = () => {
               console.log(`Removed publication ${pubId} from project ${oldProjectId}`);
             }
           }
-          
+
           // If publication was added to a new project
           if (projectId) {
             const newProject = projects.find(p => p.id === projectId);
@@ -287,23 +287,23 @@ const PublicationForm: React.FC = () => {
             }
           }
         }
-        
+
         // Make sure team members have this publication in their list
         teamMembersInPublication.forEach(member => {
           const memberPublications = member.publications || [];
           if (!memberPublications.includes(pubId)) {
-            const updatedMember = { 
-              ...member, 
+            const updatedMember = {
+              ...member,
               publications: [...memberPublications, pubId]
             };
             updateTeamMember(updatedMember);
             console.log(`Added publication ${pubId} to team member ${member.name}`);
           }
         });
-        
+
         // IMMEDIATE UPDATE: Ensure the UI is updated right away
         window.dispatchEvent(new CustomEvent('publication-updated', {
-          detail: { 
+          detail: {
             publicationId: pubId,
             teamMemberIds: teamMembersInPublication.map(m => m.id),
             timestamp: Date.now(),
@@ -311,10 +311,10 @@ const PublicationForm: React.FC = () => {
           }
         }));
       }
-      
+
       // Trigger an update event so other components can refresh
       const updateEvent = new CustomEvent('publication-updated', {
-        detail: { 
+        detail: {
           publicationId: pubId,
           timestamp: Date.now(),
           teamMembers: teamMembersInPublication.map(m => m.id)
@@ -322,7 +322,7 @@ const PublicationForm: React.FC = () => {
       });
       window.dispatchEvent(updateEvent);
       console.log("Dispatched publication-updated event");
-      
+
       setFormSubmitted(true);
       setTimeout(() => {
         navigate('/admin/publications');
@@ -332,15 +332,15 @@ const PublicationForm: React.FC = () => {
       setError("An error occurred while saving the publication.");
     }
   };
-  
+
   // Handle publication deletion
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this publication?')) {
       setIsDeleting(true);
-      
+
       // Before deletion, clean up references
       const publicationToDelete = publications.find(p => p.id === pubId);
-      
+
       // Remove from project's publications list if applicable
       if (publicationToDelete?.projectId) {
         const project = projects.find(p => p.id === publicationToDelete.projectId);
@@ -352,7 +352,7 @@ const PublicationForm: React.FC = () => {
           updateProject(updatedProject);
         }
       }
-      
+
       // Remove from team members' publications lists
       teamMembers.forEach(member => {
         if (member.publications && member.publications.includes(pubId)) {
@@ -363,24 +363,24 @@ const PublicationForm: React.FC = () => {
           updateTeamMember(updatedMember);
         }
       });
-      
+
       deletePublication(pubId);
-      
+
       // Notify other components about the deletion
       window.dispatchEvent(new CustomEvent('publication-updated', {
-        detail: { 
+        detail: {
           publicationId: pubId,
           action: 'delete',
           timestamp: Date.now()
         }
       }));
-      
+
       setTimeout(() => {
         navigate('/admin/publications');
       }, 1000);
     }
   };
-  
+
   // Show deletion message
   if (isDeleting) {
     return (
@@ -398,27 +398,27 @@ const PublicationForm: React.FC = () => {
     <Layout>
       <div className="admin-form-container">
         <h1>{isNewPublication ? 'Add Publication' : 'Edit Publication'}</h1>
-        
+
         {/* Success message */}
         {formSubmitted && (
           <div className="success-message">
             Publication successfully {isNewPublication ? 'added' : 'updated'}! Redirecting...
           </div>
         )}
-        
+
         {/* Error message */}
         {error && (
           <div className="error-message">
             {error}
           </div>
         )}
-        
+
         {/* Debug info */}
         <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
           <strong>ID:</strong> {pubId}<br/>
           <strong>Mode:</strong> {isNewPublication ? 'New' : 'Edit'}
         </div>
-        
+
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <label htmlFor="title">Title*</label>
@@ -430,7 +430,7 @@ const PublicationForm: React.FC = () => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="journal">Journal/Conference/Book*</label>
             <input
@@ -441,7 +441,7 @@ const PublicationForm: React.FC = () => {
               required
             />
           </div>
-          
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="year">Year*</label>
@@ -455,7 +455,7 @@ const PublicationForm: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="type">Publication Type*</label>
               <select
@@ -465,17 +465,20 @@ const PublicationForm: React.FC = () => {
                 required
               >
                 <option value="journal">Journal Article</option>
-                <option value="conference">Conference Paper</option>
-                <option value="book">Book/Book Chapter</option>
+                <option value="conference">Conference Proceeding</option>
+                <option value="conference">Workshop Contribution</option>
+                <option value="book chapter">Book Chapter</option>
+                <option value="book">Book</option>
+                <option value="commentary">Commentary</option>
                 <option value="preprint">Preprint</option>
                 <option value="thesis">Thesis/Dissertation</option>
               </select>
             </div>
           </div>
-          
+
           <div className="form-group">
             <label>Authors*</label>
-            
+
             {/* NEW: Team member selection */}
             <div className="team-member-author-selection">
               <select
@@ -490,8 +493,8 @@ const PublicationForm: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleAddTeamMemberAsAuthor}
                 className="add-author-button"
                 disabled={!selectedTeamMember}
@@ -511,8 +514,8 @@ const PublicationForm: React.FC = () => {
                   style={{ marginBottom: '5px' }}
                   required={index === 0}
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => handleRemoveAuthor(index)}
                   className="remove-button"
                   disabled={authors.length <= 1 && index === 0}
@@ -521,8 +524,8 @@ const PublicationForm: React.FC = () => {
                 </button>
               </div>
             ))}
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={handleAddAuthor}
               className="add-field-button"
             >
@@ -532,7 +535,7 @@ const PublicationForm: React.FC = () => {
               You can add team members from the dropdown or manually enter authors using "LastName, F." format
             </p>
           </div>
-          
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="doi">DOI (optional)</label>
@@ -544,7 +547,7 @@ const PublicationForm: React.FC = () => {
                 placeholder="10.xxxx/xxxxx"
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="url">URL (optional)</label>
               <input
@@ -556,7 +559,7 @@ const PublicationForm: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="abstract">Abstract (optional)</label>
             <textarea
@@ -566,7 +569,7 @@ const PublicationForm: React.FC = () => {
               rows={5}
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="citation">Citation*</label>
             <textarea
@@ -578,7 +581,7 @@ const PublicationForm: React.FC = () => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="projectId">Related Project (optional)</label>
             <select
@@ -594,7 +597,7 @@ const PublicationForm: React.FC = () => {
               ))}
             </select>
           </div>
-          
+
           <div className="form-group">
             <label>Keywords (optional)</label>
             <div className="tag-input-container">
@@ -605,8 +608,8 @@ const PublicationForm: React.FC = () => {
                 onKeyDown={handleKeywordKeyDown}
                 placeholder="Type a keyword and press Enter"
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleAddKeyword}
                 className="tag-add-button"
               >
@@ -617,9 +620,9 @@ const PublicationForm: React.FC = () => {
               {keywords.map(keyword => (
                 <div key={keyword} className="tag-badge">
                   {keyword}
-                  <button 
-                    type="button" 
-                    className="tag-remove" 
+                  <button
+                    type="button"
+                    className="tag-remove"
                     onClick={() => handleRemoveKeyword(keyword)}
                   >
                     ×
@@ -628,21 +631,21 @@ const PublicationForm: React.FC = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="form-actions">
             {!isNewPublication && (
-              <button 
-                type="button" 
-                onClick={handleDelete} 
+              <button
+                type="button"
+                onClick={handleDelete}
                 className="delete-button"
               >
                 Delete Publication
               </button>
             )}
             <div className="right-buttons">
-              <button 
-                type="button" 
-                onClick={() => navigate('/admin/publications')} 
+              <button
+                type="button"
+                onClick={() => navigate('/admin/publications')}
                 className="cancel-button"
               >
                 Cancel

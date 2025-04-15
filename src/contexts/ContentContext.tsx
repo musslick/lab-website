@@ -35,65 +35,65 @@ interface ContentContextType {
   deleteProject: (id: string) => void;
   reorderProjects: (projectIds: string[]) => void;
   getProjectById: (id: string) => Project | undefined;
-  
+
   // Team member operations
   updateTeamMember: (teamMember: TeamMember) => void;
   addTeamMember: (teamMember: TeamMember) => TeamMember;
   deleteTeamMember: (id: string) => void;
   reorderTeamMembers: (teamMemberIds: string[]) => void;
   getTeamMemberById: (id: string) => TeamMember | undefined;
-  
+
   // News item operations
   updateNewsItem: (newsItem: NewsItem) => void;
   addNewsItem: (newsItem: NewsItem) => NewsItem;
   deleteNewsItem: (id: string) => void;
   getNewsItemById: (id: string) => NewsItem | undefined;
-  
+
   // Collaborator operations
   updateCollaborator: (collaborator: Collaborator) => void;
   addCollaborator: (collaborator: Collaborator) => Collaborator;
   deleteCollaborator: (id: string) => void;
   getCollaboratorById: (id: string) => Collaborator | undefined;
-  
+
   // Publication operations
   updatePublication: (publication: Publication) => void;
   addPublication: (publication: Publication) => Publication;
   deletePublication: (id: string) => void;
   getPublicationById: (id: string) => Publication | undefined;
-  
+
   // Software operations
   updateSoftware: (software: Software) => void;
   addSoftware: (software: Software) => Software;
   deleteSoftware: (id: string) => void;
   getSoftwareById: (id: string) => Software | undefined;
-  
+
   // Job opening operations
   updateJobOpening: (jobOpening: JobOpening) => void;
   addJobOpening: (jobOpening: JobOpening) => JobOpening;
   deleteJobOpening: (id: string) => void;
   getJobOpeningById: (id: string) => JobOpening | undefined;
-  
+
   // Funding source operations
   updateFundingSource: (fundingSource: FundingSource) => void;
   addFundingSource: (fundingSource: FundingSource) => FundingSource;
   deleteFundingSource: (id: string) => void;
   getFundingSourceById: (id: string) => FundingSource | undefined;
-  
+
   // Topic color operations
   updateTopicColor: (name: string, color: string) => void;
   addTopicColor: (name: string, color: string) => void;
   removeTopicColor: (name: string) => void;
   getTopicColorByName: (name: string) => TopicColor | undefined;
-  
+
   // Global operations
   resetToDefaults: () => void;
-  
+
   // Featured items operations
   setFeaturedProject: (projectId: string) => void;
   setFeaturedNewsItem: (newsItemId: string) => void;
   setFeaturedPublication: (publicationId: string) => void;
   getFeaturedItems: () => { projectId: string | null; newsItemId: string | null; publicationId: string | null };
-  
+
   // Team image operations
   getTeamImage: () => string;
   updateTeamImage: (imageUrl: string) => void;
@@ -112,61 +112,61 @@ export const ContentContext = createContext<ContentContextType>({
   software: [],
   jobOpenings: [],
   topicColorRegistry: {},
-  
+
   updateProject: () => {},
   addProject: () => ({ id: '', title: '', description: '', color: '', category: '', team: [] }),
   deleteProject: () => {},
   reorderProjects: () => {},
   getProjectById: () => undefined,
-  
+
   updateTeamMember: () => {},
   addTeamMember: () => ({ id: '', name: '', role: '', bio: '', imageUrl: '', color: '' }),
   deleteTeamMember: () => {},
   reorderTeamMembers: () => {},
   getTeamMemberById: () => undefined,
-  
+
   updateNewsItem: () => {},
   addNewsItem: () => ({ id: '', title: '', content: '', date: '', author: '' }),
   deleteNewsItem: () => {},
   getNewsItemById: () => undefined,
-  
+
   updateCollaborator: () => {},
   addCollaborator: () => ({ id: '', name: '', url: '' }),
   deleteCollaborator: () => {},
   getCollaboratorById: () => undefined,
-  
+
   updatePublication: () => {},
-  addPublication: () => ({ id: '', title: '', authors: [], journal: '', year: 0, citation: '', type: 'journal' }),
+  addPublication: () => ({ id: '', title: '', authors: [], journal: '', year: 0, citation: '', type: 'journal article' }),
   deletePublication: () => {},
   getPublicationById: () => undefined,
-  
+
   updateSoftware: () => {},
   addSoftware: () => ({ id: '', name: '', description: '', repoUrl: '', technologies: [], developers: [], license: '' }),
   deleteSoftware: () => {},
   getSoftwareById: () => undefined,
-  
+
   updateJobOpening: () => {},
   addJobOpening: () => ({ id: '', title: '', description: '', requirements: [], type: 'full-time', location: '', postedDate: '', isOpen: true }),
   deleteJobOpening: () => {},
   getJobOpeningById: () => undefined,
-  
+
   updateFundingSource: () => {},
   addFundingSource: () => ({ id: '', name: '', url: '' }),
   deleteFundingSource: () => {},
   getFundingSourceById: () => undefined,
-  
+
   updateTopicColor: () => {},
   addTopicColor: () => {},
   removeTopicColor: () => {},
   getTopicColorByName: () => undefined,
-  
+
   resetToDefaults: () => {},
-  
+
   setFeaturedProject: () => {},
   setFeaturedNewsItem: () => {},
   setFeaturedPublication: () => {},
   getFeaturedItems: () => ({ projectId: null, newsItemId: null, publicationId: null }),
-  
+
   getTeamImage: () => '/assets/lab_team.jpeg',
   updateTeamImage: () => {},
   getTeamImagePosition: () => 'center',
@@ -206,7 +206,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     return currentProjects.map(project => {
       // Generate a fixed lab blue linear gradient regardless of team
       const gradient = `linear-gradient(to right, #00AAFF 0%, #005580 100%)`;
-      
+
       return {
         ...project,
         color: gradient
@@ -227,47 +227,47 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         const savedJobOpenings = localStorage.getItem('jobOpenings');
         const savedFundingSources = localStorage.getItem('fundingSources');
         const savedTopicColorRegistry = localStorage.getItem('topicColorRegistry');
-  
+
         let projectsData: Project[];
         let teamData: TeamMember[];
         let newsData: NewsItem[];
-  
+
         if (savedTeamMembers) {
           teamData = JSON.parse(savedTeamMembers);
         } else {
           teamData = initialTeamMembers;
         }
         setTeamMembers(teamData);
-  
+
         if (savedProjects) {
           projectsData = JSON.parse(savedProjects);
         } else {
           projectsData = initialProjects;
         }
-        
+
         // Update projects with lab blue gradient instead of team colors
         const updatedProjects = updateProjectGradients(projectsData);
         setProjects(updatedProjects);
-        
+
         if (savedNewsItems) {
           newsData = JSON.parse(savedNewsItems);
         } else {
           newsData = initialNewsItems;
         }
         setNewsItems(newsData);
-        
+
         if (savedCollaborators) {
           setCollaborators(JSON.parse(savedCollaborators));
         } else {
           setCollaborators(initialCollaborators);
         }
-        
+
         if (savedPublications) {
           setPublications(JSON.parse(savedPublications));
         } else {
           setPublications(initialPublications);
         }
-        
+
         if (savedSoftware) {
           setSoftware(JSON.parse(savedSoftware));
         } else {
@@ -315,7 +315,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         if (savedTeamImagePosition) {
           setTeamImagePosition(savedTeamImagePosition);
         }
-        
+
         // Save the updated projects if necessary
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
           localStorage.setItem('projects', JSON.stringify(updatedProjects));
@@ -381,7 +381,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const getTeamImage = (): string => {
     return teamImage;
   };
-  
+
   // Update team image function
   const updateTeamImage = (imageUrl: string): void => {
     try {
@@ -396,7 +396,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const getTeamImagePosition = (): string => {
     return teamImagePosition;
   };
-  
+
   // Update team image position function
   const updateTeamImagePosition = (position: string): void => {
     try {
@@ -455,7 +455,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     try {
       localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
       setTeamMembers(updatedMembers);
-      
+
       // Don't update project colors when team members change
     } catch (error) {
       console.error("Error saving team members to localStorage:", error);
@@ -486,7 +486,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   };
 
   const updateFundingSource = (updatedFunding: FundingSource) => {
-    const newFundingSources = fundingSources.map(source => 
+    const newFundingSources = fundingSources.map(source =>
       source.id === updatedFunding.id ? updatedFunding : source
     );
     saveFundingSources(newFundingSources);
@@ -499,10 +499,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         ...newFunding,
         id: fundingId
       };
-      
+
       const newFundingSources = [...fundingSources, fundingWithId];
       saveFundingSources(newFundingSources);
-      
+
       return fundingWithId;
     } catch (error) {
       console.error("Failed to add funding source:", error);
@@ -556,7 +556,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       _lastUpdated: Date.now()
     };
 
-    const newProjects = projects.map(project => 
+    const newProjects = projects.map(project =>
       project.id === updatedProject.id ? projectWithUpdatedColor : project
     );
 
@@ -683,7 +683,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       color: updatedMember.color || previousMember?.color || '#000000'
     };
 
-    const newTeamMembers = teamMembers.map(member => 
+    const newTeamMembers = teamMembers.map(member =>
       member.id === memberWithColor.id ? memberWithColor : member
     );
 
@@ -738,7 +738,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   // News item management functions
   const updateNewsItem = (updatedNewsItem: NewsItem) => {
     try {
-      const newNewsItems = newsItems.map(item => 
+      const newNewsItems = newsItems.map(item =>
         item.id === updatedNewsItem.id ? updatedNewsItem : item
       );
       saveNewsItems(newNewsItems);
@@ -790,7 +790,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   };
 
   const updateCollaborator = (updatedCollaborator: Collaborator) => {
-    const newCollaborators = collaborators.map(collab => 
+    const newCollaborators = collaborators.map(collab =>
       collab.id === updatedCollaborator.id ? updatedCollaborator : collab
     );
     saveCollaborators(newCollaborators);
@@ -803,10 +803,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         ...newCollaborator,
         id: collabId
       };
-      
+
       const newCollaborators = [...collaborators, collabWithId];
       saveCollaborators(newCollaborators);
-      
+
       return collabWithId;
     } catch (error) {
       console.error("Failed to add collaborator:", error);
@@ -831,7 +831,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   };
 
   const updateSoftware = (updatedSoftware: Software) => {
-    const newSoftwareList = software.map(item => 
+    const newSoftwareList = software.map(item =>
       item.id === updatedSoftware.id ? updatedSoftware : item
     );
     saveSoftware(newSoftwareList);
@@ -844,10 +844,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         ...newSoftware,
         id: softwareId
       };
-      
+
       const newSoftwareList = [...software, softwareWithId];
       saveSoftware(newSoftwareList);
-      
+
       return softwareWithId;
     } catch (error) {
       console.error("Failed to add software:", error);
@@ -876,7 +876,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   };
 
   const updatePublication = (updatedPublication: Publication) => {
-    const newPublications = publications.map(pub => 
+    const newPublications = publications.map(pub =>
       pub.id === updatedPublication.id ? updatedPublication : pub
     );
     savePublications(newPublications);
@@ -889,10 +889,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         ...newPublication,
         id: pubId
       };
-      
+
       const newPublications = [...publications, pubWithId];
       savePublications(newPublications);
-      
+
       return pubWithId;
     } catch (error) {
       console.error("Failed to add publication:", error);
@@ -917,7 +917,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   };
 
   const updateJobOpening = (updatedJobOpening: JobOpening) => {
-    const newJobOpenings = jobOpenings.map(job => 
+    const newJobOpenings = jobOpenings.map(job =>
       job.id === updatedJobOpening.id ? updatedJobOpening : job
     );
     saveJobOpenings(newJobOpenings);
@@ -930,10 +930,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         ...newJobOpening,
         id: jobId
       };
-      
+
       const newJobOpenings = [...jobOpenings, jobWithId];
       saveJobOpenings(newJobOpenings);
-      
+
       return jobWithId;
     } catch (error) {
       console.error("Failed to add job opening:", error);
@@ -966,7 +966,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       localStorage.removeItem('teamImagePosition');
       localStorage.removeItem('topicColorRegistry');
       setTeamMembers(initialTeamMembers);
-      
+
       const projectsWithGradients = updateProjectGradients(initialProjects);
       setProjects(projectsWithGradients);
       setNewsItems(initialNewsItems);
@@ -984,10 +984,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
       // Reset team image
       setTeamImage('/assets/lab_team.jpeg');
-      
+
       // Reset team image position
       setTeamImagePosition('center');
-      
+
       alert('Data has been reset to defaults.');
     }
   };
