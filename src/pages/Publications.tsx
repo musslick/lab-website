@@ -5,10 +5,11 @@ import { useContent } from '../contexts/ContentContext';
 import '../styles/styles.css';
 
 const Publications: React.FC = () => {
-  const { projects, publications } = useContent();
+  const { projects, publications, software } = useContent();
   const [selectedYear, setSelectedYear] = useState<string>('All');
   const [selectedType, setSelectedType] = useState<string>('All');
   const [selectedProject, setSelectedProject] = useState<string>('All');
+  const [selectedSoftware, setSelectedSoftware] = useState<string>('All');
   const [keywordSearch, setKeywordSearch] = useState<string>('');
 
   // Get unique years
@@ -20,14 +21,33 @@ const Publications: React.FC = () => {
 
   // Get projects that have publications
   const projectsWithPublications = projects.filter(project =>
-    publications.some(pub => pub.projectId === project.id)
+    publications.some(pub => 
+      (pub.projectId === project.id) || 
+      (pub.projectIds && pub.projectIds.includes(project.id))
+    )
+  );
+  
+  // Get software with publications
+  const softwareWithPublications = software.filter(sw =>
+    publications.some(pub => pub.softwareIds && pub.softwareIds.includes(sw.id))
   );
 
   // Filter publications
   const filteredPublications = publications.filter(publication => {
+    // Match year filter
     const matchesYear = selectedYear === 'All' || publication.year.toString() === selectedYear;
+    
+    // Match type filter
     const matchesType = selectedType === 'All' || publication.type === selectedType;
-    const matchesProject = selectedProject === 'All' || publication.projectId === selectedProject;
+    
+    // Match project filter
+    const matchesProject = selectedProject === 'All' || 
+      publication.projectId === selectedProject || 
+      (publication.projectIds && publication.projectIds.includes(selectedProject));
+      
+    // Match software filter
+    const matchesSoftware = selectedSoftware === 'All' || 
+      (publication.softwareIds && publication.softwareIds.includes(selectedSoftware));
 
     // Enhanced search: search across title, abstract, authors, journal, and keywords
     const matchesSearch = !keywordSearch.trim() || (() => {
@@ -48,16 +68,50 @@ const Publications: React.FC = () => {
       return searchTerms.some(term => fullText.includes(term));
     })();
 
-    return matchesYear && matchesType && matchesProject && matchesSearch;
+    return matchesYear && matchesType && matchesProject && matchesSoftware && matchesSearch;
   });
 
   // Sort publications by year (newest first)
   const sortedPublications = [...filteredPublications].sort((a, b) => b.year - a.year);
 
-  // Function to get project title by ID
-  const getProjectTitle = (projectId: string): string => {
-    const project = projects.find(p => p.id === projectId);
-    return project ? project.title : '';
+  // Function to get project titles by IDs
+  const getProjectTitles = (publication: Publication): JSX.Element[] => {
+    // Collect all project IDs, including both legacy projectId and new projectIds array
+    const projectIds: string[] = [];
+    if (publication.projectId) projectIds.push(publication.projectId);
+    if (publication.projectIds) projectIds.push(...publication.projectIds.filter(id => id !== publication.projectId));
+    
+    // Remove duplicates
+    const uniqueProjectIds = [...new Set(projectIds)];
+    
+    return uniqueProjectIds.map(projectId => {
+      const project = projects.find(p => p.id === projectId);
+      if (!project) return null;
+      
+      return (
+        <Link key={projectId} to={`/projects/${projectId}`} className="related-project-link">
+          {project.title}
+        </Link>
+      );
+    }).filter(Boolean) as JSX.Element[];
+  };
+  
+  // Function to get software names by IDs
+  const getSoftwareLinks = (publication: Publication): JSX.Element[] => {
+    if (!publication.softwareIds || publication.softwareIds.length === 0) {
+      return [];
+    }
+    
+    return publication.softwareIds.map(softwareId => {
+      const sw = software.find(s => s.id === softwareId);
+      if (!sw) return null;
+      
+      return (
+        <Link key={softwareId} to={`/software/${softwareId}`} className="related-software-link">
+          {sw.name}
+        </Link>
+      );
+    }).filter(Boolean) as JSX.Element[];
   };
 
   // Handle keyword search input change
@@ -142,6 +196,29 @@ const Publications: React.FC = () => {
             </div>
           </div>
         )}
+        
+        {softwareWithPublications.length > 0 && (
+          <div className="tag-filter">
+            <h3>Filter by Software</h3>
+            <div className="tag-list">
+              <button
+                className={`tag-button ${selectedSoftware === 'All' ? 'active' : ''}`}
+                onClick={() => setSelectedSoftware('All')}
+              >
+                All Software
+              </button>
+              {softwareWithPublications.map(sw => (
+                <button
+                  key={sw.id}
+                  className={`tag-button ${selectedSoftware === sw.id ? 'active' : ''}`}
+                  onClick={() => setSelectedSoftware(sw.id)}
+                >
+                  {sw.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="tag-filter">
           <h3>Search Publications</h3>
@@ -202,12 +279,23 @@ const Publications: React.FC = () => {
                 </div>
               )}
 
-              {publication.projectId && (
+              {/* Display related projects */}
+              {(publication.projectId || (publication.projectIds && publication.projectIds.length > 0)) && (
                 <div className="publication-project">
-                  <span>Related Research Area: </span>
-                  <Link to={`/projects/${publication.projectId}`}>
-                    {getProjectTitle(publication.projectId)}
-                  </Link>
+                  <span>Related Research {getProjectTitles(publication).length > 1 ? 'Areas' : 'Area'}: </span>
+                  <div className="related-links">
+                    {getProjectTitles(publication)}
+                  </div>
+                </div>
+              )}
+              
+              {/* Display related software */}
+              {publication.softwareIds && publication.softwareIds.length > 0 && (
+                <div className="publication-software">
+                  <span>Related Software: </span>
+                  <div className="related-links">
+                    {getSoftwareLinks(publication)}
+                  </div>
                 </div>
               )}
 

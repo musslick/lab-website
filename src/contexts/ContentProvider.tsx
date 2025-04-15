@@ -439,6 +439,17 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
     setCollaborators(prevCollaborators => prevCollaborators.filter(collaborator => collaborator.id !== id));
   };
 
+  // New method: reorderCollaborators
+  const reorderCollaborators = (collaboratorIds: string[]) => {
+    // Create a new array of collaborators in the specified order
+    const orderedCollaborators = collaboratorIds.map(id => 
+      collaborators.find(collaborator => collaborator.id === id)
+    ).filter((collaborator): collaborator is Collaborator => !!collaborator);
+    
+    // Update the collaborators state
+    setCollaborators(orderedCollaborators);
+  };
+
   // Publication operations
   const updatePublication = (updatedPublication: Publication) => {
     setPublications(prevPublications => 
@@ -683,6 +694,7 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       updateCollaborator,
       addCollaborator,
       deleteCollaborator,
+      reorderCollaborators,
       updatePublication,
       addPublication,
       deletePublication,

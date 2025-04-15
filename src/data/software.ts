@@ -9,10 +9,12 @@ export interface Software {
   technologies: string[];
   developers: string[];
   license: string;
-  projectId?: string;
+  projectIds?: string[]; // Changed from projectId to projectIds array
+  projectId?: string; // Keep for backward compatibility
   featured?: boolean;
   releaseDate?: string;
   lastUpdate?: string;
+  publicationIds?: string[]; // Added support for related publications
 }
 
 export const software: Software[] = [
@@ -34,7 +36,8 @@ export const software: Software[] = [
     "imageUrl": "https://autoresearch.github.io/autora/img/overview.png",
     "demoUrl": "https://autoresearch.github.io/autora/examples/closed-loop-basic/",
     "documentationUrl": "https://autoresearch.github.io/autora/",
-    "projectId": "project-1744383288085",
+    "projectIds": ["project-1744383288085"], // Convert to array format
+    "projectId": "project-1744383288085", // Keep for backward compatibility
     "featured": true,
     "releaseDate": "2022-08-26"
   },
@@ -53,7 +56,8 @@ export const software: Software[] = [
     "license": "MIT",
     "demoUrl": "https:/https://autoresearch.github.io/sweetbean/Basic%20Tutorials//demos.automated-lab.org/cognisim",
     "documentationUrl": "https://autoresearch.github.io/sweetbean/",
-    "projectId": "project-1744383465177",
+    "projectIds": ["project-1744383465177"], // Convert to array format
+    "projectId": "project-1744383465177", // Keep for backward compatibility
     "releaseDate": "2024-12-10"
   },
   {
@@ -70,7 +74,8 @@ export const software: Software[] = [
     "license": "MIT",
     "demoUrl": "https://sites.google.com/view/sweetpea-ai/tutorials",
     "documentationUrl": "https://sweetpea-org.github.io/",
-    "projectId": "project-1744380957652",
+    "projectIds": ["project-1744380957652"], // Convert to array format
+    "projectId": "project-1744380957652", // Keep for backward compatibility
     "releaseDate": "2018-09-20"
   },
   {
@@ -88,6 +93,8 @@ export const software: Software[] = [
     ],
     "license": "MIT",
     "documentationUrl": "https://autoresearch.github.io/EEG-GAN/",
+    "projectIds": [], // Convert to array format
+    "projectId": undefined, // Keep for backward compatibility
     "releaseDate": "2023-03-28"
   }
 ];

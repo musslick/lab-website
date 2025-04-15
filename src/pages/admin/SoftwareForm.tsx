@@ -7,7 +7,7 @@ import { Software } from '../../data/software';
 const SoftwareForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { software, projects, teamMembers, updateSoftware, addSoftware, deleteSoftware } = useContent();
+  const { software, projects, teamMembers, publications, updateSoftware, addSoftware, deleteSoftware } = useContent();
   
   // Form state
   const [name, setName] = useState('');
@@ -20,7 +20,8 @@ const SoftwareForm: React.FC = () => {
   const [technologyInput, setTechnologyInput] = useState('');
   const [developers, setDevelopers] = useState<string[]>([]);
   const [license, setLicense] = useState('');
-  const [projectId, setProjectId] = useState('');
+  const [projectIds, setProjectIds] = useState<string[]>([]);
+  const [publicationIds, setPublicationIds] = useState<string[]>([]);
   const [featured, setFeatured] = useState(false);
   const [releaseDate, setReleaseDate] = useState('');
   const [lastUpdate, setLastUpdate] = useState('');
@@ -57,7 +58,17 @@ const SoftwareForm: React.FC = () => {
         setTechnologies(softwareToEdit.technologies || []);
         setDevelopers(softwareToEdit.developers || []);
         setLicense(softwareToEdit.license || '');
-        setProjectId(softwareToEdit.projectId || '');
+        
+        if (softwareToEdit.projectIds && softwareToEdit.projectIds.length > 0) {
+          setProjectIds(softwareToEdit.projectIds);
+        } else if (softwareToEdit.projectId) {
+          setProjectIds([softwareToEdit.projectId]); 
+        } else {
+          setProjectIds([]);
+        }
+        
+        setPublicationIds(softwareToEdit.publicationIds || []);
+        
         setFeatured(softwareToEdit.featured || false);
         setReleaseDate(softwareToEdit.releaseDate || '');
         setLastUpdate(softwareToEdit.lastUpdate || '');
@@ -91,6 +102,18 @@ const SoftwareForm: React.FC = () => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
     setDevelopers(selected);
   };
+  
+  // Projects selection
+  const handleProjectsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = Array.from(e.target.selectedOptions, option => option.value);
+    setProjectIds(selected);
+  };
+  
+  // Publications selection
+  const handlePublicationsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = Array.from(e.target.selectedOptions, option => option.value);
+    setPublicationIds(selected);
+  };
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,7 +144,13 @@ const SoftwareForm: React.FC = () => {
       if (imageUrl) softwareData.imageUrl = imageUrl;
       if (demoUrl) softwareData.demoUrl = demoUrl;
       if (documentationUrl) softwareData.documentationUrl = documentationUrl;
-      if (projectId) softwareData.projectId = projectId;
+      if (projectIds.length > 0) {
+        softwareData.projectIds = projectIds;
+        softwareData.projectId = projectIds[0];
+      }
+      if (publicationIds.length > 0) {
+        softwareData.publicationIds = publicationIds;
+      }
       if (featured) softwareData.featured = featured;
       if (releaseDate) softwareData.releaseDate = releaseDate;
       if (lastUpdate) softwareData.lastUpdate = lastUpdate;
@@ -340,22 +369,42 @@ const SoftwareForm: React.FC = () => {
                 <option value="Custom">Custom</option>
               </select>
             </div>
-            
-            <div className="form-group">
-              <label htmlFor="projectId">Related Project (optional)</label>
-              <select
-                id="projectId"
-                value={projectId}
-                onChange={(e) => setProjectId(e.target.value)}
-              >
-                <option value="">None</option>
-                {projects.map(project => (
-                  <option key={project.id} value={project.id}>
-                    {project.title}
-                  </option>
-                ))}
-              </select>
-            </div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="projectIds">Related Projects (optional)</label>
+            <select
+              id="projectIds"
+              multiple
+              value={projectIds}
+              onChange={handleProjectsChange}
+              style={{ height: '120px' }}
+            >
+              {projects.map(project => (
+                <option key={project.id} value={project.id}>
+                  {project.title}
+                </option>
+              ))}
+            </select>
+            <p className="form-help-text">Hold Ctrl/Cmd to select multiple projects</p>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="publicationIds">Related Publications (optional)</label>
+            <select
+              id="publicationIds"
+              multiple
+              value={publicationIds}
+              onChange={handlePublicationsChange}
+              style={{ height: '120px' }}
+            >
+              {publications.map(publication => (
+                <option key={publication.id} value={publication.id}>
+                  {publication.title} ({publication.year})
+                </option>
+              ))}
+            </select>
+            <p className="form-help-text">Hold Ctrl/Cmd to select multiple publications</p>
           </div>
           
           <div className="form-row">

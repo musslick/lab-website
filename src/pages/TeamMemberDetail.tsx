@@ -11,6 +11,7 @@ const TeamMemberDetail: React.FC = () => {
   const [memberPublications, setMemberPublications] = useState<any[]>([]);
   const [memberSoftware, setMemberSoftware] = useState<any[]>([]);
   const [publicationsByYear, setPublicationsByYear] = useState<Record<string, any[]>>({});
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const updateMemberData = () => {
@@ -20,10 +21,17 @@ const TeamMemberDetail: React.FC = () => {
 
         // Update projects list
         if (updatedMember?.projects) {
-          const projects = updatedMember.projects
+          // Use a Set to ensure unique project IDs
+          const uniqueProjectIds = new Set(updatedMember.projects);
+          
+          // Convert to array and get project details, filtering out undefined projects
+          const projects = Array.from(uniqueProjectIds)
             .map(projectId => getProjectById(projectId))
             .filter(project => project !== undefined);
+            
           setMemberProjects(projects);
+        } else {
+          setMemberProjects([]); // Reset if no projects
         }
 
         // Find publications where this team member is an author
@@ -90,6 +98,28 @@ const TeamMemberDetail: React.FC = () => {
       <div className="error-message">Team member not found</div>
     );
   }
+
+  // Function to check if a project has a valid image
+  const hasValidProjectImage = (project: any) => {
+    if (imageErrors[project.id]) {
+      return false;
+    }
+    
+    return Boolean(
+      project.image && 
+      project.image.trim() !== '' && 
+      !project.image.endsWith('undefined') && 
+      !project.image.endsWith('null')
+    );
+  };
+  
+  // Handle project image error
+  const handleProjectImageError = (projectId: string) => {
+    setImageErrors(prev => ({
+      ...prev,
+      [projectId]: true
+    }));
+  };
 
   // Function to generate gradient for project cards
   const generateProjectGradient = (project: any) => {
@@ -196,9 +226,24 @@ const TeamMemberDetail: React.FC = () => {
                 <div
                   className="project-color-indicator"
                   style={{
-                    background: generateProjectGradient(project)
+                    background: hasValidProjectImage(project) 
+                      ? `url(${project.image}) center/cover no-repeat` 
+                      : generateProjectGradient(project)
                   }}
-                ></div>
+                >
+                  {hasValidProjectImage(project) && (
+                    <img 
+                      src={project.image} 
+                      alt=""
+                      style={{ 
+                        display: 'none', 
+                        width: '1px', 
+                        height: '1px'
+                      }}
+                      onError={() => handleProjectImageError(project.id)} 
+                    />
+                  )}
+                </div>
                 <div className="project-info">
                   <h3>{project.title}</h3>
                   <p>{project.description.length > 150
@@ -212,7 +257,7 @@ const TeamMemberDetail: React.FC = () => {
         </div>
       )}
 
-      {/* Software section - updated to match existing software design */}
+      {/* Software section */}
       {memberSoftware.length > 0 && (
         <div className="team-member-section">
           <h2>Software</h2>
@@ -272,74 +317,98 @@ const TeamMemberDetail: React.FC = () => {
                   )}
                 </div>
 
-                {sw.projectId && (
+                {/* Support both projectId and projectIds */}
+                {(sw.projectIds && sw.projectIds.length > 0) ? (
+                  <div className="software-related-projects">
+                    <p>Related Projects:</p>
+                    <ul>
+                      {sw.projectIds.map((projectId: string) => {
+                        const project = getProjectById(projectId);
+                        return project ? (
+                          <li key={projectId}>
+                            <Link to={`/projects/${projectId}`}>
+                              {project.title}
+                            </Link>
+                          </li>
+                        ) : null;
+                      })}
+                    </ul>
+                  </div>
+                ) : sw.projectId ? (
                   <div className="software-related-project">
                     <Link to={`/projects/${sw.projectId}`} className="project-link">
                       {getProjectById(sw.projectId)?.title || 'Related Project'}
                     </Link>
                   </div>
-                )}
+                ) : null}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Publications section - updated to match existing publications design */}
+      {/* Publications section */}
       {memberPublications.length > 0 && (
         <div className="team-member-section">
           <h2>Publications</h2>
           <div className="publications-list">
-            {memberPublications.map((publication) => (
-              <div key={publication.id} className="publication-item">
-                <h4 className="publication-title">
-                  {publication.url ? (
-                    <a
-                      href={publication.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {publication.title}
-                    </a>
-                  ) : (
-                    publication.title
-                  )}
-                </h4>
-                <p className="publication-authors">{publication.authors.join(', ')}</p>
-                <div className="publication-meta">
-                  <span className="publication-journal">
-                    <em>{publication.journal}</em>
-                  </span>
-                  <span className="publication-year">{publication.year}</span>
-                  {publication.type && (
-                    <span className="publication-type">{publication.type}</span>
-                  )}
+            {Object.keys(publicationsByYear)
+              .sort((a, b) => Number(b) - Number(a)) // Sort years in descending order
+              .map(year => (
+                <div key={year} className="publications-year-section">
+                  <h3 className="publications-year-header">{year}</h3>
+                  {publicationsByYear[year].map(publication => (
+                    <div key={publication.id} className="publication-item">
+                      <h4 className="publication-title">
+                        {publication.url ? (
+                          <a
+                            href={publication.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {publication.title}
+                          </a>
+                        ) : (
+                          publication.title
+                        )}
+                      </h4>
+                      <p className="publication-authors">{publication.authors.join(', ')}</p>
+                      <div className="publication-meta">
+                        <span className="publication-journal">
+                          <em>{publication.journal}</em>
+                        </span>
+                        <span className="publication-year">{publication.year}</span>
+                        {publication.type && (
+                          <span className="publication-type">{publication.type}</span>
+                        )}
+                      </div>
+                      {publication.abstract && (
+                        <div className="publication-abstract">
+                          <p>{publication.abstract}</p>
+                        </div>
+                      )}
+                      {publication.projectId && (
+                        <p className="publication-project">
+                          Related project: <Link to={`/projects/${publication.projectId}`}>
+                            {getProjectById(publication.projectId)?.title || 'View project'}
+                          </Link>
+                        </p>
+                      )}
+                      {publication.doi && (
+                        <p className="publication-doi">
+                          DOI: <a
+                            href={`https://doi.org/${publication.doi}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {publication.doi}
+                          </a>
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                {publication.abstract && (
-                  <div className="publication-abstract">
-                    <p>{publication.abstract}</p>
-                  </div>
-                )}
-                {publication.projectId && (
-                  <p className="publication-project">
-                    Related project: <Link to={`/projects/${publication.projectId}`}>
-                      {getProjectById(publication.projectId)?.title || 'View project'}
-                    </Link>
-                  </p>
-                )}
-                {publication.doi && (
-                  <p className="publication-doi">
-                    DOI: <a
-                      href={`https://doi.org/${publication.doi}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {publication.doi}
-                    </a>
-                  </p>
-                )}
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       )}

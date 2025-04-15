@@ -53,6 +53,7 @@ interface ContentContextType {
   updateCollaborator: (collaborator: Collaborator) => void;
   addCollaborator: (collaborator: Collaborator) => Collaborator;
   deleteCollaborator: (id: string) => void;
+  reorderCollaborators: (collaboratorIds: string[]) => void; // Added reorderCollaborators
   getCollaboratorById: (id: string) => Collaborator | undefined;
 
   // Publication operations
@@ -133,6 +134,7 @@ export const ContentContext = createContext<ContentContextType>({
   updateCollaborator: () => {},
   addCollaborator: () => ({ id: '', name: '', url: '' }),
   deleteCollaborator: () => {},
+  reorderCollaborators: () => {}, // Added reorderCollaborators
   getCollaboratorById: () => undefined,
 
   updatePublication: () => {},
@@ -237,6 +239,17 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         } else {
           teamData = initialTeamMembers;
         }
+        
+        // Deduplicate project IDs for all team members (whether from storage or initial data)
+        teamData = teamData.map(member => {
+          if (member.projects && Array.isArray(member.projects)) {
+            // Use a Set to ensure unique project IDs
+            const uniqueProjectIds = Array.from(new Set(member.projects));
+            return { ...member, projects: uniqueProjectIds };
+          }
+          return member;
+        });
+        
         setTeamMembers(teamData);
 
         if (savedProjects) {
@@ -320,6 +333,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
           localStorage.setItem('projects', JSON.stringify(updatedProjects));
         }
+
+        // Save the deduped team members back to localStorage
+        localStorage.setItem('teamMembers', JSON.stringify(teamData));
       } catch (error) {
         console.error("Error loading data from localStorage:", error);
         setProjects(initialProjects);
@@ -672,6 +688,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const reorderTeamMembers = (teamMemberIds: string[]) => {
     const reorderedTeamMembers = teamMemberIds.map(id => teamMembers.find(member => member.id === id)).filter(Boolean) as TeamMember[];
     saveTeamMembers(reorderedTeamMembers);
+  };
+
+  const reorderCollaborators = (collaboratorIds: string[]) => {
+    const reorderedCollaborators = collaboratorIds.map(id => collaborators.find(collaborator => collaborator.id === id)).filter(Boolean) as Collaborator[];
+    setCollaborators(reorderedCollaborators);
   };
 
   // Team member management functions
@@ -1028,6 +1049,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       deleteProject,
       reorderProjects,
       reorderTeamMembers,
+      reorderCollaborators, // Added reorderCollaborators
       updateTeamMember,
       addTeamMember,
       deleteTeamMember,

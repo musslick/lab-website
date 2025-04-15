@@ -7,7 +7,7 @@ import { Publication } from '../../data/publications';
 const PublicationForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { publications, projects, teamMembers, updatePublication, addPublication, deletePublication, updateTeamMember, updateProject } = useContent();
+  const { publications, projects, teamMembers, software, updatePublication, addPublication, deletePublication, updateTeamMember, updateProject, updateSoftware } = useContent();
 
   // Form state
   const [title, setTitle] = useState('');
@@ -19,12 +19,13 @@ const PublicationForm: React.FC = () => {
   const [url, setUrl] = useState('');
   const [abstract, setAbstract] = useState('');
   const [citation, setCitation] = useState('');
-  const [projectId, setProjectId] = useState('');
+  const [projectIds, setProjectIds] = useState<string[]>([]);
+  const [softwareIds, setSoftwareIds] = useState<string[]>([]);
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState('');
   const [pubId, setPubId] = useState('');
 
-  // NEW: Add state for team member selection
+  // State for team member selection
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('');
 
   // UI state
@@ -54,13 +55,25 @@ const PublicationForm: React.FC = () => {
         setTitle(publicationToEdit.title || '');
         setJournal(publicationToEdit.journal || '');
         setYear(publicationToEdit.year || new Date().getFullYear());
-        setType(publicationToEdit.type || 'journal');
+        setType(publicationToEdit.type || 'journal article');
         setAuthors(publicationToEdit.authors || ['']);
         setDoi(publicationToEdit.doi || '');
         setUrl(publicationToEdit.url || '');
         setAbstract(publicationToEdit.abstract || '');
         setCitation(publicationToEdit.citation || '');
-        setProjectId(publicationToEdit.projectId || '');
+        
+        // Handle both projectId (string) and projectIds (array)
+        if (publicationToEdit.projectIds && publicationToEdit.projectIds.length > 0) {
+          setProjectIds(publicationToEdit.projectIds);
+        } else if (publicationToEdit.projectId) {
+          setProjectIds([publicationToEdit.projectId]);
+        } else {
+          setProjectIds([]);
+        }
+        
+        // Handle software IDs
+        setSoftwareIds(publicationToEdit.softwareIds || []);
+        
         setKeywords(publicationToEdit.keywords || []);
       } else {
         setError(`Could not find publication with ID: ${id}`);
@@ -88,7 +101,7 @@ const PublicationForm: React.FC = () => {
     }
   };
 
-  // NEW: Add team member as author
+  // Add team member as author
   const handleAddTeamMemberAsAuthor = () => {
     if (selectedTeamMember) {
       const member = teamMembers.find(m => m.id === selectedTeamMember);
@@ -135,6 +148,18 @@ const PublicationForm: React.FC = () => {
         setSelectedTeamMember('');
       }
     }
+  };
+  
+  // Projects selection
+  const handleProjectsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = Array.from(e.target.selectedOptions, option => option.value);
+    setProjectIds(selected);
+  };
+  
+  // Software selection
+  const handleSoftwareChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = Array.from(e.target.selectedOptions, option => option.value);
+    setSoftwareIds(selected);
   };
 
   // Keyword management
@@ -193,14 +218,21 @@ const PublicationForm: React.FC = () => {
       if (doi) publicationData.doi = doi;
       if (url) publicationData.url = url;
       if (abstract) publicationData.abstract = abstract;
-      if (projectId) publicationData.projectId = projectId;
+      if (projectIds.length > 0) {
+        publicationData.projectIds = projectIds;
+        publicationData.projectId = projectIds[0]; // Set first project as primary for backward compatibility
+      }
+      if (softwareIds.length > 0) {
+        publicationData.softwareIds = softwareIds;
+      }
       if (keywords.length > 0) publicationData.keywords = [...keywords];
 
       console.log("Saving publication:", publicationData);
 
-      // Track the old project ID for reference
+      // Track the old project IDs for reference
       const oldPublication = isNewPublication ? null : publications.find(pub => pub.id === pubId);
-      const oldProjectId = oldPublication?.projectId;
+      const oldProjectIds = oldPublication?.projectIds || (oldPublication?.projectId ? [oldPublication.projectId] : []);
+      const oldSoftwareIds = oldPublication?.softwareIds || [];
 
       // Get the team member IDs that match the authors
       const teamMembersInPublication = teamMembers.filter(member => {
@@ -229,8 +261,8 @@ const PublicationForm: React.FC = () => {
           }
         });
 
-        // If project is associated, update the project's publications list
-        if (projectId) {
+        // Update projects with this publication reference
+        projectIds.forEach(projectId => {
           const project = projects.find(p => p.id === projectId);
           if (project) {
             // Add this publication to the project
@@ -241,7 +273,21 @@ const PublicationForm: React.FC = () => {
             updateProject(updatedProject);
             console.log(`Added publication ${addedPublication.id} to project ${projectId}`);
           }
-        }
+        });
+        
+        // Update software with this publication reference
+        softwareIds.forEach(softwareId => {
+          const sw = software.find(s => s.id === softwareId);
+          if (sw) {
+            // Add this publication to the software
+            const updatedSoftware = {
+              ...sw,
+              publicationIds: [...(sw.publicationIds || []), addedPublication.id]
+            };
+            updateSoftware(updatedSoftware);
+            console.log(`Added publication ${addedPublication.id} to software ${softwareId}`);
+          }
+        });
 
         // IMMEDIATE UPDATE: Ensure the UI is updated right away
         window.dispatchEvent(new CustomEvent('publication-updated', {
@@ -256,10 +302,9 @@ const PublicationForm: React.FC = () => {
         updatePublication(publicationData);
         console.log("Updated existing publication:", publicationData.id);
 
-        // Handle project association changes
-        if (oldProjectId !== projectId) {
-          // If publication was removed from a project
-          if (oldProjectId) {
+        // Handle project association changes - removed projects
+        oldProjectIds.forEach(oldProjectId => {
+          if (!projectIds.includes(oldProjectId)) {
             const oldProject = projects.find(p => p.id === oldProjectId);
             if (oldProject && oldProject.publications) {
               const updatedProject = {
@@ -270,9 +315,11 @@ const PublicationForm: React.FC = () => {
               console.log(`Removed publication ${pubId} from project ${oldProjectId}`);
             }
           }
+        });
 
-          // If publication was added to a new project
-          if (projectId) {
+        // Handle project association changes - added projects
+        projectIds.forEach(projectId => {
+          if (!oldProjectIds.includes(projectId)) {
             const newProject = projects.find(p => p.id === projectId);
             if (newProject) {
               const projectPubs = newProject.publications || [];
@@ -286,7 +333,40 @@ const PublicationForm: React.FC = () => {
               }
             }
           }
-        }
+        });
+        
+        // Handle software association changes - removed software
+        oldSoftwareIds.forEach(oldSoftwareId => {
+          if (!softwareIds.includes(oldSoftwareId)) {
+            const oldSoftware = software.find(s => s.id === oldSoftwareId);
+            if (oldSoftware && oldSoftware.publicationIds) {
+              const updatedSoftware = {
+                ...oldSoftware,
+                publicationIds: oldSoftware.publicationIds.filter(id => id !== pubId)
+              };
+              updateSoftware(updatedSoftware);
+              console.log(`Removed publication ${pubId} from software ${oldSoftwareId}`);
+            }
+          }
+        });
+        
+        // Handle software association changes - added software
+        softwareIds.forEach(softwareId => {
+          if (!oldSoftwareIds.includes(softwareId)) {
+            const newSoftware = software.find(s => s.id === softwareId);
+            if (newSoftware) {
+              const softwarePubs = newSoftware.publicationIds || [];
+              if (!softwarePubs.includes(pubId)) {
+                const updatedSoftware = {
+                  ...newSoftware,
+                  publicationIds: [...softwarePubs, pubId]
+                };
+                updateSoftware(updatedSoftware);
+                console.log(`Added publication ${pubId} to software ${softwareId}`);
+              }
+            }
+          }
+        });
 
         // Make sure team members have this publication in their list
         teamMembersInPublication.forEach(member => {
@@ -341,9 +421,16 @@ const PublicationForm: React.FC = () => {
       // Before deletion, clean up references
       const publicationToDelete = publications.find(p => p.id === pubId);
 
-      // Remove from project's publications list if applicable
-      if (publicationToDelete?.projectId) {
-        const project = projects.find(p => p.id === publicationToDelete.projectId);
+      // Get all project IDs associated with this publication
+      const associatedProjectIds = publicationToDelete?.projectIds || 
+        (publicationToDelete?.projectId ? [publicationToDelete.projectId] : []);
+      
+      // Get all software IDs associated with this publication
+      const associatedSoftwareIds = publicationToDelete?.softwareIds || [];
+
+      // Remove from each project's publications list
+      associatedProjectIds.forEach(projectId => {
+        const project = projects.find(p => p.id === projectId);
         if (project && project.publications) {
           const updatedProject = {
             ...project,
@@ -351,7 +438,19 @@ const PublicationForm: React.FC = () => {
           };
           updateProject(updatedProject);
         }
-      }
+      });
+      
+      // Remove from each software's publications list
+      associatedSoftwareIds.forEach(softwareId => {
+        const sw = software.find(s => s.id === softwareId);
+        if (sw && sw.publicationIds) {
+          const updatedSoftware = {
+            ...sw,
+            publicationIds: sw.publicationIds.filter(id => id !== pubId)
+          };
+          updateSoftware(updatedSoftware);
+        }
+      });
 
       // Remove from team members' publications lists
       teamMembers.forEach(member => {
@@ -413,12 +512,6 @@ const PublicationForm: React.FC = () => {
           </div>
         )}
 
-        {/* Debug info */}
-        <div style={{background: '#f8f9fa', padding: '10px', marginBottom: '15px', fontSize: '12px'}}>
-          <strong>ID:</strong> {pubId}<br/>
-          <strong>Mode:</strong> {isNewPublication ? 'New' : 'Edit'}
-        </div>
-
         <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <label htmlFor="title">Title*</label>
@@ -464,9 +557,9 @@ const PublicationForm: React.FC = () => {
                 onChange={(e) => setType(e.target.value as any)}
                 required
               >
-                <option value="journal">Journal Article</option>
-                <option value="conference">Conference Proceeding</option>
-                <option value="conference">Workshop Contribution</option>
+                <option value="journal article">Journal Article</option>
+                <option value="conference proceeding">Conference Proceeding</option>
+                <option value="workshop contribution">Workshop Contribution</option>
                 <option value="book chapter">Book Chapter</option>
                 <option value="book">Book</option>
                 <option value="commentary">Commentary</option>
@@ -479,7 +572,7 @@ const PublicationForm: React.FC = () => {
           <div className="form-group">
             <label>Authors*</label>
 
-            {/* NEW: Team member selection */}
+            {/* Team member selection */}
             <div className="team-member-author-selection">
               <select
                 value={selectedTeamMember}
@@ -583,19 +676,39 @@ const PublicationForm: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="projectId">Related Project (optional)</label>
+            <label htmlFor="projectIds">Related Projects (optional)</label>
             <select
-              id="projectId"
-              value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
+              id="projectIds"
+              multiple
+              value={projectIds}
+              onChange={handleProjectsChange}
+              style={{ height: '120px' }}
             >
-              <option value="">None</option>
               {projects.map(project => (
                 <option key={project.id} value={project.id}>
                   {project.title}
                 </option>
               ))}
             </select>
+            <p className="form-help-text">Hold Ctrl/Cmd to select multiple projects</p>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="softwareIds">Related Software (optional)</label>
+            <select
+              id="softwareIds"
+              multiple
+              value={softwareIds}
+              onChange={handleSoftwareChange}
+              style={{ height: '120px' }}
+            >
+              {software.map(sw => (
+                <option key={sw.id} value={sw.id}>
+                  {sw.name}
+                </option>
+              ))}
+            </select>
+            <p className="form-help-text">Hold Ctrl/Cmd to select multiple software packages</p>
           </div>
 
           <div className="form-group">
