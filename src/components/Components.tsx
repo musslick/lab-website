@@ -321,6 +321,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         return project.category;
     };
     
+    // Determine the background style - Always use gradient for emoji cards
+    const backgroundStyle = hasEmojis
+        ? { background: generateStaticGradient() }
+        : hasValidImage 
+          ? { background: `url(${project.image}) center/cover no-repeat` }
+          : { background: generateStaticGradient() };
+    
     return (
         <Link 
             to={`/projects/${project.id}`} 
@@ -330,13 +337,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             <div 
                 ref={colorBlockRef}
                 className="project-color-block"
-                style={{ 
-                    background: hasEmojis ? 
-                        generateStaticGradient() : 
-                        (hasValidImage ? 
-                            `url(${project.image}) center/cover no-repeat` : 
-                            generateStaticGradient())
-                }}
+                style={backgroundStyle}
             >
                 {hasEmojis && (
                     <div className="project-emoji-container">

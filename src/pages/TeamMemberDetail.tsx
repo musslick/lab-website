@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
-import { getTopicColorsFromProject, createProjectGradient } from '../utils/colorUtils';
+import { getTopicColorsFromProject, createProjectGradient, OPENMOJI_BASE_URL } from '../utils/colorUtils';
 
 const TeamMemberDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -99,6 +99,31 @@ const TeamMemberDetail: React.FC = () => {
     );
   }
 
+  // Function to generate gradient for project cards
+  const generateProjectGradient = (project: any) => {
+    // Get topic colors from the project
+    const topicColors = getTopicColorsFromProject(project);
+
+    // Create a linear gradient with the unified function (using 'to right' direction)
+    return createProjectGradient(topicColors, '135deg');
+  };
+
+  // Function to get emoji URLs for a project
+  const getProjectEmojiUrls = (project: any): string[] => {
+    if (project.emojiHexcodes && project.emojiHexcodes.length > 0) {
+      return project.emojiHexcodes.map((hex: string) => `${OPENMOJI_BASE_URL}${hex}.svg`);
+    }
+    return [];
+  };
+
+  // Function to check if a project has emojis
+  const hasProjectEmojis = (project: any) => {
+    return Boolean(
+      project.emojiHexcodes && 
+      project.emojiHexcodes.length > 0
+    );
+  };
+  
   // Function to check if a project has a valid image
   const hasValidProjectImage = (project: any) => {
     if (imageErrors[project.id]) {
@@ -121,13 +146,17 @@ const TeamMemberDetail: React.FC = () => {
     }));
   };
 
-  // Function to generate gradient for project cards
-  const generateProjectGradient = (project: any) => {
-    // Get topic colors from the project
-    const topicColors = getTopicColorsFromProject(project);
-
-    // Create a gradient with the unified function
-    return createProjectGradient(topicColors, 'circle at center');
+  // Determine background style - Gradient for emojis, image for images, gradient as fallback
+  const getProjectBackgroundStyle = (project: any) => {
+    if (hasProjectEmojis(project)) {
+      // Use the proper gradient created from topic colors for emoji cards
+      const gradient = generateProjectGradient(project);
+      return { background: gradient };
+    } else if (hasValidProjectImage(project)) {
+      return { background: `url(${project.image}) center/cover no-repeat` };
+    } else {
+      return { background: generateProjectGradient(project) };
+    }
   };
 
   return (
@@ -225,24 +254,30 @@ const TeamMemberDetail: React.FC = () => {
               >
                 <div
                   className="project-color-indicator"
-                  style={{
-                    background: hasValidProjectImage(project) 
-                      ? `url(${project.image}) center/cover no-repeat` 
-                      : generateProjectGradient(project)
-                  }}
+                  style={getProjectBackgroundStyle(project)}
                 >
-                  {hasValidProjectImage(project) && (
-                    <img 
-                      src={project.image} 
-                      alt=""
-                      style={{ 
-                        display: 'none', 
-                        width: '1px', 
-                        height: '1px'
-                      }}
-                      onError={() => handleProjectImageError(project.id)} 
-                    />
-                  )}
+                  {hasProjectEmojis(project) ? (
+                    <div className="project-emoji-container">
+                      {getProjectEmojiUrls(project).map((url, index) => (
+                        <img 
+                          key={index}
+                          src={url} 
+                          alt={`Project Emoji ${index+1}`} 
+                          className="project-emoji"
+                          onError={() => console.error(`Failed to load emoji at ${url}`)}
+                        />
+                      ))}
+                    </div>
+                  ) : hasValidProjectImage(project) ? (
+                    <div className="project-image-frame">
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="project-image"
+                        onError={() => handleProjectImageError(project.id)}
+                      />
+                    </div>
+                  ) : null}
                 </div>
                 <div className="project-info">
                   <h3>{project.title}</h3>
