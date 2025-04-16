@@ -995,7 +995,6 @@
   font-size: 0.9em;
   padding: 2px;
   text-align: right;
-  -moz-appearance: textfield; /* Firefox */
 }
 
 .hue-input::-webkit-outer-spin-button,

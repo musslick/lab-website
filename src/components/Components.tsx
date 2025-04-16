@@ -331,9 +331,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 ref={colorBlockRef}
                 className="project-color-block"
                 style={{ 
-                    background: hasValidImage ? 
-                        `url(${project.image}) center/cover no-repeat` : 
-                        generateStaticGradient()
+                    background: hasEmojis ? 
+                        generateStaticGradient() : 
+                        (hasValidImage ? 
+                            `url(${project.image}) center/cover no-repeat` : 
+                            generateStaticGradient())
                 }}
             >
                 {hasEmojis && (
