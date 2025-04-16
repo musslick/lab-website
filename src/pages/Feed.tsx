@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useContent } from '../contexts/ContentContext';
+import { getOpenMojiUrl, LAB_COLOR } from '../utils/colorUtils';
 import '../styles/styles.css';
 
 const Feed: React.FC = () => {
@@ -35,6 +36,10 @@ const Feed: React.FC = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Check if a news item has emojis
+  const hasEmojis = (item: any): boolean => 
+    Boolean(item.emojiHexcodes && item.emojiHexcodes.length > 0);
+
   return (
     <div className="projects-page">
       <div className="projects-header">
@@ -61,13 +66,32 @@ const Feed: React.FC = () => {
         {sortedNews.length > 0 ? (
           sortedNews.map(item => (
             <div key={item.id} className={`news-card ${item.featured ? 'featured' : ''}`}>
-              {item.imageUrl && (
+              {/* Show emojis if available, otherwise show image if available */}
+              {hasEmojis(item) ? (
+                <div 
+                  className="news-emoji-container"
+                  style={{ backgroundColor: LAB_COLOR }}
+                >
+                  {item.emojiHexcodes && item.emojiHexcodes.map((hexcode: string, index: number) => (
+                    <img 
+                      key={index}
+                      src={getOpenMojiUrl(hexcode)} 
+                      alt={`News Emoji ${index+1}`} 
+                      className="news-emoji"
+                      onError={(e) => {
+                        console.error(`Failed to load emoji with hexcode: ${hexcode}`);
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  ))}
+                  {item.featured && <span className="featured-banner">Featured</span>}
+                </div>
+              ) : item.imageUrl ? (
                 <div className="news-image">
                   <img src={item.imageUrl} alt={item.title} />
                   {item.featured && <span className="featured-banner">Featured</span>}
                 </div>
-              )}
-              {!item.imageUrl && item.featured && (
+              ) : item.featured && (
                 <div className="featured-header">
                   <span className="featured-banner">Featured</span>
                 </div>

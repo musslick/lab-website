@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContent } from '../../contexts/ContentContext';
 import Layout from '../../components/Layout';
 import { NewsItem } from '../../data/news';
+import { getOpenMojiUrl } from '../../utils/colorUtils';
 
 const NewsForm: React.FC = () => {
   // Get necessary parameters and context
@@ -24,6 +25,11 @@ const NewsForm: React.FC = () => {
   const [tagInput, setTagInput] = useState('');
   const [newsId, setNewsId] = useState('');
   
+  // Emoji state
+  const [emojiHexcodes, setEmojiHexcodes] = useState<string[]>([]);
+  const [showEmojiSelector, setShowEmojiSelector] = useState(false);
+  const [emojiInput, setEmojiInput] = useState('');
+
   // UI state
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -63,6 +69,8 @@ const NewsForm: React.FC = () => {
         setImageUrl(itemToEdit.imageUrl || '');
         setFeatured(itemToEdit.featured || false);
         setTags(itemToEdit.tags || []);
+        // Load emojis if they exist
+        setEmojiHexcodes(itemToEdit.emojiHexcodes || []);
       } else {
         setErrorMessage(`Could not find news item with ID: ${id}`);
         console.error(`Could not find news item with ID: ${id}`);
@@ -97,6 +105,32 @@ const NewsForm: React.FC = () => {
       e.target.value = ''; // Reset select after selection
     }
   };
+
+  // Emoji management
+  const handleAddEmoji = () => {
+    if (emojiInput.trim() && !emojiHexcodes.includes(emojiInput.trim())) {
+      // Check if the input is a valid hexcode format
+      const hexcodeRegex = /^[0-9A-Fa-f]{4,5}$/;
+      if (hexcodeRegex.test(emojiInput.trim())) {
+        setEmojiHexcodes(prev => [...prev, emojiInput.trim()]);
+        setEmojiInput('');
+      } else {
+        setErrorMessage('Please enter a valid OpenMoji hexcode (4-5 hexadecimal characters)');
+        setTimeout(() => setErrorMessage(null), 3000);
+      }
+    }
+  };
+
+  const handleRemoveEmoji = (index: number) => {
+    setEmojiHexcodes(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleEmojiKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddEmoji();
+    }
+  };
   
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -123,9 +157,14 @@ const NewsForm: React.FC = () => {
         tags: [...tags]
       };
       
-      // Only include imageUrl if it's not empty
-      if (imageUrl.trim()) {
+      // Only include imageUrl if it's not empty and no emojis are used
+      if (imageUrl.trim() && emojiHexcodes.length === 0) {
         newsItem.imageUrl = imageUrl;
+      }
+      
+      // Only include emojiHexcodes if they exist
+      if (emojiHexcodes.length > 0) {
+        newsItem.emojiHexcodes = [...emojiHexcodes];
       }
       
       console.log("Saving news item:", newsItem);
@@ -263,6 +302,83 @@ const NewsForm: React.FC = () => {
             </div>
           </div>
           
+          {/* Emoji selector */}
+          <div className="form-group">
+            <label>OpenMoji Emojis</label>
+            <div className="emoji-note">
+              <p>Adding OpenMoji emojis will replace the image for this news item with a solid color banner containing your selected emojis.</p>
+            </div>
+            
+            <button 
+              type="button" 
+              className="toggle-emoji-selector"
+              onClick={() => setShowEmojiSelector(!showEmojiSelector)}
+            >
+              {showEmojiSelector ? 'Hide Emoji Selector' : 'Show Emoji Selector'}
+            </button>
+            
+            {showEmojiSelector && (
+              <div className="emoji-selection-container">
+                <div className="selected-emojis">
+                  {emojiHexcodes.length > 0 ? (
+                    <div className="emoji-preview-grid">
+                      {emojiHexcodes.map((hexcode, index) => (
+                        <div key={index} className="selected-emoji-item">
+                          <div 
+                            className="emoji-preview-bg" 
+                            style={{ backgroundColor: '#00AAFF' }}
+                          >
+                            <img 
+                              src={getOpenMojiUrl(hexcode)} 
+                              alt={`OpenMoji ${hexcode}`}
+                              className="emoji-preview-img"
+                              onError={(e) => {
+                                console.error(`Failed to load emoji with hexcode: ${hexcode}`);
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          </div>
+                          <button 
+                            type="button" 
+                            className="remove-emoji-btn" 
+                            onClick={() => handleRemoveEmoji(index)}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="emoji-placeholder">No emojis selected yet</p>
+                  )}
+                </div>
+                
+                <div className="emoji-input-row">
+                  <input
+                    type="text"
+                    value={emojiInput}
+                    onChange={(e) => setEmojiInput(e.target.value)}
+                    onKeyDown={handleEmojiKeyDown}
+                    placeholder="Enter OpenMoji hexcode (e.g., 1F600)"
+                    className="emoji-hexcode-input"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={handleAddEmoji}
+                    className="add-emoji-btn"
+                    disabled={!emojiInput.trim()}
+                  >
+                    Add
+                  </button>
+                </div>
+                
+                <div className="emoji-help-text">
+                  <p>Find OpenMoji hexcodes at <a href="https://openmoji.org/library/" target="_blank" rel="noopener noreferrer">OpenMoji.org</a></p>
+                </div>
+              </div>
+            )}
+          </div>
+          
           <div className="form-group">
             <label htmlFor="imageUrl">Image URL (optional)</label>
             <input
@@ -270,8 +386,12 @@ const NewsForm: React.FC = () => {
               id="imageUrl"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
+              disabled={emojiHexcodes.length > 0}
             />
-            {imageUrl && (
+            {emojiHexcodes.length > 0 && (
+              <p className="emoji-note">Image URL is disabled because emojis are selected. Remove all emojis to use an image instead.</p>
+            )}
+            {imageUrl && emojiHexcodes.length === 0 && (
               <div className="image-preview">
                 <img 
                   src={imageUrl} 
