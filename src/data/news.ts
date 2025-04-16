@@ -50,6 +50,6 @@ export const newsItems: NewsItem[] = [
     "tags": [
       "team update"
     ],
-    "imageUrl": "https://raw.githubusercontent.com/morilori/automated-lab/refs/heads/main/src/assets/team/Moritz.jpg?token=GHSAT0AAAAAACOGSZUKDUAKOWDPJ2J6PXZYZ76U6RQ"
+    "imageUrl": "https://i.postimg.cc/NfR4FFXr/Moritz.jpg"
   }
 ];
