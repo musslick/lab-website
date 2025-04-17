@@ -123,6 +123,23 @@ const Home: React.FC = () => {
                     {featuredNewsItem && (
                         <Link to="/feed" className="project-card">
                             <div className="project-color-block" style={{ background: '#00AAFF' }}>
+                                {/* Display emojis if they exist for the featured news item */}
+                                {featuredNewsItem.emojiHexcodes && featuredNewsItem.emojiHexcodes.length > 0 && (
+                                    <div className="project-emoji-container">
+                                        {featuredNewsItem.emojiHexcodes.map((hexcode, index) => (
+                                            <img 
+                                                key={index}
+                                                src={`https://openmoji.org/data/black/svg/${hexcode}.svg`}
+                                                alt={`News Emoji ${index+1}`}
+                                                className="project-emoji"
+                                                onError={(e) => {
+                                                    console.error(`Failed to load emoji with hexcode: ${hexcode}`);
+                                                    (e.target as HTMLImageElement).style.display = 'none';
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="project-content">
                                 <h3 className="project-title">{featuredNewsItem.title}</h3>
@@ -156,6 +173,18 @@ const Home: React.FC = () => {
                                 className="project-color-block"
                                 style={{ background: '#00AAFF' }}
                             >
+                                {/* Always display bookmark emoji for publications - now using black and white version */}
+                                <div className="project-emoji-container">
+                                    <img 
+                                        src={`https://openmoji.org/data/black/svg/1F4D1.svg`}
+                                        alt="Publication Bookmark"
+                                        className="project-emoji"
+                                        onError={(e) => {
+                                            console.error('Failed to load bookmark emoji');
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                    />
+                                </div>
                             </div>
                             <div className="project-content">
                                 <h3 className="project-title">{featuredPublication.title}</h3>

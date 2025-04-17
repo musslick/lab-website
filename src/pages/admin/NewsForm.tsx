@@ -109,15 +109,9 @@ const NewsForm: React.FC = () => {
   // Emoji management
   const handleAddEmoji = () => {
     if (emojiInput.trim() && !emojiHexcodes.includes(emojiInput.trim())) {
-      // Check if the input is a valid hexcode format
-      const hexcodeRegex = /^[0-9A-Fa-f]{4,5}$/;
-      if (hexcodeRegex.test(emojiInput.trim())) {
-        setEmojiHexcodes(prev => [...prev, emojiInput.trim()]);
-        setEmojiInput('');
-      } else {
-        setErrorMessage('Please enter a valid OpenMoji hexcode (4-5 hexadecimal characters)');
-        setTimeout(() => setErrorMessage(null), 3000);
-      }
+      // Add the emoji without length restriction validation
+      setEmojiHexcodes(prev => [...prev, emojiInput.trim()]);
+      setEmojiInput('');
     }
   };
 
