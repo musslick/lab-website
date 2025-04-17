@@ -252,10 +252,10 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
       projectWithUpdatedTopicColors.topicsWithColors = updatedTopicsWithColors;
     }
     
-    // Use lab blue linear gradient instead of radial
+    // Use lab blue color instead of gradient
     const projectWithUpdatedColor = {
       ...projectWithUpdatedTopicColors,
-      color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`,
+      color: LAB_COLOR,
       _lastUpdated: Date.now()
     };
 
@@ -301,10 +301,10 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
         projectWithTopicColors.topicsWithColors = topicsWithColors;
       }
       
-      // Use lab blue linear gradient instead of radial
+      // Use lab blue color instead of gradient
       const projectWithColor = {
         ...projectWithTopicColors,
-        color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
+        color: LAB_COLOR
       };
 
       setProjects(prevProjects => [...prevProjects, projectWithColor]);
@@ -333,10 +333,10 @@ export const ContentProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Helper function to update project gradients
   const updateProjectGradients = (currentProjects: Project[]): Project[] => {
     return currentProjects.map(project => {
-      // Use a simple lab blue linear gradient instead of radial
+      // Use a simple lab blue color instead of gradient
       return {
         ...project,
-        color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
+        color: LAB_COLOR
       };
     });
   };

@@ -3695,3 +3695,64 @@ header {
     justify-content: center;
   }
 }
+
+/* =========================================
+   METHOD GRADIENT TOGGLE CHECKBOX STYLES
+   ========================================= */
+
+/* Method gradient toggle checkbox styling */
+.gradient-toggle {
+  margin: 15px 0 25px;
+  display: flex;
+  align-items: center;
+}
+
+.gradient-toggle label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.gradient-toggle input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #00AAFF;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.gradient-toggle input[type="checkbox"]:checked {
+  background-color: #00AAFF;
+}
+
+.gradient-toggle input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.gradient-toggle input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.3);
+}
+
+.gradient-toggle-label {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.gradient-toggle:hover input[type="checkbox"] {
+  border-color: #0088CC;
+}

@@ -231,6 +231,7 @@ const OPENMOJI_BASE_URL = 'https://openmoji.org/data/black/svg/';
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     const [imageError, setImageError] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     
     // Get the topic color registry from context
     const { topicColorRegistry } = useContent();
@@ -321,23 +322,34 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         return project.category;
     };
     
-    // Determine the background style - Always use gradient for emoji cards
-    const backgroundStyle = hasEmojis
-        ? { background: generateStaticGradient() }
-        : hasValidImage 
-          ? { background: `url(${project.image}) center/cover no-repeat` }
-          : { background: generateStaticGradient() };
+    // Determine the background style based on conditions
+    const getBackgroundStyle = () => {
+        if (hasEmojis) {
+            // Show gradient when hovered and there are topics
+            if (isHovered && project.topics && project.topics.length > 0) {
+                return { background: generateStaticGradient() };
+            } 
+            // Otherwise use solid LAB_COLOR
+            return { background: LAB_COLOR };
+        } else if (hasValidImage) {
+            return { background: `url(${project.image}) center/cover no-repeat` };
+        } else {
+            return { background: LAB_COLOR };
+        }
+    };
     
     return (
         <Link 
             to={`/projects/${project.id}`} 
             className="project-card"
             ref={cardRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             <div 
                 ref={colorBlockRef}
                 className="project-color-block"
-                style={backgroundStyle}
+                style={getBackgroundStyle()}
             >
                 {hasEmojis && (
                     <div className="project-emoji-container">

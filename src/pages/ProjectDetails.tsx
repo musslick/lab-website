@@ -21,6 +21,8 @@ const renderDisciplines = (disciplines: string | string[]) => {
   return disciplines;
 };
 
+const LAB_COLOR = '#00AAFF'; // Solid lab blue color
+
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { projects, teamMembers, publications, software, topicColorRegistry } = useContent();
@@ -28,45 +30,24 @@ const ProjectDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [projectTeam, setProjectTeam] = useState<any[]>([]);
   const [projectSoftware, setProjectSoftware] = useState<any[]>([]);
+  const [projectPublications, setProjectPublications] = useState<any[]>([]);
   const [imageError, setImageError] = useState(false);
 
   // Store the colors for creating dynamic gradients
   const [topicColors, setTopicColors] = useState<string[]>([]);
-  const [baseColor] = useState<string>('#00AAFF'); // Lab blue color
+  const [baseColor] = useState<string>(LAB_COLOR);
 
   // Mouse interaction states
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const [isFrozen, setIsFrozen] = useState(false);
   const colorHeaderRef = useRef<HTMLDivElement>(null);
 
-  // Generate static gradient for project emojis background
-  const generateStaticGradient = () => {
-    if (!project || !project.topics) return `linear-gradient(to right, #00AAFF, #005580)`;
-
-    const topicColors = project.topics.map((topicName: string) => {
-      if (topicColorRegistry && topicColorRegistry[topicName]) {
-        return topicColorRegistry[topicName].color;
-      }
-
-      const topicWithColor = project.topicsWithColors?.find((t: any) => t.name === topicName);
-      if (topicWithColor?.color) {
-        return topicWithColor.color;
-      }
-
-      const index = project.topics.indexOf(topicName) || 0;
-      const total = project.topics.length || 1;
-      return generateTopicColor(Math.round((index / total) * 360));
-    });
-
-    return createProjectGradient(topicColors, '135deg');
-  };
-
   // Check if project has a valid image
   const hasValidImage = (): boolean => {
     return Boolean(
-      project?.image && 
+      project?.image &&
       project.image.trim() !== '' &&
-      !project.image.endsWith('undefined') && 
+      !project.image.endsWith('undefined') &&
       !project.image.endsWith('null') &&
       !imageError
     );
@@ -75,7 +56,7 @@ const ProjectDetails: React.FC = () => {
   // Check if project has emojis
   const hasEmojis = (): boolean => {
     return Boolean(
-      project?.emojiHexcodes && 
+      project?.emojiHexcodes &&
       project.emojiHexcodes.length > 0
     );
   };
@@ -137,10 +118,13 @@ const ProjectDetails: React.FC = () => {
 
       const relatedSoftware = software.filter(sw => sw.projectId === id);
       setProjectSoftware(relatedSoftware);
+
+      const relatedPublications = publications.filter(pub => pub.projectId === id);
+      setProjectPublications(relatedPublications);
     }
 
     setLoading(false);
-  }, [id, projects, teamMembers, software, baseColor, topicColorRegistry]);
+  }, [id, projects, teamMembers, software, baseColor, topicColorRegistry, publications]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (colorHeaderRef.current && !isFrozen) {
@@ -159,15 +143,14 @@ const ProjectDetails: React.FC = () => {
     setIsFrozen(true);
   };
 
-  const generateDynamicGradient = () => {
-    if (!project.topics || project.topics.length === 0) {
-      return baseColor;
+  // Generate a gradient based on project topics
+  const generateGradient = () => {
+    // Always use gradient if project has topics
+    if (project.topics && project.topics.length > 0) {
+      return createProjectGradient(topicColors, '135deg');
     }
-
-    const { x, y } = mousePosition;
-    const position = `circle at ${x}% ${y}%`;
-
-    return createProjectGradient(topicColors, position);
+    // Fallback to solid LAB_COLOR if no topics
+    return LAB_COLOR;
   };
 
   if (loading) {
@@ -175,111 +158,53 @@ const ProjectDetails: React.FC = () => {
   }
 
   if (!project) {
-    return (
-      <>
-        <TopNav />
-        <div className="project-details">
-          <h1>Project not found</h1>
-          <p>The requested project could not be found.</p>
-          <Link to="/projects">Return to Projects</Link>
-        </div>
-        <Footer />
-      </>
-    );
+    return <div className="not-found">Project not found</div>;
   }
-
-  const projectPublications = publications.filter(pub => pub.projectId === id);
-
-  const publicationsByYear = projectPublications.reduce((acc, publication) => {
-    const year = publication.year.toString();
-    if (!acc[year]) {
-      acc[year] = [];
-    }
-    acc[year].push(publication);
-    return acc;
-  }, {} as Record<string, typeof projectPublications>);
 
   return (
     <>
       <TopNav />
       <div className="project-details">
-        {/* Use the same container structure for all cases */}
         <div
           ref={colorHeaderRef}
           className="project-color-header"
-          style={{ 
-            background: generateDynamicGradient(),
-            height: '300px', // Fixed height for all cases
-            width: '100%',
-            marginLeft: '0',
-            position: 'relative',
-            overflow: 'hidden'
-          }}
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          style={{
+            background: hasEmojis() ? generateGradient() : 'transparent',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
         >
-          {/* Image case */}
-          {hasValidImage() && !hasEmojis() && (
-            <div className="project-image-container" style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 1
-            }}>
-              <img 
-                src={project.image} 
-                alt={project.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center'
-                }}
-                onError={() => setImageError(true)}
-              />
+          {hasEmojis() ? (
+            <div className="project-emoji-container">
+              {getEmojiUrls().map((url, index) => (
+                <img
+                  key={index}
+                  src={url}
+                  alt={`Project Emoji ${index + 1}`}
+                  className="project-emoji"
+                  onError={() => {
+                    console.error(`Failed to load emoji at ${url}`);
+                  }}
+                />
+              ))}
             </div>
-          )}
-          
-          {/* Emoji with gradient case */}
-          {hasEmojis() && (
-            <div 
-              className="project-emoji-frame"
-              style={{ 
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                background: generateStaticGradient(),
+          ) : hasValidImage() && (
+            <img
+              src={project.image}
+              alt={project.title}
+              className="project-header-image"
+              style={{
                 width: '100%',
                 height: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 2
+                objectFit: 'cover',
+                display: 'block'
               }}
-            >
-              <div className="project-emoji-container">
-                {getEmojiUrls().map((url, index) => (
-                  <img 
-                    key={index}
-                    src={url} 
-                    alt={`Project Emoji ${index+1}`} 
-                    className="project-emoji"
-                    style={{ 
-                      width: '120px',
-                      height: '120px',
-                      margin: '0 15px'
-                    }}
-                    onError={() => console.error(`Failed to load emoji at ${url}`)}
-                  />
-                ))}
-              </div>
-            </div>
+              onError={() => setImageError(true)}
+            />
           )}
-          
-          {/* Pure gradient case - this is the fallback and is already the background */}
         </div>
 
         <h1 className="project-title-standalone">{project.title}</h1>
@@ -293,7 +218,7 @@ const ProjectDetails: React.FC = () => {
             <div className="project-detail-topics">
               {project.topics.map((method: string, index: number) => {
                 let methodColor;
-                
+
                 if (topicColorRegistry && topicColorRegistry[method]) {
                   methodColor = topicColorRegistry[method].color;
                 } else {
@@ -302,7 +227,7 @@ const ProjectDetails: React.FC = () => {
                   );
                   methodColor = methodWithColor?.color;
                 }
-                
+
                 if (!methodColor) {
                   methodColor = generateTopicColor(Math.round((index / (project.topics.length || 1)) * 360));
                 }
@@ -325,7 +250,6 @@ const ProjectDetails: React.FC = () => {
               <h4>Topics:</h4>
               <p>{project.category && renderDisciplines(project.category)}</p>
             </div>
-
           </div>
         </div>
 
@@ -349,6 +273,9 @@ const ProjectDetails: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Image is already displayed in the header when there are no emojis,
+            so we don't need to show it again in the content area */}
 
         {projectSoftware.length > 0 && (
           <div className="project-section">

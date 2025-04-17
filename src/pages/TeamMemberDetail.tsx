@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
-import { getTopicColorsFromProject, createProjectGradient, OPENMOJI_BASE_URL } from '../utils/colorUtils';
+import { getTopicColorsFromProject, createProjectGradient, OPENMOJI_BASE_URL, LAB_COLOR } from '../utils/colorUtils';
 
 const TeamMemberDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -149,24 +149,17 @@ const TeamMemberDetail: React.FC = () => {
   // Determine background style - Gradient for emojis, image for images, gradient as fallback
   const getProjectBackgroundStyle = (project: any) => {
     if (hasProjectEmojis(project)) {
-      // Use the proper gradient created from topic colors for emoji cards
-      const gradient = generateProjectGradient(project);
-      return { background: gradient };
+      // Use solid lab blue instead of gradient
+      return { background: LAB_COLOR };
     } else if (hasValidProjectImage(project)) {
       return { background: `url(${project.image}) center/cover no-repeat` };
     } else {
-      return { background: generateProjectGradient(project) };
+      return { background: LAB_COLOR };
     }
   };
 
   return (
     <div className="team-member-detail-page">
-      <div className="team-member-header">
-        <div
-          className="team-member-color-header"
-          style={{ background: member.color }}
-        ></div>
-      </div>
       <div className="team-member-profile">
         <div className="team-member-profile-image">
           {member.imageUrl ? (
