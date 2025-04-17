@@ -23,15 +23,17 @@ export const newsItems: NewsItem[] = [
       "cognitive control",
       "computational modeling"
     ],
-    "imageUrl": "https://www.uni-bonn.de/de/forschung-lehre/forschungsprofil/transdisziplinaere-forschungsbereiche/tra-4-individuals/programme/german-research-foundation/logo-dfg.jpg/@@images/image/leadimagesize"
+    "emojiHexcodes": [
+      "1F91D"
+    ]
   },
   {
     "id": "news-2",
     "title": "Grant Award: Workshop on Automated Scientific Discovery of Mind and Brain",
-    "content": "We are fortunate to have received support from Lower Saxony's Ministry of Science and Culture for a workshop on \"AI for Discovery of Mind and Brain\" (PROFIL International, MWK, 28.204 Euro) for hosting a Workshop at Princeton University together with our collaborators there, Younes Strittmatter and Jonathan D. Cohen.\n\nThis workshop will host a series of tutorials on open-software scientific software for automating scientific discovery in cognitive science, and present cutting-edge research on AI for cognitive science and automated scientific discovery.\n\nStay tuned for more details!",
+    "content": "We are fortunate to have received support from Lower Saxony's Ministry of Science and Culture for a workshop on “AI for Discovery of Mind and Brain” (PROFIL International, MWK, 28.204 Euro) for hosting a Workshop at Princeton University together with our collaborators there, Younes Strittmatter and Jonathan D. Cohen.\n\nThis workshop will host a series of tutorials on open-software scientific software for automating scientific discovery in cognitive science, and present cutting-edge research on AI for cognitive science and automated scientific discovery.\n\nStay tuned for more details!",
     "date": "2025-04-11",
     "author": "Sebastian Musslick",
-    "featured": true,
+    "featured": false,
     "tags": [
       "AI for science",
       "automated scientific discovery",
@@ -39,21 +41,9 @@ export const newsItems: NewsItem[] = [
       "hackathon",
       "funding"
     ],
-    "imageUrl": "https://i.postimg.cc/Y2RwQtJ4/New-Logo-3.png"
-  },
-  {
-    "id": "news-4",
-    "title": "New Paper on Automated Scientific Discovery Published",
-    "content": "We're excited to announce that our recent paper on 'Automated Scientific Discovery using Large Language Models' has been accepted for publication in Nature Machine Intelligence. This work demonstrates how AI systems can accelerate cognitive science research by generating novel hypotheses and experimental designs.\n\nCongratulations to all team members and collaborators involved in this groundbreaking research!",
-    "date": "2025-04-15",
-    "author": "Sebastian Musslick",
-    "featured": true,
-    "tags": [
-      "publication",
-      "AI for science",
-      "large language models"
-    ],
-    "emojiHexcodes": ["1F916", "1F4D6", "1F9E0", "1F4CA"]
+    "emojiHexcodes": [
+      "1F91D"
+    ]
   },
   {
     "id": "news-3",
@@ -65,6 +55,8 @@ export const newsItems: NewsItem[] = [
     "tags": [
       "team update"
     ],
-    "imageUrl": "https://i.postimg.cc/NfR4FFXr/Moritz.jpg"
+    "emojiHexcodes": [
+      "1F9D1-200D-1F393"
+    ]
   }
 ];

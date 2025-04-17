@@ -38,7 +38,7 @@ export const projects: Project[] = [
       "Muhip Tezcan",
       "Se Eun Choi"
     ],
-    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
       "equation discovery",
       "knowledge distillation",
@@ -48,30 +48,35 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "equation discovery",
-        "color": "#ff9999",
+        "color": "#f0cca8",
         "hue": 0
       },
       {
         "name": "knowledge distillation",
-        "color": "#99ff99",
+        "color": "#a8f0cc",
         "hue": 120
       },
       {
         "name": "SINDy",
-        "color": "#9999ff",
+        "color": "#a8a8f0",
         "hue": 240
       },
       {
         "name": "computational modeling",
-        "color": "#ffb399",
+        "color": "#f0f0a8",
         "hue": 15
       }
     ],
     "status": "ongoing",
     "publications": [],
+    "emojiHexcodes": [
+      "1F4C8",
+      "\t1F504",
+      "1F50D"
+    ],
     "image": "https://i.postimg.cc/cCm37nc5/model-discovery.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744541911782
+    "_lastUpdated": 1744890519217
   },
   {
     "id": "project-1744380957652",
@@ -87,7 +92,7 @@ export const projects: Project[] = [
       "Pelin Kömürlüoğlu",
       "Se Eun Choi"
     ],
-    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
       "active learning",
       "SAT sampling",
@@ -97,30 +102,35 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "active learning",
-        "color": "#ff9999",
+        "color": "#f0a8a8",
         "hue": 0
       },
       {
         "name": "SAT sampling",
-        "color": "#ccff99",
+        "color": "#a8f0a8",
         "hue": 90
       },
       {
         "name": "program synthesis",
-        "color": "#99ffff",
+        "color": "#a8d1f0",
         "hue": 180
       },
       {
         "name": "integrative experimental design",
-        "color": "#cc99ff",
+        "color": "#cca8f0",
         "hue": 270
       }
     ],
     "status": "ongoing",
     "publications": [],
+    "emojiHexcodes": [
+      "1F4CA",
+      "1F504",
+      "\t1F4CB"
+    ],
     "image": "https://i.postimg.cc/0NyP1hcn/experimental-design.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744645669040
+    "_lastUpdated": 1744808447054
   },
   {
     "id": "project-1744383288085",
@@ -139,7 +149,7 @@ export const projects: Project[] = [
       "Se Eun Choi",
       "Leon Schmid"
     ],
-    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
       "integrative experimental design",
       "program synthesis",
@@ -152,44 +162,49 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "integrative experimental design",
-        "color": "#ff9999",
-        "hue": 0
-      },
-      {
-        "name": "program synthesis",
-        "color": "#ccff99",
-        "hue": 90
-      },
-      {
-        "name": "active learning",
-        "color": "#99ffff",
-        "hue": 180
-      },
-      {
-        "name": "equation discovery",
-        "color": "#cc99ff",
+        "color": "#cca8f0",
         "hue": 270
       },
       {
+        "name": "program synthesis",
+        "color": "#a8d1f0",
+        "hue": 180
+      },
+      {
+        "name": "active learning",
+        "color": "#f0a8a8",
+        "hue": 0
+      },
+      {
+        "name": "equation discovery",
+        "color": "#f0cca8",
+        "hue": 0
+      },
+      {
         "name": "computational modeling",
-        "color": "#ffb399",
+        "color": "#f0f0a8",
         "hue": 15
       },
       {
         "name": "scientific knowledge representation",
-        "color": "#fff199",
+        "color": "#cdf0a8",
         "hue": 52
       },
       {
         "name": "retrieval augmented generation",
-        "color": "#ff99f0",
+        "color": "#f0a8f0",
         "hue": 309
       }
     ],
     "status": "ongoing",
     "publications": [],
+    "emojiHexcodes": [
+      "1F916",
+      "1F504",
+      "1F9D1-200D-1F52C"
+    ],
     "image": "https://i.postimg.cc/02TXR40S/integrated-discovery.png",
-    "_lastUpdated": 1744646027034
+    "_lastUpdated": 1744808325469
   },
   {
     "id": "project-1744383465177",
@@ -206,7 +221,7 @@ export const projects: Project[] = [
       "Alessandra Brondetta",
       "Moritz Hartstang"
     ],
-    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
       "integrative experimental design",
       "large language models",
@@ -231,9 +246,14 @@ export const projects: Project[] = [
     ],
     "status": "ongoing",
     "publications": [],
+    "emojiHexcodes": [
+      "\t1F9D1",
+      "1F4BB",
+      "1F916"
+    ],
     "image": "https://i.postimg.cc/NfxbJF9S/synthetic-participants.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744649858704
+    "_lastUpdated": 1744791503555
   },
   {
     "id": "project-1744537991200",
@@ -248,7 +268,7 @@ export const projects: Project[] = [
       "Sebastian Musslick",
       "Alessandra Brondetta"
     ],
-    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
       "computational modeling",
       "mathematical analysis"
@@ -256,20 +276,25 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "computational modeling",
-        "color": "#ff9999",
-        "hue": 0
+        "color": "#f0f0a8",
+        "hue": 15
       },
       {
         "name": "mathematical analysis",
-        "color": "#99ffff",
+        "color": "#a8f0f0",
         "hue": 180
       }
     ],
     "status": "ongoing",
     "publications": [],
+    "emojiHexcodes": [
+      "\t2714",
+      "1F9E0",
+      "\t274C"
+    ],
     "image": "https://i.postimg.cc/XqK1rBhc/rational-boundedness.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744656500911
+    "_lastUpdated": 1744810830840
   },
   {
     "id": "project-1744383751212",
@@ -284,7 +309,7 @@ export const projects: Project[] = [
       "Alessandra Brondetta",
       "Moritz Hartstang"
     ],
-    "color": "radial-gradient(circle at center, #00AAFF 0%, #005580 100%)",
+    "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
       "computational modeling",
       "integrative experimental design"
@@ -292,19 +317,24 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "computational modeling",
-        "color": "#ffb399",
+        "color": "#f0f0a8",
         "hue": 15
       },
       {
         "name": "integrative experimental design",
-        "color": "#cc99ff",
+        "color": "#cca8f0",
         "hue": 270
       }
     ],
     "status": "ongoing",
     "publications": [],
+    "emojiHexcodes": [
+      "\t1F4AA",
+      "1F9E0",
+      "\t1F39B"
+    ],
     "image": "https://i.postimg.cc/bYW5nczG/mental-effort.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744659961849
+    "_lastUpdated": 1744829352567
   }
-  ];
+];
