@@ -50,8 +50,8 @@ const Software: React.FC = () => {
     <Layout>
       <div className="projects-page">
         <div className="projects-header">
-          <h1>Software</h1>
-          <p>We develop and maintain several open-source Python (pip) packages for automating various aspects of empirical research.</p>
+          <h1>Scientific Software</h1>
+          <p>We co-develop and maintain several open-source Python (pip) packages for automating various aspects of empirical research.</p>
         </div>
 
         <div className="tag-filter">
@@ -85,9 +85,9 @@ const Software: React.FC = () => {
 
                   {item.imageUrl && (
                     <div className="software-image">
-                      <img 
-                        src={item.imageUrl} 
-                        alt={item.name} 
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
                         style={{ maxWidth: '100%', maxHeight: '200px' }}
                         onError={(e) => {
                           console.error(`Failed to load software image: ${item.imageUrl}`);
@@ -112,7 +112,7 @@ const Software: React.FC = () => {
                   </div>
 
                   <div className="software-developed-by">
-                    <strong>Contributing Team Members:</strong> {item.developers.join(', ')}
+                    <strong>Contributing Lab Members:</strong> {item.developers.join(', ')}
                   </div>
 
                   <div className="software-meta">
@@ -167,9 +167,9 @@ const Software: React.FC = () => {
                       <h4>Related Projects</h4>
                       <div className="software-related-projects-list">
                         {relatedProjects.map((project: Project) => (
-                          <Link 
-                            key={project.id} 
-                            to={`/projects/${project.id}`} 
+                          <Link
+                            key={project.id}
+                            to={`/projects/${project.id}`}
                             className="software-project-link"
                           >
                             <div className="software-project-name">
@@ -180,7 +180,7 @@ const Software: React.FC = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   {relatedPublications.length > 0 && (
                     <div className="software-related-publications">
                       <h4>Related Publications</h4>
@@ -203,10 +203,10 @@ const Software: React.FC = () => {
                               </span>
                               <span className="publication-year">{publication.year}</span>
                               {publication.doi && (
-                                <a 
+                                <a
                                   href={`https://doi.org/${publication.doi}`}
-                                  target="_blank" 
-                                  rel="noopener noreferrer" 
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className="publication-doi"
                                 >
                                   DOI: {publication.doi}

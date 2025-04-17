@@ -21,12 +21,12 @@ const Publications: React.FC = () => {
 
   // Get projects that have publications
   const projectsWithPublications = projects.filter(project =>
-    publications.some(pub => 
-      (pub.projectId === project.id) || 
+    publications.some(pub =>
+      (pub.projectId === project.id) ||
       (pub.projectIds && pub.projectIds.includes(project.id))
     )
   );
-  
+
   // Get software with publications
   const softwareWithPublications = software.filter(sw =>
     publications.some(pub => pub.softwareIds && pub.softwareIds.includes(sw.id))
@@ -36,17 +36,17 @@ const Publications: React.FC = () => {
   const filteredPublications = publications.filter(publication => {
     // Match year filter
     const matchesYear = selectedYear === 'All' || publication.year.toString() === selectedYear;
-    
+
     // Match type filter
     const matchesType = selectedType === 'All' || publication.type === selectedType;
-    
+
     // Match project filter
-    const matchesProject = selectedProject === 'All' || 
-      publication.projectId === selectedProject || 
+    const matchesProject = selectedProject === 'All' ||
+      publication.projectId === selectedProject ||
       (publication.projectIds && publication.projectIds.includes(selectedProject));
-      
+
     // Match software filter
-    const matchesSoftware = selectedSoftware === 'All' || 
+    const matchesSoftware = selectedSoftware === 'All' ||
       (publication.softwareIds && publication.softwareIds.includes(selectedSoftware));
 
     // Enhanced search: search across title, abstract, authors, journal, and keywords
@@ -80,14 +80,14 @@ const Publications: React.FC = () => {
     const projectIds: string[] = [];
     if (publication.projectId) projectIds.push(publication.projectId);
     if (publication.projectIds) projectIds.push(...publication.projectIds.filter(id => id !== publication.projectId));
-    
+
     // Remove duplicates
     const uniqueProjectIds = [...new Set(projectIds)];
-    
+
     return uniqueProjectIds.map(projectId => {
       const project = projects.find(p => p.id === projectId);
       if (!project) return null;
-      
+
       return (
         <Link key={projectId} to={`/projects/${projectId}`} className="related-project-link">
           {project.title}
@@ -95,17 +95,17 @@ const Publications: React.FC = () => {
       );
     }).filter(Boolean) as JSX.Element[];
   };
-  
+
   // Function to get software names by IDs
   const getSoftwareLinks = (publication: Publication): JSX.Element[] => {
     if (!publication.softwareIds || publication.softwareIds.length === 0) {
       return [];
     }
-    
+
     return publication.softwareIds.map(softwareId => {
       const sw = software.find(s => s.id === softwareId);
       if (!sw) return null;
-      
+
       return (
         <Link key={softwareId} to={`/software/${softwareId}`} className="related-software-link">
           {sw.name}
@@ -128,7 +128,7 @@ const Publications: React.FC = () => {
     <div className="publications-page">
       <div className="projects-header">
         <h1>Publications</h1>
-        <p>Research papers, conference proceedings, and other published work from our lab. If you are having trouble accessing an article, please feel free to reach out.</p>
+        <p>Research papers, conference proceedings, and other published work from our lab. If you are having trouble accessing an article, feel free to reach out.</p>
       </div>
 
       <div className="filter-container">
@@ -196,7 +196,7 @@ const Publications: React.FC = () => {
             </div>
           </div>
         )}
-        
+
         {softwareWithPublications.length > 0 && (
           <div className="tag-filter">
             <h3>Filter by Software</h3>
@@ -288,7 +288,7 @@ const Publications: React.FC = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Display related software */}
               {publication.softwareIds && publication.softwareIds.length > 0 && (
                 <div className="publication-software">

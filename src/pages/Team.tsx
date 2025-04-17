@@ -9,15 +9,13 @@ const Team: React.FC = () => {
     <div className="team-page">
       <div className="projects-header">
         <h1>Team Members</h1>
-        <p>The real voyage of discovery consists not in seeking new landscapes, but in having new eyes. – Marcel Proust</p>
+        <p><i>The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.</i> – Marcel Proust</p>
+        <p>We believe that advancing the automated discovery of mind and brain — and AI for science more broadly — requires close collaboration across disciplines.
+        That's why our group draws on the expertise of researchers from different fields, including neuroscience, psychology, computer science, engineering, and physics.</p>
       </div>
 
       <div className="team-intro">
-        <p>
-          We believe that advancing the automated discovery of mind and brain — and AI for science more broadly — requires <i>close collaboration across disciplines</i>.
-          That's why our group draws on the expertise of researchers from a variety of fields, including neuroscience, psychology, computer science, engineering, and physics.
-
-        </p>
+        <p></p>
       </div>
 
       <div className="team-container">
