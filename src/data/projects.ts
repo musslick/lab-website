@@ -48,12 +48,12 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "equation discovery",
-        "color": "#f0cca8",
+        "color": "#f0a8a8",
         "hue": 0
       },
       {
         "name": "knowledge distillation",
-        "color": "#a8f0cc",
+        "color": "#a8f0a8",
         "hue": 120
       },
       {
@@ -63,20 +63,23 @@ export const projects: Project[] = [
       },
       {
         "name": "computational modeling",
-        "color": "#f0f0a8",
+        "color": "#f0baa8",
         "hue": 15
       }
     ],
     "status": "ongoing",
-    "publications": [],
+    "publications": [
+      "pub-005",
+      "pub-1744722944290",
+      "pub-1744891086200"
+    ],
     "emojiHexcodes": [
       "1F4C8",
-      "\t1F504",
-      "1F50D"
+      "1F916"
     ],
     "image": "https://i.postimg.cc/cCm37nc5/model-discovery.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744890519217
+    "_lastUpdated": 1744902884665
   },
   {
     "id": "project-1744380957652",
@@ -107,12 +110,12 @@ export const projects: Project[] = [
       },
       {
         "name": "SAT sampling",
-        "color": "#a8f0a8",
+        "color": "#ccf0a8",
         "hue": 90
       },
       {
         "name": "program synthesis",
-        "color": "#a8d1f0",
+        "color": "#a8f0f0",
         "hue": 180
       },
       {
@@ -122,15 +125,16 @@ export const projects: Project[] = [
       }
     ],
     "status": "ongoing",
-    "publications": [],
+    "publications": [
+      "pub-1744721577387"
+    ],
     "emojiHexcodes": [
-      "1F4CA",
-      "1F504",
-      "\t1F4CB"
+      "1F52C",
+      "1F916"
     ],
     "image": "https://i.postimg.cc/0NyP1hcn/experimental-design.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744808447054
+    "_lastUpdated": 1744902569877
   },
   {
     "id": "project-1744383288085",
@@ -167,7 +171,7 @@ export const projects: Project[] = [
       },
       {
         "name": "program synthesis",
-        "color": "#a8d1f0",
+        "color": "#a8f0f0",
         "hue": 180
       },
       {
@@ -177,34 +181,38 @@ export const projects: Project[] = [
       },
       {
         "name": "equation discovery",
-        "color": "#f0cca8",
+        "color": "#f0a8a8",
         "hue": 0
       },
       {
         "name": "computational modeling",
-        "color": "#f0f0a8",
+        "color": "#f0baa8",
         "hue": 15
       },
       {
         "name": "scientific knowledge representation",
-        "color": "#cdf0a8",
+        "color": "#f0e6a8",
         "hue": 52
       },
       {
         "name": "retrieval augmented generation",
-        "color": "#f0a8f0",
+        "color": "#f0a8e5",
         "hue": 309
       }
     ],
     "status": "ongoing",
-    "publications": [],
+    "publications": [
+      "pub-001",
+      "pub-1744708691267",
+      "pub-1744719753012"
+    ],
     "emojiHexcodes": [
+      "1F4C8",
       "1F916",
-      "1F504",
-      "1F9D1-200D-1F52C"
+      "1F52C"
     ],
     "image": "https://i.postimg.cc/02TXR40S/integrated-discovery.png",
-    "_lastUpdated": 1744808325469
+    "_lastUpdated": 1744903251954
   },
   {
     "id": "project-1744383465177",
@@ -230,30 +238,31 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "integrative experimental design",
-        "color": "#cc99ff",
+        "color": "#cca8f0",
         "hue": 270
       },
       {
         "name": "large language models",
-        "color": "#ff99c7",
+        "color": "#f0a8c8",
         "hue": 333
       },
       {
         "name": "computational modeling",
-        "color": "#ffb399",
+        "color": "#f0baa8",
         "hue": 15
       }
     ],
     "status": "ongoing",
-    "publications": [],
+    "publications": [
+      "pub-003"
+    ],
     "emojiHexcodes": [
-      "\t1F9D1",
       "1F4BB",
       "1F916"
     ],
     "image": "https://i.postimg.cc/NfxbJF9S/synthetic-participants.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744791503555
+    "_lastUpdated": 1744902962907
   },
   {
     "id": "project-1744537991200",
@@ -276,7 +285,7 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "computational modeling",
-        "color": "#f0f0a8",
+        "color": "#f0baa8",
         "hue": 15
       },
       {
@@ -286,15 +295,18 @@ export const projects: Project[] = [
       }
     ],
     "status": "ongoing",
-    "publications": [],
+    "publications": [
+      "pub-1744728564846",
+      "pub-1744736607819",
+      "pub-1744896020699"
+    ],
     "emojiHexcodes": [
-      "\t2714",
       "1F9E0",
-      "\t274C"
+      "2696"
     ],
     "image": "https://i.postimg.cc/XqK1rBhc/rational-boundedness.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744810830840
+    "_lastUpdated": 1744903078480
   },
   {
     "id": "project-1744383751212",
@@ -317,7 +329,7 @@ export const projects: Project[] = [
     "topicsWithColors": [
       {
         "name": "computational modeling",
-        "color": "#f0f0a8",
+        "color": "#f0baa8",
         "hue": 15
       },
       {
@@ -327,14 +339,19 @@ export const projects: Project[] = [
       }
     ],
     "status": "ongoing",
-    "publications": [],
+    "publications": [
+      "pub-1744716563446",
+      "pub-1744719584837",
+      "pub-1744719929858",
+      "pub-1744736825251",
+      "pub-1744896816957"
+    ],
     "emojiHexcodes": [
-      "\t1F4AA",
-      "1F9E0",
-      "\t1F39B"
+      "1F914",
+      "1F9E0"
     ],
     "image": "https://i.postimg.cc/bYW5nczG/mental-effort.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744829352567
+    "_lastUpdated": 1744903153667
   }
 ];
