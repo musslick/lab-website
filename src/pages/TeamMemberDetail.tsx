@@ -12,6 +12,7 @@ const TeamMemberDetail: React.FC = () => {
   const [memberSoftware, setMemberSoftware] = useState<any[]>([]);
   const [publicationsByYear, setPublicationsByYear] = useState<Record<string, any[]>>({});
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
 
   useEffect(() => {
     const updateMemberData = () => {
@@ -148,8 +149,12 @@ const TeamMemberDetail: React.FC = () => {
 
   // Determine background style - Gradient for emojis, image for images, gradient as fallback
   const getProjectBackgroundStyle = (project: any) => {
+    // When hovering a project with emojis, show gradient if it has topics
     if (hasProjectEmojis(project)) {
-      // Use solid lab blue instead of gradient
+      if (hoveredProjectId === project.id && project.topics && project.topics.length > 0) {
+        return { background: generateProjectGradient(project) };
+      }
+      // Otherwise use solid lab blue
       return { background: LAB_COLOR };
     } else if (hasValidProjectImage(project)) {
       return { background: `url(${project.image}) center/cover no-repeat` };
@@ -244,6 +249,8 @@ const TeamMemberDetail: React.FC = () => {
                 key={project.id}
                 to={`/projects/${project.id}`}
                 className="team-member-project-card"
+                onMouseEnter={() => setHoveredProjectId(project.id)}
+                onMouseLeave={() => setHoveredProjectId(null)}
               >
                 <div
                   className="project-color-indicator"
