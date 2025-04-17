@@ -477,5 +477,72 @@ export const publications: Publication[] = [
       "project-1744383751212"
     ],
     "projectId": "project-1744383751212"
-  }
+  },
+  {
+  "id": "pub-1744891086200",
+  "title": "GFN-SR: Symbolic regression with generative flow networks",
+  "journal": "NeurIPS 2023 AI for Science Workshop",
+  "year": 2023,
+  "type": "workshop contribution",
+  "authors": [
+    "Li, S.",
+    "Marinescu, I.",
+    "Musslick, S."
+  ],
+  "citation": "Li, S., Marinescu, I., & Musslick, S. (2023). GFN-SR: Symbolic regression with generative flow networks. NeurIPS 2023 AI for Science Workshop.",
+  "url": "https://arxiv.org/abs/2312.00396",
+  "projectIds": [
+    "project-1744367667570"
+  ],
+  "projectId": "project-1744367667570",
+  "keywords": [
+    "equation discovery",
+    "generative flow networks"
+  ]
+},
+{
+  "id": "pub-1744896020699",
+  "title": "An Information-Theoretic Approach to Reward Rate Optimization in the Tradeoff Between Controlled and Automatic Processing in Neural Network Architectures",
+  "journal": "eLife",
+  "year": 2023,
+  "type": "journal article",
+  "authors": [
+    "Petri, G.",
+    "Musslick, S.",
+    "Cohen, J. D."
+  ],
+  "citation": "Petri, G., Musslick, S., & Cohen, J. D. (2024). An information-theoretic approach to reward rate optimization in the tradeoff between controlled and automatic processing in neural network architectures. eLife, 13, RP93251.",
+  "url": "https://doi.org/10.7554/eLife.93251.1",
+  "projectIds": [
+    "project-1744537991200"
+  ],
+  "projectId": "project-1744537991200",
+  "keywords": [
+    "information theory"
+  ]
+},
+{
+  "id": "pub-1744896816957",
+  "title": "An integrative effort: Bridging motivational intensity theory and recent neurocomputational and neuronal models of effort and control allocation",
+  "journal": "Psychological Review",
+  "year": 2023,
+  "type": "journal article",
+  "authors": [
+    "Silvestrini, N.",
+    "Musslick, S.",
+    "Berry, A.",
+    "Vassena, E."
+  ],
+  "citation": "Silvestrini, N., Musslick, S., Berry, A. S., & Vassena, E. (2023). An integrative effort: Bridging motivational intensity theory and recent neurocomputational and neuronal models of effort and control allocation. Psychological Review, 130(4), 1081.",
+  "doi": "10.1037/rev0000372",
+  "url": "https://doi.org/10.1037/rev0000372",
+  "projectIds": [
+    "project-1744383751212"
+  ],
+  "projectId": "project-1744383751212",
+  "keywords": [
+    "cognitive control",
+    "expected value of control"
+  ]
+}
 ];
