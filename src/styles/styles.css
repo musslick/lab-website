@@ -2278,7 +2278,7 @@ header {
 
 /* News emoji container styles */
 .news-emoji-container {
-  height: 200px;
+  height: 180px;
   position: relative;
   display: flex;
   align-items: center;
@@ -2290,14 +2290,14 @@ header {
 }
 
 .news-emoji {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
   filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
 }
 
 .news-image {
-  height: 200px;
+  height: 180px;
   overflow: hidden;
 }
 
