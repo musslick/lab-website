@@ -75,9 +75,10 @@ const Feed: React.FC = () => {
                   {item.emojiHexcodes && item.emojiHexcodes.map((hexcode: string, index: number) => (
                     <img 
                       key={index}
-                      src={getOpenMojiUrl(hexcode)} 
+                      src={getOpenMojiUrl(hexcode, true)} // Set invertColor to true to make emojis white
                       alt={`News Emoji ${index+1}`} 
                       className="news-emoji"
+                      style={{ filter: 'invert(1)' }} // Add CSS filter to invert colors (black to white)
                       onError={(e) => {
                         console.error(`Failed to load emoji with hexcode: ${hexcode}`);
                         (e.target as HTMLImageElement).style.display = 'none';

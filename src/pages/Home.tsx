@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 // Import the SVG directly when using Create React App or similar bundler
 import { ReactComponent as BrainLogo } from '../assets/logo.svg';
+import { getOpenMojiUrl } from '../utils/colorUtils';
 
 const Home: React.FC = () => {
     const { projects, collaborators, fundingSources, newsItems, publications, getFeaturedItems, getTeamImage, getTeamImagePosition } = useContent();
@@ -129,9 +130,10 @@ const Home: React.FC = () => {
                                         {featuredNewsItem.emojiHexcodes.map((hexcode, index) => (
                                             <img 
                                                 key={index}
-                                                src={`https://openmoji.org/data/black/svg/${hexcode}.svg`}
+                                                src={getOpenMojiUrl(hexcode, true)}
                                                 alt={`News Emoji ${index+1}`}
                                                 className="project-emoji"
+                                                style={{ filter: 'invert(1)' }}
                                                 onError={(e) => {
                                                     console.error(`Failed to load emoji with hexcode: ${hexcode}`);
                                                     (e.target as HTMLImageElement).style.display = 'none';
@@ -176,9 +178,10 @@ const Home: React.FC = () => {
                                 {/* Always display bookmark emoji for publications - now using black and white version */}
                                 <div className="project-emoji-container">
                                     <img 
-                                        src={`https://openmoji.org/data/black/svg/1F4D1.svg`}
+                                        src={getOpenMojiUrl('1F4D1', true)}
                                         alt="Publication Bookmark"
                                         className="project-emoji"
+                                        style={{ filter: 'invert(1)' }}
                                         onError={(e) => {
                                             console.error('Failed to load bookmark emoji');
                                             (e.target as HTMLImageElement).style.display = 'none';

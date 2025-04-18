@@ -202,13 +202,14 @@ export const OPENMOJI_BASE_URL = "https://openmoji.org/data/black/svg/";
 /**
  * Get the OpenMoji URL for a given emoji hexcode
  * @param hexcode The hexcode of the emoji (e.g. "1F600" for 😀)
- * @returns The full URL to the OpenMoji SVG (black and white version)
+ * @param invertColor Whether to invert the color (black to white)
+ * @returns The full URL to the OpenMoji SVG
  */
-export const getOpenMojiUrl = (hexcode: string): string => {
+export const getOpenMojiUrl = (hexcode: string, invertColor: boolean = false): string => {
   if (!hexcode) return "";
   // Ensure the hexcode is properly formatted without any prefixes
   const cleanHexcode = hexcode.replace(/^U\+/i, "").toUpperCase();
-  return `${OPENMOJI_BASE_URL}${cleanHexcode}.svg`;
+  return `${OPENMOJI_BASE_URL}${cleanHexcode}.svg${invertColor ? '#invert' : ''}`;
 };
 
 /**
