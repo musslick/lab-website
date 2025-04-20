@@ -581,5 +581,32 @@ export const publications: Publication[] = [
       "project-1744367667570"
     ],
     "projectId": "project-1744367667570"
-  }
+  },
+  {
+  "id": "pub-1744922642928",
+  "title": "An evaluation of experimental sampling strategies for autonomous empirical research in cognitive science",
+  "journal": "Proceedings of the 45th Annual Meeting of the Cognitive Science Society ",
+  "year": 2023,
+  "type": "conference proceeding",
+  "authors": [
+    "Musslick, S.",
+    "Hewson, J. T. S.",
+    "Andrew, B. W.",
+    "Strittmatter, Y.",
+    "Williams, C. C.",
+    "Dang, G. T.",
+    "Dubova, M.",
+    "Holland, J. G."
+  ],
+  "citation": "Musslick, S., Hewson, J. T., Andrew, B. W., Strittmatter, Y., Williams, C. C., Dang, G. T., ... & Holland, J. G. (2023). An evaluation of experimental sampling strategies for autonomous empirical research in cognitive science. In Proceedings of the 45th Annual Meeting of the Cognitive Science Society (pp. 1386–1392).",
+  "url": "https://escholarship.org/uc/item/5ch569fg",
+  "projectIds": [
+    "project-1744380957652"
+  ],
+  "projectId": "project-1744380957652",
+  "keywords": [
+    "random sampling",
+    "metascience"
+  ]
+}
 ];
