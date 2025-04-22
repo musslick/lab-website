@@ -23,9 +23,7 @@ export const newsItems: NewsItem[] = [
       "cognitive control",
       "computational modeling"
     ],
-    "emojiHexcodes": [
-      "1F91D"
-    ]
+    "imageUrl": "https://www.uni-bonn.de/de/forschung-lehre/forschungsprofil/transdisziplinaere-forschungsbereiche/tra-4-individuals/programme/german-research-foundation/logo-dfg.jpg/@@images/image/leadimagesize"
   },
   {
     "id": "news-2",
@@ -33,7 +31,7 @@ export const newsItems: NewsItem[] = [
     "content": "We are fortunate to have received support from Lower Saxony's Ministry of Science and Culture for a workshop on “AI for Discovery of Mind and Brain” (PROFIL International, MWK, 28.204 Euro) for hosting a Workshop at Princeton University together with our collaborators there, Younes Strittmatter and Jonathan D. Cohen.\n\nThis workshop will host a series of tutorials on open-software scientific software for automating scientific discovery in cognitive science, and present cutting-edge research on AI for cognitive science and automated scientific discovery.\n\nStay tuned for more details!",
     "date": "2025-04-11",
     "author": "Sebastian Musslick",
-    "featured": false,
+    "featured": true,
     "tags": [
       "AI for science",
       "automated scientific discovery",
@@ -41,9 +39,7 @@ export const newsItems: NewsItem[] = [
       "hackathon",
       "funding"
     ],
-    "emojiHexcodes": [
-      "1F91D"
-    ]
+    "imageUrl": "https://i.postimg.cc/Y2RwQtJ4/New-Logo-3.png"
   },
   {
     "id": "news-3",
@@ -55,8 +51,16 @@ export const newsItems: NewsItem[] = [
     "tags": [
       "team update"
     ],
-    "emojiHexcodes": [
-      "1F9D1-200D-1F393"
-    ]
+    "imageUrl": "https://i.postimg.cc/NfR4FFXr/Moritz.jpg"
+  },
+  {
+    "id": "news-1745330308816",
+    "title": "Automated Research Assistant presented at Interdisciplinary Science Summit",
+    "content": "Our Automated Research Assistant (AutoRA) was featured in a live demo at the Interdisciplinary Science Summit in Toronto, an event organized by Schmidt Science Fellows. At the summit, we showcased how AutoRA can discover models of human human learning in closed-loop experiments.",
+    "date": "2024-12-07",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [],
+    "imageUrl": "https://i.postimg.cc/W46skZ2f/bb-media-photos-popup-image-2.jpg"
   }
 ];

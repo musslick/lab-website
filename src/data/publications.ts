@@ -41,7 +41,12 @@ export const publications: Publication[] = [
     "citation": "Musslick, S., Bartlett, L. K., Chandramouli, S. H., Dubova, M., Gobet, F., Griffiths, T. L., ... & Holmes, W. R. (2025). Automating the practice of science: Opportunities, challenges, and implications. Proceedings of the National Academy of Sciences, 122(5), e2401238121.",
     "doi": "10.1073/pnas.2401238121",
     "url": "https://doi.org/10.1073/pnas.2401238121",
-    "projectId": "project-1744383288085",
+    "projectIds": [
+      "project-1744367667570",
+      "project-1744380957652",
+      "project-1744383288085"
+    ],
+    "projectId": "project-1744367667570",
     "keywords": [
       "automated scientific practice",
       "automated model discovery",
@@ -87,7 +92,15 @@ export const publications: Publication[] = [
     "citation": "Strittmatter, Y., & Musslick, S. (2025). SweetBean: A declarative language for behavioral experiments with human and artificial participants. Journal of Open Source Software, 10(107), 7703.",
     "doi": "10.21105/joss.07703",
     "url": "https://joss.theoj.org/papers/10.21105/joss.07703",
-    "projectId": "project-1744383465177",
+    "projectIds": [
+      "project-1744380957652",
+      "project-1744383288085",
+      "project-1744383465177"
+    ],
+    "projectId": "project-1744380957652",
+    "softwareIds": [
+      "cogni-sim"
+    ],
     "keywords": [
       "LLM",
       "web-based experiments",
@@ -170,9 +183,12 @@ export const publications: Publication[] = [
     "doi": "10.21105/joss.06839",
     "url": "https://doi.org/10.21105/joss.06839",
     "projectIds": [
-      "project-1744383288085"
+      "project-1744367667570",
+      "project-1744380957652",
+      "project-1744383288085",
+      "project-1744383465177"
     ],
-    "projectId": "project-1744383288085",
+    "projectId": "project-1744367667570",
     "softwareIds": [
       "brain-mapper"
     ],
@@ -289,7 +305,11 @@ export const publications: Publication[] = [
     "citation": "Musslick, S., & Bizyaeva, A. (2024). Examining cognitive flexibility and stability through the lens of dynamical systems. Current Opinion in Behavioral Sciences, 57, 101375.",
     "doi": "10.1016/j.cobeha.2024.101375",
     "url": "https://doi.org/10.1016/j.cobeha.2024.101375",
-    "projectId": "project-1744383751212",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200",
     "keywords": [
       "tradeoff",
       "rational boundedness",
@@ -310,7 +330,16 @@ export const publications: Publication[] = [
     "citation": "Musslick, S., Strittmatter, Y., & Dubova, M. (2024). Closed-loop scientific discovery in the behavioral sciences. PsyArXiv.",
     "doi": "10.31234/osf.io/c2ytb",
     "url": "https://doi.org/10.31234/osf.io/c2ytb",
-    "projectId": "project-1744383288085",
+    "projectIds": [
+      "project-1744367667570",
+      "project-1744380957652",
+      "project-1744383288085",
+      "project-1744383465177"
+    ],
+    "projectId": "project-1744367667570",
+    "softwareIds": [
+      "brain-mapper"
+    ],
     "keywords": [
       "automated scientific discovery"
     ]
@@ -388,7 +417,14 @@ export const publications: Publication[] = [
     ],
     "citation": "Brondetta, A., Bizyaeva, A., Lucas, M., Petri, G., & Musslick, S. (2024). On the Benefits of Heterogeneity in Cognitive Stability and Flexibility for Collaborative Task Switching. In Proceedings of the 46th Annual Meeting of the Cognitive Science Society (pp. 5872– 5878).",
     "url": "https://escholarship.org/uc/item/6b47b61g",
-    "projectId": "project-1744537991200"
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200",
+    "softwareIds": [
+      "software-1745315215124"
+    ]
   },
   {
     "id": "pub-1744736334974",
@@ -421,6 +457,10 @@ export const publications: Publication[] = [
     ],
     "citation": "Li, Y., Carrasco-Davis, R., Strittmatter, Y., Sarao Mannelli, S., & Musslick, S. (2024). A meta-learning framework for rationalizing cognitive fatigue in neural systems. In Proceedings of the 46th Annual Meeting of the Cognitive Science Society (pp. 1598– 1606).",
     "url": "https://escholarship.org/uc/item/8pn5q3kx",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
     "projectId": "project-1744537991200",
     "keywords": [
       "cognitive control",
@@ -479,7 +519,8 @@ export const publications: Publication[] = [
     "citation": "Petri, G., Musslick, S., & Cohen, J. D. (2024). An information-theoretic approach to reward rate optimization in the tradeoff between controlled and automatic processing in neural network architectures. eLife, 13, RP93251.",
     "url": "https://doi.org/10.7554/eLife.93251.1",
     "projectIds": [
-      "project-1744537991200"
+      "project-1744537991200",
+      "project-1744383751212"
     ],
     "projectId": "project-1744537991200",
     "keywords": [
@@ -580,33 +621,36 @@ export const publications: Publication[] = [
     "projectIds": [
       "project-1744367667570"
     ],
-    "projectId": "project-1744367667570"
+    "projectId": "project-1744367667570",
+    "softwareIds": [
+      "brain-mapper"
+    ]
   },
   {
-  "id": "pub-1744922642928",
-  "title": "An evaluation of experimental sampling strategies for autonomous empirical research in cognitive science",
-  "journal": "Proceedings of the 45th Annual Meeting of the Cognitive Science Society ",
-  "year": 2023,
-  "type": "conference proceeding",
-  "authors": [
-    "Musslick, S.",
-    "Hewson, J. T. S.",
-    "Andrew, B. W.",
-    "Strittmatter, Y.",
-    "Williams, C. C.",
-    "Dang, G. T.",
-    "Dubova, M.",
-    "Holland, J. G."
-  ],
-  "citation": "Musslick, S., Hewson, J. T., Andrew, B. W., Strittmatter, Y., Williams, C. C., Dang, G. T., ... & Holland, J. G. (2023). An evaluation of experimental sampling strategies for autonomous empirical research in cognitive science. In Proceedings of the 45th Annual Meeting of the Cognitive Science Society (pp. 1386–1392).",
-  "url": "https://escholarship.org/uc/item/5ch569fg",
-  "projectIds": [
-    "project-1744380957652"
-  ],
-  "projectId": "project-1744380957652",
-  "keywords": [
-    "random sampling",
-    "metascience"
-  ]
-}
+    "id": "pub-1744922642928",
+    "title": "An evaluation of experimental sampling strategies for autonomous empirical research in cognitive science",
+    "journal": "Proceedings of the 45th Annual Meeting of the Cognitive Science Society ",
+    "year": 2023,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Hewson, J. T. S.",
+      "Andrew, B. W.",
+      "Strittmatter, Y.",
+      "Williams, C. C.",
+      "Dang, G. T.",
+      "Dubova, M.",
+      "Holland, J. G."
+    ],
+    "citation": "Musslick, S., Hewson, J. T., Andrew, B. W., Strittmatter, Y., Williams, C. C., Dang, G. T., ... & Holland, J. G. (2023). An evaluation of experimental sampling strategies for autonomous empirical research in cognitive science. In Proceedings of the 45th Annual Meeting of the Cognitive Science Society (pp. 1386–1392).",
+    "url": "https://escholarship.org/uc/item/5ch569fg",
+    "projectIds": [
+      "project-1744380957652"
+    ],
+    "projectId": "project-1744380957652",
+    "keywords": [
+      "random sampling",
+      "metascience"
+    ]
+  }
 ];

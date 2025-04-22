@@ -51,7 +51,7 @@ const Home: React.FC = () => {
 
             {/* Team Picture Section - Updated to include mission statement */}
             <section className="team-picture-section" style={{ marginTop: '4rem' }}>
-                <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '2rem' }}>Welcome to our lab.</h2>
+                <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '2rem' }}>AI for Science <span style={{ color: 'grey' }}>Meets</span> Cognitive Science</h2>
                 <div className="team-mission-container" style={{
                     display: 'flex',
                     gap: '1.5rem',
@@ -108,10 +108,10 @@ const Home: React.FC = () => {
                     }}>
                         <h3 style={{ marginTop: '0', color: '#00AAFF' }}>Our Mission</h3>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
-                            Our lab explores <b><span style={{ color: '#00AAFF' }}>how the human mind works</span></b> — and why it sometimes doesn’t. But understanding something as complex as the brain is hard, especially when we’re limited by our own brains in the process.
+                            Our lab studies the computational principles that underlie the <b><span style={{ color: '#00AAFF' }}>capabilities and limitations of human cognition.</span></b> Ironically, as human scientists, we are constrained by the very cognitive limitations we seek to understand: the space of possible scientific models and experiments is too vast for the human brain to navigate alone, making it difficult to achieve an integrative understanding of the mind.
                         </p>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem', marginBottom: '0' }}>
-                            To break through these limits, we <b><span style={{ color: '#00AAFF' }}>build AI scientists</span></b> that work alongside us as research partners. These artificial scientists help us explore larger spaces of theories and experiments, and identify patterns that human researchers might otherwise miss. Together, we aim to better understand the computational principles behind human thought and behavior — and push the boundaries of how science itself is done.
+                            To overcome these limits, we integrate AI into the scientific process. We <b><span style={{ color: '#00AAFF' }}>build artificial scientists</span></b> that work alongside us as research partners — systems that can explore larger spaces of theories and experiments, and uncover patterns that human researchers might overlook. Together, we aim to better understand the computational principles behind human thought and behavior— and to push the boundaries of how science itself is done.
                         </p>
                     </div>
                 </div>
@@ -128,7 +128,7 @@ const Home: React.FC = () => {
                                 {featuredNewsItem.emojiHexcodes && featuredNewsItem.emojiHexcodes.length > 0 && (
                                     <div className="project-emoji-container">
                                         {featuredNewsItem.emojiHexcodes.map((hexcode, index) => (
-                                            <img 
+                                            <img
                                                 key={index}
                                                 src={getOpenMojiUrl(hexcode, true)}
                                                 alt={`News Emoji ${index+1}`}
@@ -177,7 +177,7 @@ const Home: React.FC = () => {
                             >
                                 {/* Always display bookmark emoji for publications - now using black and white version */}
                                 <div className="project-emoji-container">
-                                    <img 
+                                    <img
                                         src={getOpenMojiUrl('1F4D1', true)}
                                         alt="Publication Bookmark"
                                         className="project-emoji"

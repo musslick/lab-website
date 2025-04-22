@@ -38,11 +38,15 @@ export const software: Software[] = [
     "demoUrl": "https://autoresearch.github.io/autora/examples/closed-loop-basic/",
     "documentationUrl": "https://autoresearch.github.io/autora/",
     "projectIds": [
+      "project-1744367667570",
+      "project-1744380957652",
       "project-1744383288085"
     ],
-    "projectId": "project-1744383288085",
+    "projectId": "project-1744367667570",
     "publicationIds": [
-      "pub-1744708691267"
+      "pub-1744708691267",
+      "pub-003",
+      "pub-1744719753012"
     ],
     "featured": true,
     "releaseDate": "2022-08-26"
@@ -64,9 +68,10 @@ export const software: Software[] = [
     "demoUrl": "https:/https://autoresearch.github.io/sweetbean/Basic%20Tutorials//demos.automated-lab.org/cognisim",
     "documentationUrl": "https://autoresearch.github.io/sweetbean/",
     "projectIds": [
+      "project-1744383288085",
       "project-1744383465177"
     ],
-    "projectId": "project-1744383465177",
+    "projectId": "project-1744383288085",
     "releaseDate": "2024-12-10"
   },
   {
@@ -83,8 +88,13 @@ export const software: Software[] = [
     "license": "MIT",
     "demoUrl": "https://sites.google.com/view/sweetpea-ai/tutorials",
     "documentationUrl": "https://sweetpea-org.github.io/",
+    "projectIds": [
+      "project-1744380957652",
+      "project-1744383288085"
+    ],
     "projectId": "project-1744380957652",
-    "releaseDate": "2018-09-20"
+    "releaseDate": "2018-09-20",
+    "publicationIds": []
   },
   {
     "id": "software-1744661083211",
