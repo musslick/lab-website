@@ -69,7 +69,7 @@ export const jobOpenings: JobOpening[] = [
   },
   {
     "id": "job-1745315794128",
-    "title": "Student Workshop Assistant",
+    "title": "Student Assistant",
     "description": "Our lab is hosting a Workshop on \"AI for Discovery of Mind and Brain\" at Princeton University this September. We are looking for a student assistant who will help organize the workshop.\n\nTasks include:\n\n- Coordination with workshop speakers and administrative staff at UOS and Princeton University\n- Planning of the workshop schedule\n- Generation of materials for workshop advertisement\n\nWe are looking for someone able to dedicate 20h/month beginning as soon as possible. \n\nPlease send your CV and a brief motivation letter to sebastian.musslick@uos.de (Subject: \"SHK for UOS-Princeton Workshop\").",
     "requirements": [
       "fluent in English",
@@ -80,6 +80,7 @@ export const jobOpenings: JobOpening[] = [
     "location": "hybrid",
     "postedDate": "2025-04-22",
     "isOpen": true,
-    "contactEmail": "sebastian.musslick@uos.de"
+    "contactEmail": "sebastian.musslick@uos.de",
+    "projectId": "project-1744383288085"
   }
 ];
