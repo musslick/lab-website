@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import { Link } from 'react-router-dom';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ const Contact: React.FC = () => {
     organization: '',
     message: ''
   });
-  
+
   const [formStatus, setFormStatus] = useState<{
     submitted: boolean;
     error: string | null;
@@ -16,7 +17,7 @@ const Contact: React.FC = () => {
     submitted: false,
     error: null
   });
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
@@ -24,10 +25,10 @@ const Contact: React.FC = () => {
       [name]: value
     }));
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!formData.name || !formData.email || !formData.message) {
       setFormStatus({
@@ -36,7 +37,7 @@ const Contact: React.FC = () => {
       });
       return;
     }
-    
+
     // In a real application, you would send the form data to your backend
     // For this example, we'll just simulate a successful submission
     setTimeout(() => {
@@ -52,29 +53,23 @@ const Contact: React.FC = () => {
       });
     }, 1000);
   };
-  
+
   return (
     <Layout>
       <div className="contact-page">
         <div className="page-header">
           <h1>Contact Us</h1>
-          <p>Interested in collaborating? Get in touch with our team.</p>
+          <p>Interested in working with us? Get in touch with our <Link to="/team"><span style={{ color: '#00AAFF' }}>team</span></Link>.</p>
         </div>
-        
+
         <div className="contact-container">
           <div className="contact-info">
-            <h2>Why Collaborate With Us?</h2>
-            <p>Our lab is dedicated to exploring the frontiers of mind and brain research through automated scientific discovery. We welcome collaborations with:</p>
-            <ul>
-              <li>Academic research groups</li>
-              <li>Industry partners</li>
-              <li>Healthcare institutions</li>
-              <li>Technology companies</li>
-              <li>Government agencies</li>
-            </ul>
-            <p>Together, we can push the boundaries of neuroscience and develop innovative solutions to complex problems.</p>
+            <p>Our lab entertains <b>collaborations</b> with researchers in both academia and industry. We are particularly interested to learn from and work with researchers focused in AI for science and automated scientific discovery, irrespective of the application domain.</p>
+            <p></p>
+            <p>For <b>press inquiries</b>, please contact <a href="mailto:office-spa@uni-osnabrueck.de"><span style={{ color: '#00AAFF' }}>Julia Reuter</span></a> or <a href="mailto:sebastian.musslick@uos.de"><span style={{ color: '#00AAFF' }}>Sebastian Musslick</span></a>. </p>
           </div>
-          
+
+          {/*
           <div className="contact-form-container">
             {formStatus.submitted ? (
               <div className="success-message">
@@ -86,7 +81,7 @@ const Contact: React.FC = () => {
                 {formStatus.error && (
                   <div className="error-message">{formStatus.error}</div>
                 )}
-                
+
                 <div className="form-group">
                   <label htmlFor="name">Name*</label>
                   <input
@@ -98,7 +93,7 @@ const Contact: React.FC = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="form-group">
                   <label htmlFor="email">Email*</label>
                   <input
@@ -110,7 +105,7 @@ const Contact: React.FC = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="form-group">
                   <label htmlFor="organization">Organization</label>
                   <input
@@ -121,7 +116,7 @@ const Contact: React.FC = () => {
                     onChange={handleChange}
                   />
                 </div>
-                
+
                 <div className="form-group">
                   <label htmlFor="message">Message*</label>
                   <textarea
@@ -133,11 +128,12 @@ const Contact: React.FC = () => {
                     required
                   ></textarea>
                 </div>
-                
+
                 <button type="submit" className="submit-button">Send Message</button>
               </form>
             )}
           </div>
+          */}
         </div>
       </div>
     </Layout>
