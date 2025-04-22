@@ -44,9 +44,7 @@ export const software: Software[] = [
     ],
     "projectId": "project-1744367667570",
     "publicationIds": [
-      "pub-1744708691267",
-      "pub-003",
-      "pub-1744719753012"
+      "pub-1744708691267"
     ],
     "featured": true,
     "releaseDate": "2022-08-26"

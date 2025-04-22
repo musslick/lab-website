@@ -57,10 +57,37 @@ export const newsItems: NewsItem[] = [
     "id": "news-1745330308816",
     "title": "Automated Research Assistant presented at Interdisciplinary Science Summit",
     "content": "Our Automated Research Assistant (AutoRA) was featured in a live demo at the Interdisciplinary Science Summit in Toronto, an event organized by Schmidt Science Fellows. At the summit, we showcased how AutoRA can discover models of human human learning in closed-loop experiments.",
-    "date": "2024-12-07",
+    "date": "2024-07-17",
     "author": "Sebastian Musslick",
     "featured": false,
     "tags": [],
     "imageUrl": "https://i.postimg.cc/W46skZ2f/bb-media-photos-popup-image-2.jpg"
+  },
+  {
+    "id": "news-1745333860298",
+    "title": "Hackathon at German Research Center for AI",
+    "content": "Together with the Autonomous Empirical Research Group, our lab hosted a hackathon at the  German Research Center for AI in Osnabrück, Germany. The goal of the hackathon was to develop integrated scientific discovery systems capable of discovering new models of human learning. ",
+    "date": "2025-01-24",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [
+      "AI for science",
+      "automated scientific discovery",
+      "hackathon"
+    ],
+    "imageUrl": "https://i.postimg.cc/MZ3mcy7s/dfki-hackathon.jpg"
+  },
+  {
+    "id": "news-1745334035309",
+    "title": "Computational Modeling Workshop at Brown University",
+    "content": "Our lab co-organized Computational Modeling Workshop at held at the Carney Institute for Brain Science at Brown University. The workshop enabled students of Osnabrück University and other institutions to learn about basic and advanced methods in computational modeling. Students travel grants were supported by the Institute of Cognitive Science and the Universitätsgesellschaft of Osnabrück University.",
+    "date": "2024-07-12",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [
+      "computational modeling",
+      "workshop"
+    ],
+    "imageUrl": "https://i.postimg.cc/zvDN4stk/brown-workshop.jpg"
   }
 ];
