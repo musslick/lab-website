@@ -27,7 +27,7 @@ export const jobOpenings: JobOpening[] = [
     "type": "postdoc",
     "location": "On-site",
     "postedDate": "2023-09-01",
-    "isOpen": true,
+    "isOpen": false,
     "contactEmail": "applications@automatedlab.org",
     "closingDate": "2023-12-31",
     "projectId": "neural-mapping"
@@ -44,10 +44,10 @@ export const jobOpenings: JobOpening[] = [
     ],
     "type": "phd",
     "location": "On-site",
-    "contactEmail": "applications@automatedlab.org",
     "postedDate": "2023-10-15",
-    "projectId": "brain-computer",
-    "isOpen": true
+    "isOpen": false,
+    "contactEmail": "applications@automatedlab.org",
+    "projectId": "brain-computer"
   },
   {
     "id": "job-003",
@@ -61,10 +61,25 @@ export const jobOpenings: JobOpening[] = [
     ],
     "type": "internship",
     "location": "Remote or On-site",
-    "applicationUrl": "https://forms.automatedlab.org/internship",
     "postedDate": "2023-11-01",
+    "isOpen": false,
+    "applicationUrl": "https://forms.automatedlab.org/internship",
     "closingDate": "2024-02-28",
-    "projectId": "cognitive-ai",
-    "isOpen": true
+    "projectId": "cognitive-ai"
+  },
+  {
+    "id": "job-1745315794128",
+    "title": "Student Workshop Assistant",
+    "description": "Our lab is hosting a Workshop on \"AI for Discovery of Mind and Brain\" at Princeton University this September. We are looking for a student assistant who will help organize the workshop.\n\nTasks include:\n\n- Coordination with workshop speakers and administrative staff at UOS and Princeton University\n- Planning of the workshop schedule\n- Generation of materials for workshop advertisement\n\nWe are looking for someone able to dedicate 20h/month beginning May 1st. \n\nPlease send your CV and a brief motivation letter to sebastian.musslick@uos.de (Subject: \"SHK for UOS-Princeton Workshop\").",
+    "requirements": [
+      "fluent in English",
+      "excellent organizational skills",
+      "general understanding of AI and cognitive science"
+    ],
+    "type": "part-time",
+    "location": "hybrid",
+    "postedDate": "2025-04-22",
+    "isOpen": true,
+    "contactEmail": "sebastian.musslick@uos.de"
   }
 ];
