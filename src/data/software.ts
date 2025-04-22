@@ -102,5 +102,31 @@ export const software: Software[] = [
     "license": "MIT",
     "documentationUrl": "https://autoresearch.github.io/EEG-GAN/",
     "releaseDate": "2023-03-28"
+  },
+  {
+    "id": "software-1745315215124",
+    "name": "Mentevo",
+    "description": "Mentevo is a compact Python library for simulating and analyzing a dynamical system model of cognitive stability and flexibility in task-switching environments, within groups of agents. Originally developed for the study presented in Brondetta et al. (2024), it provides tools to explore how environmental and task conditions (e.g., task-switching rates) affect individual and group task-switching performance. The library also includes parametrization options, performance metrics and visualization methods.",
+    "repoUrl": "https://github.com/alessandrabrondetta/Mentevo",
+    "technologies": [
+      "dynamical system",
+      "computational modeling"
+    ],
+    "developers": [
+      "Alessandra Brondetta"
+    ],
+    "license": "MIT",
+    "imageUrl": "https://alessandrabrondetta.github.io/Mentevo/assets/banner.png",
+    "demoUrl": "https://github.com/alessandrabrondetta/Mentevo/blob/main/notebooks/starter.ipynb",
+    "documentationUrl": "https://alessandrabrondetta.github.io/Mentevo/",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200",
+    "publicationIds": [
+      "pub-1744728564846"
+    ],
+    "releaseDate": "2025-01-20"
   }
 ];
