@@ -7,16 +7,16 @@ import '../styles/styles.css';
 const JoinUs: React.FC = () => {
   const { jobOpenings, projects } = useContent();
   const [selectedType, setSelectedType] = useState<string>('All');
-  
+
   // Get unique job types
   const allTypes = jobOpenings.map(job => job.type);
   const uniqueTypes = ['All', ...Array.from(new Set(allTypes))];
-  
+
   // Filter job openings by selected type and only show open positions
-  const filteredJobs = selectedType === 'All' 
-    ? jobOpenings.filter(job => job.isOpen) 
+  const filteredJobs = selectedType === 'All'
+    ? jobOpenings.filter(job => job.isOpen)
     : jobOpenings.filter(job => job.isOpen && job.type === selectedType);
-  
+
   // Format job type for display
   const formatJobType = (type: string): string => {
     switch(type) {
@@ -28,7 +28,7 @@ const JoinUs: React.FC = () => {
       default: return type.charAt(0).toUpperCase() + type.slice(1);
     }
   };
-  
+
   // Get project title by ID
   const getProjectTitle = (projectId: string): string => {
     const project = projects.find(p => p.id === projectId);
@@ -40,16 +40,17 @@ const JoinUs: React.FC = () => {
       <div className="projects-page">
         <div className="projects-header">
           <h1>Join Our Team</h1>
-          <p>Explore current opportunities to work with our research lab</p>
+          <p>Explore current opportunities to work with our lab.</p>
         </div>
-        
+
+        {/*
         <div className="join-us-intro">
           <p>
             We are looking for talented and passionate individuals to join our interdisciplinary team.
-            Our lab offers a collaborative environment where researchers can contribute to cutting-edge 
+            Our lab offers a collaborative environment where researchers can contribute to cutting-edge
             projects in neuroscience, artificial intelligence, and brain-computer interfaces.
           </p>
-          
+
           <h2>Why Join Us?</h2>
           <ul className="benefits-list">
             <li>Work on groundbreaking research with real-world impact</li>
@@ -59,15 +60,16 @@ const JoinUs: React.FC = () => {
             <li>Flexible working arrangements and competitive compensation</li>
           </ul>
         </div>
+        */}
 
         <h2>Open Positions</h2>
-        
+
         <div className="tag-filter">
           <h3>Filter by Position Type</h3>
           <div className="tag-list">
             {uniqueTypes.map(type => (
-              <button 
-                key={type} 
+              <button
+                key={type}
                 className={`tag-button ${selectedType === type ? 'active' : ''}`}
                 onClick={() => setSelectedType(type)}
               >
@@ -76,13 +78,13 @@ const JoinUs: React.FC = () => {
             ))}
           </div>
         </div>
-        
+
         <div className="job-openings-list">
           {filteredJobs.length > 0 ? (
             filteredJobs.map(job => (
               <div key={job.id} className="job-opening-card">
                 <h3 className="job-title">{job.title}</h3>
-                
+
                 <div className="job-meta">
                   <span className="job-type">{formatJobType(job.type)}</span>
                   <span className="job-location">{job.location}</span>
@@ -92,9 +94,9 @@ const JoinUs: React.FC = () => {
                     </Link>
                   )}
                 </div>
-                
+
                 <p className="job-description">{job.description}</p>
-                
+
                 <div className="job-requirements">
                   <h4>Requirements:</h4>
                   <ul>
@@ -103,26 +105,26 @@ const JoinUs: React.FC = () => {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div className="job-dates">
                   <div>Posted: {new Date(job.postedDate).toLocaleDateString()}</div>
                   {job.closingDate && (
                     <div>Apply by: {new Date(job.closingDate).toLocaleDateString()}</div>
                   )}
                 </div>
-                
+
                 <div className="job-apply">
                   {job.applicationUrl ? (
-                    <a 
-                      href={job.applicationUrl} 
-                      className="apply-button" 
-                      target="_blank" 
+                    <a
+                      href={job.applicationUrl}
+                      className="apply-button"
+                      target="_blank"
                       rel="noopener noreferrer"
                     >
                       Apply Now
                     </a>
                   ) : job.contactEmail ? (
-                    <a 
+                    <a
                       href={`mailto:${job.contactEmail}?subject=Application for ${job.title}`}
                       className="apply-button"
                     >
