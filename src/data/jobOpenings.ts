@@ -3,7 +3,7 @@ export interface JobOpening {
   title: string;
   description: string;
   requirements: string[];
-  type: 'full-time' | 'part-time' | 'internship' | 'phd' | 'postdoc';
+  type: 'Postdoctoral Researcher' | 'Doctoral Researcher' | 'Student Research Assistant' | 'Intern' | 'Other' | 'full-time' | 'part-time' | 'internship' | 'phd' | 'postdoc'; // Updated to include new types while maintaining backward compatibility
   location: string;
   contactEmail?: string;
   applicationUrl?: string;

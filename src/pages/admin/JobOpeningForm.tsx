@@ -13,7 +13,7 @@ const JobOpeningForm: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [requirements, setRequirements] = useState<string[]>(['']);
-  const [type, setType] = useState<'full-time' | 'part-time' | 'internship' | 'phd' | 'postdoc'>('full-time');
+  const [type, setType] = useState<JobOpening['type']>('Other');
   const [location, setLocation] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [applicationUrl, setApplicationUrl] = useState('');
@@ -42,6 +42,15 @@ const JobOpeningForm: React.FC = () => {
     }
   }, [isNewJobOpening, jobId]);
   
+  // Define the predefined position types
+  const positionTypes = [
+    "Postdoctoral Researcher",
+    "Doctoral Researcher", 
+    "Student Research Assistant", 
+    "Intern", 
+    "Other"
+  ] as const;
+  
   useEffect(() => {
     if (!isNewJobOpening) {
       // Only load existing data for edit mode
@@ -51,7 +60,20 @@ const JobOpeningForm: React.FC = () => {
         setTitle(jobToEdit.title || '');
         setDescription(jobToEdit.description || '');
         setRequirements(jobToEdit.requirements || ['']);
-        setType(jobToEdit.type || 'full-time');
+        
+        // Map legacy types to new position types if needed
+        let positionType = jobToEdit.type as JobOpening['type'];
+        if (positionType === 'full-time' || positionType === 'part-time') {
+          positionType = "Other";
+        } else if (positionType === 'postdoc') {
+          positionType = "Postdoctoral Researcher";
+        } else if (positionType === 'phd') {
+          positionType = "Doctoral Researcher";
+        } else if (positionType === 'internship') {
+          positionType = "Intern";
+        }
+        
+        setType(positionType);
         setLocation(jobToEdit.location || '');
         setContactEmail(jobToEdit.contactEmail || '');
         setApplicationUrl(jobToEdit.applicationUrl || '');
@@ -242,14 +264,14 @@ const JobOpeningForm: React.FC = () => {
               <select
                 id="type"
                 value={type}
-                onChange={(e) => setType(e.target.value as any)}
+                onChange={(e) => setType(e.target.value as JobOpening['type'])}
                 required
               >
-                <option value="full-time">Full-time</option>
-                <option value="part-time">Part-time</option>
-                <option value="internship">Internship</option>
-                <option value="phd">PhD Position</option>
-                <option value="postdoc">Postdoctoral Position</option>
+                {positionTypes.map((positionType) => (
+                  <option key={positionType} value={positionType}>
+                    {positionType}
+                  </option>
+                ))}
               </select>
             </div>
             
