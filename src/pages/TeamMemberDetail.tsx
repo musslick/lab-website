@@ -163,6 +163,13 @@ const TeamMemberDetail: React.FC = () => {
     }
   };
 
+  // Define OpenMoji SVG hexcodes for contact icons (black version)
+  const OPENMOJI_ICONS = {
+    email: "2709", // Envelope
+    github: "	E045", // GitHub icon
+    cv: "1F4C4", // Document icon
+  };
+
   return (
     <div className="team-member-detail-page">
       <div className="team-member-profile">
@@ -193,16 +200,27 @@ const TeamMemberDetail: React.FC = () => {
           <div className="team-member-contact">
             {member.email && (
               <div className="contact-item">
-                <span className="contact-icon">✉️ </span>
+                <img 
+                  src={`${OPENMOJI_BASE_URL}${OPENMOJI_ICONS.email}.svg`} 
+                  alt="Email" 
+                  className="contact-icon" 
+                  style={{ verticalAlign: 'middle' }}
+                />
                 <a href={`mailto:${member.email}`} className="team-member-email">
                   Mail
                 </a>
               </div>
             )}
 
+            {/* Use only member.github property */}
             {member.github && (
               <div className="contact-item">
-                <span className="contact-icon">🐙 </span>
+                <img 
+                  src={`${OPENMOJI_BASE_URL}${OPENMOJI_ICONS.github}.svg`} 
+                  alt="GitHub" 
+                  className="contact-icon"
+                  style={{ verticalAlign: 'middle' }}
+                />
                 <a
                   href={`https://github.com/${member.github}`}
                   target="_blank"
@@ -216,7 +234,12 @@ const TeamMemberDetail: React.FC = () => {
 
             {member.cvUrl && (
               <div className="contact-item">
-                <span className="contact-icon">📄 </span>
+                <img 
+                  src={`${OPENMOJI_BASE_URL}${OPENMOJI_ICONS.cv}.svg`} 
+                  alt="CV" 
+                  className="contact-icon"
+                  style={{ verticalAlign: 'middle' }}
+                />
                 <a
                   href={member.cvUrl.startsWith('data:')
                     ? URL.createObjectURL(dataURLtoBlob(member.cvUrl))
