@@ -76,7 +76,7 @@ export const jobOpenings: JobOpening[] = [
       "excellent organizational skills",
       "general understanding of AI and cognitive science"
     ],
-    "type": "part-time",
+    "type": "Student Research Assistant",
     "location": "hybrid",
     "postedDate": "2025-04-22",
     "isOpen": true,
