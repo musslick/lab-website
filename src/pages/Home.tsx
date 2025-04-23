@@ -34,6 +34,9 @@ const Home: React.FC = () => {
         return new Date(dateString).toLocaleDateString('en-US', options);
     };
 
+    // Handshake emoji for featured news
+    const handshakeEmojiUrl = getOpenMojiUrl('1F91D'); // Handshake emoji hexcode
+
     return (
         <div className="home-page">
             <section className="hero-section">
@@ -125,7 +128,7 @@ const Home: React.FC = () => {
                         <Link to="/feed" className="project-card">
                             <div className="project-color-block" style={{ background: '#00AAFF' }}>
                                 {/* Display emojis if they exist for the featured news item */}
-                                {featuredNewsItem.emojiHexcodes && featuredNewsItem.emojiHexcodes.length > 0 && (
+                                {featuredNewsItem.emojiHexcodes && featuredNewsItem.emojiHexcodes.length > 0 ? (
                                     <div className="project-emoji-container">
                                         {featuredNewsItem.emojiHexcodes.map((hexcode, index) => (
                                             <img
@@ -140,6 +143,15 @@ const Home: React.FC = () => {
                                                 }}
                                             />
                                         ))}
+                                    </div>
+                                ) : (
+                                    <div className="project-emoji-container">
+                                        <img 
+                                            src={handshakeEmojiUrl} 
+                                            alt="Handshake Emoji" 
+                                            className="project-emoji"
+                                            style={{ filter: 'invert(1)' }}
+                                        />
                                     </div>
                                 )}
                             </div>
