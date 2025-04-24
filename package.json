@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Website for the Automated Scientific Discovery of Mind and Brain lab.",
   "main": "src/App.tsx",
-  "homepage": "http://www.ai4cogsci.com/",
+  "homepage": "http://www.ai4cogsci.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
