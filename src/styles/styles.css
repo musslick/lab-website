@@ -1629,34 +1629,45 @@ header {
   transform: translateY(-2px);
 }
 
-.software-related-project {
-  margin: 15px 0 0 0;
+.software-related-project,
+.software-related-publication {
+  margin: 15px 0 10px 0;
   font-size: 0.9rem;
-  padding: 0;
-  text-align: left;
 }
 
-.software-related-project .project-link {
+.software-relation-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.related-publications-list,
+.related-projects-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
+.related-publication-item,
+.related-project-item {
+  margin-bottom: 3px;
+}
+
+.related-publication-link,
+.related-project-link {
   color: #00AAFF;
   text-decoration: none;
   transition: color 0.2s;
-  display: inline-flex;
-  align-items: center;
 }
 
-.software-related-project .project-link:hover {
+.related-publication-link:hover,
+.related-project-link:hover {
   text-decoration: underline;
   color: #0088cc;
 }
 
-.software-related-project .project-link::after {
-  content: '→';
-  margin-left: 5px;
-  transition: transform 0.2s;
-}
-
-.software-related-project .project-link:hover::after {
-  transform: translateX(3px);
+.related-publication-title {
+  color: #333;
 }
 
 .no-software {
@@ -1808,7 +1819,7 @@ header {
 @media (max-width: 768px) {
   .software-meta {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 5px;
   }
 
   .software-links {
@@ -3412,25 +3423,29 @@ header {
   margin-bottom: 5px;
 }
 
-.related-projects-list, .related-software-list {
+.related-publications-list, .related-projects-list {
   list-style-type: disc;
   padding-left: 20px;
   margin: 5px 0;
 }
 
-.related-project-item, .related-software-item {
+.related-publication-item, .related-project-item {
   margin-bottom: 3px;
 }
 
-.related-project-link, .related-software-link {
+.related-publication-link, .related-project-link {
   color: #00AAFF;
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.related-project-link:hover, .related-software-link:hover {
+.related-publication-link:hover, .related-project-link:hover {
   text-decoration: underline;
   color: #0088cc;
+}
+
+.related-publication-title {
+  color: #333;
 }
 
 .publication-software .related-links {

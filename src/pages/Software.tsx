@@ -163,59 +163,45 @@ const Software: React.FC = () => {
                   </div>
 
                   {relatedProjects.length > 0 && (
-                    <div className="software-related-projects">
-                      <h4>Related Projects</h4>
-                      <div className="software-related-projects-list">
-                        {relatedProjects.map((project: Project) => (
-                          <Link
-                            key={project.id}
-                            to={`/projects/${project.id}`}
-                            className="software-project-link"
-                          >
-                            <div className="software-project-name">
-                              <h5>{project.title}</h5>
-                            </div>
-                          </Link>
-                        ))}
+                    <div className="software-related-project">
+                      <div className="software-relation-label">
+                        Related Research {relatedProjects.length > 1 ? 'Areas' : 'Area'}:
                       </div>
+                      <ul className="related-projects-list">
+                        {relatedProjects.map((project: Project) => (
+                          <li key={project.id} className="related-project-item">
+                            <Link to={`/projects/${project.id}`} className="related-project-link">
+                              {project.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
 
                   {relatedPublications.length > 0 && (
-                    <div className="software-related-publications">
-                      <h4>Related Publications</h4>
-                      <div className="software-publications-list">
-                        {relatedPublications.map((publication: Publication) => (
-                          <div key={publication.id} className="software-publication-item">
-                            <h5 className="publication-title">
-                              {publication.url ? (
-                                <a href={publication.url} target="_blank" rel="noopener noreferrer">
-                                  {publication.title}
-                                </a>
-                              ) : (
-                                publication.title
-                              )}
-                            </h5>
-                            <p className="publication-authors">{publication.authors.join(', ')}</p>
-                            <div className="publication-meta">
-                              <span className="publication-journal">
-                                <em>{publication.journal}</em>
-                              </span>
-                              <span className="publication-year">{publication.year}</span>
-                              {publication.doi && (
-                                <a
-                                  href={`https://doi.org/${publication.doi}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="publication-doi"
-                                >
-                                  DOI: {publication.doi}
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        ))}
+                    <div className="software-related-publication">
+                      <div className="software-relation-label">
+                        Related {relatedPublications.length > 1 ? 'Publications' : 'Publication'}:
                       </div>
+                      <ul className="related-publications-list">
+                        {relatedPublications.map((publication: Publication) => (
+                          <li key={publication.id} className="related-publication-item">
+                            {publication.url ? (
+                              <a 
+                                href={publication.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="related-publication-link"
+                              >
+                                {publication.title}
+                              </a>
+                            ) : (
+                              <span className="related-publication-title">{publication.title}</span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>
