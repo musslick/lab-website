@@ -2810,7 +2810,7 @@ header {
 }
 
 .collaborator-tag {
-  background-color: #f8f8f8;
+  background-color: #ffffff;
   border: 1px solid #eee;
   border-radius: 12px;
   padding: 25px;
@@ -2818,7 +2818,7 @@ header {
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-   color: #000000;
+  color: #000000;
   display: flex;
   align-items: center;
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
@@ -2827,10 +2827,7 @@ header {
 }
 
 .collaborator-tag:hover {
-  background-color: #fff;
-  color: #00AAFF;
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  background-color: #ffffff;
 }
 
 .collaborator-logo {
