@@ -119,7 +119,28 @@ const ProjectDetails: React.FC = () => {
       const relatedSoftware = software.filter(sw => sw.projectId === id);
       setProjectSoftware(relatedSoftware);
 
-      const relatedPublications = publications.filter(pub => pub.projectId === id);
+      // Make sure id is not undefined before using it in includes()
+      const projectId = id || '';
+      
+      // Updated logic to handle both projectId and projectIds properties
+      const relatedPublications = publications.filter(pub => {
+        // Check single projectId (string)
+        if (pub.projectId === projectId) {
+          return true;
+        }
+        
+        // Check projectId as array
+        if (Array.isArray(pub.projectId) && pub.projectId.includes(projectId)) {
+          return true;
+        }
+        
+        // Check projectIds array
+        if (pub.projectIds && Array.isArray(pub.projectIds) && pub.projectIds.includes(projectId)) {
+          return true;
+        }
+        
+        return false;
+      });
       setProjectPublications(relatedPublications);
     }
 
