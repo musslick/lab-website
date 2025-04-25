@@ -199,7 +199,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [featuredPublication, setFeaturedPublication] = useState<string | null>(null);
 
   // Add state for team image
-  const [teamImage, setTeamImage] = useState<string>('/assets/lab_team.jpeg');
+  const [teamImage, setTeamImage] = useState<string>('https://i.postimg.cc/ZR7KYDMw/lab-team.jpg');
   // Add state for team image position (default to 'center')
   const [teamImagePosition, setTeamImagePosition] = useState<string>('center');
 
@@ -239,7 +239,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         } else {
           teamData = initialTeamMembers;
         }
-        
+
         // Deduplicate project IDs for all team members (whether from storage or initial data)
         teamData = teamData.map(member => {
           if (member.projects && Array.isArray(member.projects)) {
@@ -249,7 +249,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
           }
           return member;
         });
-        
+
         setTeamMembers(teamData);
 
         if (savedProjects) {
