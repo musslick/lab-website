@@ -498,7 +498,7 @@ const TeamMemberDetail: React.FC = () => {
                                   href={softwareItem.repoUrl} 
                                   target="_blank" 
                                   rel="noopener noreferrer" 
-                                  className="related-software-link"
+                                  className="related-project-link"
                                 >
                                   {softwareItem.name}
                                 </a>

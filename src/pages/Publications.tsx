@@ -96,7 +96,7 @@ const Publications: React.FC = () => {
     }).filter(Boolean) as JSX.Element[];
   };
 
-  // Function to get software names by IDs
+  // Function to get software links by IDs
   const getSoftwareLinks = (publication: Publication): JSX.Element[] => {
     if (!publication.softwareIds || publication.softwareIds.length === 0) {
       return [];
@@ -107,9 +107,15 @@ const Publications: React.FC = () => {
       if (!sw) return null;
 
       return (
-        <Link key={softwareId} to={`/software/${softwareId}`} className="related-software-link">
+        <a 
+          key={softwareId} 
+          href={sw.repoUrl} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="related-project-link"
+        >
           {sw.name}
-        </Link>
+        </a>
       );
     }).filter(Boolean) as JSX.Element[];
   };
@@ -310,9 +316,9 @@ const Publications: React.FC = () => {
                     <div className="publication-relation-label">
                       Related Software:
                     </div>
-                    <ul className="related-software-list">
+                    <ul className="related-projects-list">
                       {softwareLinks.map((softwareLink, index) => (
-                        <li key={index} className="related-software-item">
+                        <li key={index} className="related-project-item">
                           {softwareLink}
                         </li>
                       ))}
