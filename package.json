@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Website for the Automated Scientific Discovery of Mind and Brain lab.",
   "main": "src/App.tsx",
-  "homepage": "https://musslick.github.io/lab-website/",
+  "homepage": "https://www.ai4cogsci.com/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
