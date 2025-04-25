@@ -54,7 +54,7 @@ const Home: React.FC = () => {
 
             {/* Team Picture Section - Updated to include mission statement */}
             <section className="team-picture-section" style={{ marginTop: '4rem' }}>
-                <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '2rem' }}>AI for Science <span style={{ color: 'grey' }}>Meets</span> Cognitive Science</h2>
+                <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '2rem' }}>AI for Science Meets <span style={{ color: '#00AAFF' }}>Cognitive Science</span></h2>
                 <div className="team-mission-container" style={{
                     display: 'flex',
                     gap: '1.5rem',
@@ -109,7 +109,7 @@ const Home: React.FC = () => {
                         justifyContent: 'center',
                         minHeight: '400px'
                     }}>
-                        <h3 style={{ marginTop: '0', color: '#00AAFF' }}>Our Mission</h3>
+                        <h3 style={{ marginTop: '0', color: '#000000', fontSize: '1.3rem', fontWeight: '600', marginBottom: '10px', lineHeight: '1.3' }}>Our Mission</h3>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
                             Our lab studies the computational principles that underlie the <b><span style={{ color: '#00AAFF' }}>capabilities and limitations of human cognition.</span></b> Ironically, as human scientists, we are constrained by the very cognitive limitations we seek to understand: the space of possible scientific models and experiments is too vast for the human brain to navigate alone, making it difficult to achieve an integrative understanding of the mind.
                         </p>
