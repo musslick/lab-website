@@ -6,6 +6,12 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Define standard card shadow as a CSS variable */
+  --card-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  --card-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
 html, body, #root, .app {
   height: 100%;
   background-color: #ffffff; /* Ensure consistent white background */
@@ -322,17 +328,12 @@ header {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-decoration: none;
   height: 100%;
-}
-
-.team-member-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .team-member-image {
@@ -541,12 +542,12 @@ header {
   height: 500px; /* Maintained height at 500px */
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   transition: box-shadow 0.3s ease;
 }
 
 .team-picture-link:hover .team-picture-container {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .team-picture {
@@ -621,7 +622,7 @@ header {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: var(--card-shadow);
 }
 
 .benefits-list {
@@ -645,7 +646,7 @@ header {
   background-color: #ffffff;
   border-radius: 8px;
   padding: 25px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  box-shadow: var(--card-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -890,16 +891,11 @@ header {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   text-decoration: none;
   transition: transform 0.3s, box-shadow 0.3s;
   color: #000000;
   height: 100%;
-}
-
-.team-member-project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .project-color-indicator {
@@ -1041,7 +1037,7 @@ header {
   display: block;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Only keep basic hover effects */
   text-decoration: none;
   color: #000000; /* Changed from inherit to pure black */
@@ -1052,11 +1048,6 @@ header {
   will-change: transform; /* Optimize performance for transforms */
   margin-bottom: 15px; /* Add some spacing between cards */
   min-height: 350px; /* Set minimum height for consistency */
-}
-
-.project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .project-thumbnail {
@@ -1476,7 +1467,7 @@ header {
 .software-card {
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   padding: 20px;
   margin-bottom: 20px;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -1629,34 +1620,45 @@ header {
   transform: translateY(-2px);
 }
 
-.software-related-project {
-  margin: 15px 0 0 0;
+.software-related-project,
+.software-related-publication {
+  margin: 15px 0 10px 0;
   font-size: 0.9rem;
-  padding: 0;
-  text-align: left;
 }
 
-.software-related-project .project-link {
+.software-relation-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.related-publications-list,
+.related-projects-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
+.related-publication-item,
+.related-project-item {
+  margin-bottom: 3px;
+}
+
+.related-publication-link,
+.related-project-link {
   color: #00AAFF;
   text-decoration: none;
   transition: color 0.2s;
-  display: inline-flex;
-  align-items: center;
 }
 
-.software-related-project .project-link:hover {
+.related-publication-link:hover,
+.related-project-link:hover {
   text-decoration: underline;
   color: #0088cc;
 }
 
-.software-related-project .project-link::after {
-  content: '→';
-  margin-left: 5px;
-  transition: transform 0.2s;
-}
-
-.software-related-project .project-link:hover::after {
-  transform: translateX(3px);
+.related-publication-title {
+  color: #333;
 }
 
 .no-software {
@@ -1682,7 +1684,7 @@ header {
   }
 
   .software-link {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 120px;
   }
 }
@@ -1698,7 +1700,7 @@ header {
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--card-shadow);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -1808,11 +1810,16 @@ header {
 @media (max-width: 768px) {
   .software-meta {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 5px;
   }
 
   .software-links {
     margin-top: 0.5rem;
+  }
+
+  .software-link {
+    flex: 0 1 auto;
+    min-width: 120px;
   }
 }
 
@@ -1920,7 +1927,6 @@ header {
 
   .home-page .project-card {
     margin-bottom: 0; /* Remove default margin since we're using flex gap */
-    width: 100%;
   }
 
   /* Prevent hover transforms on mobile */
@@ -2006,7 +2012,7 @@ header {
   /* Make sure featured cards stack properly with enough space between them */
   .home-page .project-card {
     margin-bottom: 30px; /* Increased from 15px for better spacing when stacked */
-    width: 100%; /* Ensure full width */
+    width: 100%;
   }
 
   /* Ensure the last card doesn't have extra bottom margin */
@@ -2265,7 +2271,7 @@ header {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -2273,7 +2279,7 @@ header {
 
 .news-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--card-shadow-hover);
 }
 
 /* News emoji container styles */
@@ -2641,7 +2647,7 @@ header {
 }
 
 .add-emoji-btn:hover {
-  background-color: #0088cc;
+  background-color: #0089cc;
 }
 
 .add-emoji-btn:disabled {
@@ -2804,7 +2810,7 @@ header {
 }
 
 .collaborator-tag {
-  background-color: #f8f8f8;
+  background-color: #ffffff;
   border: 1px solid #eee;
   border-radius: 12px;
   padding: 25px;
@@ -2821,22 +2827,15 @@ header {
 }
 
 .collaborator-tag:hover {
-  background-color: #fff;
-  color: #00AAFF;
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  background-color: #ffffff;
 }
 
 .collaborator-logo {
   max-height: 60px;
   max-width: 90px;
-  margin-right: 16px;
-  object-fit: contain;
-  border-radius: 4px;
-
+  margin: 0 10px 0 0;
 }
 
-/* Add responsive styles for collaborator grid to match project grid */
 @media (max-width: 1100px) {
   .collaborator-list {
     grid-template-columns: repeat(2, 1fr);
@@ -2927,7 +2926,7 @@ header {
 }
 
 .contact-form-container {
-  background-color: #f8f8f8;
+  background-color: #f8f9fa;
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
@@ -3078,7 +3077,6 @@ header {
   transform: translateX(3px);
 }
 
-/* See All Links Container - for multiple links in a row */
 .see-all-links-container {
   display: flex;
   flex-wrap: wrap;
@@ -3402,20 +3400,49 @@ header {
   background-color: #e0e0e0;
 }
 
-.publication-project {
+/* Updated styles for Related Research Areas and Related Software lists */
+.publication-project, .publication-software {
   margin: 15px 0 10px 0;
   font-size: 0.9rem;
 }
 
-.publication-project a {
+.publication-relation-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.related-publications-list, .related-projects-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
+.related-publication-item, .related-project-item {
+  margin-bottom: 3px;
+}
+
+.related-publication-link, .related-project-link {
   color: #00AAFF;
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.publication-project a:hover {
+.related-publication-link:hover, .related-project-link:hover {
   text-decoration: underline;
   color: #0088cc;
+}
+
+.related-publication-title {
+  color: #333;
+}
+
+.publication-software .related-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+  font-size: 0.9rem;
 }
 
 .publication-doi {
@@ -3437,9 +3464,6 @@ header {
   padding: 40px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  color: #666;
-  font-size: 18px;
-  margin-top: 20px;
 }
 
 /* =========================================
@@ -3623,7 +3647,50 @@ header {
   color: #333;
 }
 
-/* Footer Styles to match the header */
+/* =========================================
+   STANDARDIZED CARD ANIMATIONS
+   ========================================= */
+
+/* Apply consistent card hover animations across the entire site */
+.project-card:hover,
+.team-member-card:hover,
+.news-card:hover,
+.software-card:hover,
+.collaborator-tag:hover,
+.publication-item:hover,
+.job-opening-card:hover,
+.team-member-project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Remove any specific overrides to ensure consistency */
+@media (max-width: 650px) {
+  /* Disable hover animations on mobile */
+  .project-card:hover,
+  .team-member-card:hover,
+  .news-card:hover,
+  .software-card:hover,
+  .collaborator-tag:hover,
+  .publication-item:hover,
+  .job-opening-card:hover,
+  .team-member-project-card:hover {
+    transform: none !important;
+    box-shadow: var(--card-shadow);
+  }
+  
+  /* Ensure featured cards don't have different transforms */
+  .news-card.featured,
+  .project-card.featured {
+    transform: none !important;
+    border: 2px solid #00AAFF;
+  }
+}
+
+/* =========================================
+   FOOTER STYLES
+   ========================================= */
+
 .site-footer {
   background-color: #ffffff;
   padding: 1.5rem 0;

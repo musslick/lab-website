@@ -337,54 +337,63 @@ const TeamMemberDetail: React.FC = () => {
                   </div>
                 )}
 
-                {sw.developers && sw.developers.length > 0 && sw.developers.length > 1 && (
-                  <p className="software-developed-by">
-                    Co-developed with: {sw.developers.filter((dev: string) => dev !== member.name).join(', ')}
-                  </p>
-                )}
+                <div className="software-developed-by">
+                  <strong>Contributing Lab Members:</strong> {sw.developers.filter((dev: string) => dev !== member.name).length > 0 
+                    ? sw.developers.filter((dev: string) => dev !== member.name).join(', ')
+                    : member.name}
+                </div>
 
                 <div className="software-meta">
                   {sw.license && (
                     <span className="software-license">{sw.license}</span>
                   )}
-                  {sw.releaseDate && (
-                    <p className="software-date">
-                      Released: {new Date(sw.releaseDate).toLocaleDateString()}
-                    </p>
-                  )}
-                  {sw.lastUpdate && (
-                    <p className="software-date">
-                      Updated: {new Date(sw.lastUpdate).toLocaleDateString()}
-                    </p>
-                  )}
                 </div>
 
                 <div className="software-links">
-                  <a href={sw.repoUrl} target="_blank" rel="noopener noreferrer" className="software-link repo-link">
+                  <a 
+                    href={sw.repoUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="software-link repo-link"
+                  >
                     Repository
                   </a>
+                  
                   {sw.demoUrl && (
-                    <a href={sw.demoUrl} target="_blank" rel="noopener noreferrer" className="software-link demo-link">
+                    <a 
+                      href={sw.demoUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="software-link demo-link"
+                    >
                       Demo
                     </a>
                   )}
+                  
                   {sw.documentationUrl && (
-                    <a href={sw.documentationUrl} target="_blank" rel="noopener noreferrer" className="software-link docs-link">
-                      Docs
+                    <a 
+                      href={sw.documentationUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="software-link docs-link"
+                    >
+                      Documentation
                     </a>
                   )}
                 </div>
 
-                {/* Support both projectId and projectIds */}
+                {/* Project relationships with support for both projectId and projectIds */}
                 {(sw.projectIds && sw.projectIds.length > 0) ? (
-                  <div className="software-related-projects">
-                    <p>Related Projects:</p>
-                    <ul>
+                  <div className="software-related-project">
+                    <span className="software-relation-label">
+                      Related {sw.projectIds.length > 1 ? 'Research Areas' : 'Research Area'}:
+                    </span>
+                    <ul className="related-projects-list">
                       {sw.projectIds.map((projectId: string) => {
                         const project = getProjectById(projectId);
                         return project ? (
-                          <li key={projectId}>
-                            <Link to={`/projects/${projectId}`}>
+                          <li key={projectId} className="related-project-item">
+                            <Link to={`/projects/${projectId}`} className="related-project-link">
                               {project.title}
                             </Link>
                           </li>
@@ -394,9 +403,14 @@ const TeamMemberDetail: React.FC = () => {
                   </div>
                 ) : sw.projectId ? (
                   <div className="software-related-project">
-                    <Link to={`/projects/${sw.projectId}`} className="project-link">
-                      {getProjectById(sw.projectId)?.title || 'Related Project'}
-                    </Link>
+                    <span className="software-relation-label">Related Research Area:</span>
+                    <ul className="related-projects-list">
+                      <li className="related-project-item">
+                        <Link to={`/projects/${sw.projectId}`} className="related-project-link">
+                          {getProjectById(sw.projectId)?.title || 'Related Research Area'}
+                        </Link>
+                      </li>
+                    </ul>
                   </div>
                 ) : null}
               </div>
@@ -417,7 +431,7 @@ const TeamMemberDetail: React.FC = () => {
                   <h3 className="publications-year-header">{year}</h3>
                   {publicationsByYear[year].map(publication => (
                     <div key={publication.id} className="publication-item">
-                      <h4 className="publication-title">
+                      <h3 className="publication-title">
                         {publication.url ? (
                           <a
                             href={publication.url}
@@ -429,8 +443,10 @@ const TeamMemberDetail: React.FC = () => {
                         ) : (
                           publication.title
                         )}
-                      </h4>
+                      </h3>
+                      
                       <p className="publication-authors">{publication.authors.join(', ')}</p>
+                      
                       <div className="publication-meta">
                         <span className="publication-journal">
                           <em>{publication.journal}</em>
@@ -440,18 +456,58 @@ const TeamMemberDetail: React.FC = () => {
                           <span className="publication-type">{publication.type}</span>
                         )}
                       </div>
+                      
                       {publication.abstract && (
                         <div className="publication-abstract">
                           <p>{publication.abstract}</p>
                         </div>
                       )}
-                      {publication.projectId && (
-                        <p className="publication-project">
-                          Related project: <Link to={`/projects/${publication.projectId}`}>
-                            {getProjectById(publication.projectId)?.title || 'View project'}
-                          </Link>
-                        </p>
+                      
+                      {publication.keywords && publication.keywords.length > 0 && (
+                        <div className="publication-keywords">
+                          {publication.keywords.map((keyword: string) => (
+                            <span key={keyword} className="publication-keyword">
+                              {keyword}
+                            </span>
+                          ))}
+                        </div>
                       )}
+                      
+                      {publication.projectId && (
+                        <div className="publication-project">
+                          <span className="publication-relation-label">Related Research Area:</span>
+                          <ul className="related-projects-list">
+                            <li className="related-project-item">
+                              <Link to={`/projects/${publication.projectId}`} className="related-project-link">
+                                {getProjectById(publication.projectId)?.title || 'View project'}
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {publication.softwareIds && publication.softwareIds.length > 0 && (
+                        <div className="publication-software">
+                          <span className="publication-relation-label">Related Software:</span>
+                          <div className="related-links">
+                            {publication.softwareIds.map((softwareId: string) => {
+                              const softwareItem = software.find((s: any) => s.id === softwareId);
+                              return softwareItem ? (
+                                <a 
+                                  key={softwareId} 
+                                  href={softwareItem.repoUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
+                                  className="related-project-link"
+                                >
+                                  {softwareItem.name}
+                                </a>
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      
                       {publication.doi && (
                         <p className="publication-doi">
                           DOI: <a

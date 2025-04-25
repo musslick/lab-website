@@ -6,9 +6,10 @@ import '../styles/styles.css';
 import { Software as SoftwareType } from '../data/software';
 import { Project } from '../data/projects';
 import { Publication } from '../data/publications';
+import { TeamMember } from '../data/team';
 
 const Software: React.FC = () => {
-  const { software, getProjectById, getPublicationById } = useContent();
+  const { software, getProjectById, getPublicationById, teamMembers } = useContent();
   const [selectedTech, setSelectedTech] = useState<string>('All');
 
   // Get unique technologies
@@ -44,6 +45,35 @@ const Software: React.FC = () => {
         .filter((publication): publication is Publication => publication !== undefined);
     }
     return [];
+  };
+
+  // Helper function to find a team member by name
+  const findTeamMemberByName = (name: string): TeamMember | undefined => {
+    return teamMembers.find(member => member.name === name);
+  };
+
+  // Helper function to render developer names with links if they're team members
+  const renderDevelopers = (developers: string[]) => {
+    return developers.map((developer, index) => {
+      const teamMember = findTeamMemberByName(developer);
+      
+      // If developer is a team member, render a link; otherwise render plain text
+      const developerElement = teamMember ? (
+        <Link key={teamMember.id} to={`/team/${teamMember.id}`} className="team-member-link">
+          {developer}
+        </Link>
+      ) : (
+        <span key={`dev-${index}`}>{developer}</span>
+      );
+
+      // Add comma separator if not the last item
+      return (
+        <React.Fragment key={`dev-fragment-${index}`}>
+          {developerElement}
+          {index < developers.length - 1 ? ', ' : ''}
+        </React.Fragment>
+      );
+    });
   };
 
   return (
@@ -112,7 +142,7 @@ const Software: React.FC = () => {
                   </div>
 
                   <div className="software-developed-by">
-                    <strong>Contributing Lab Members:</strong> {item.developers.join(', ')}
+                    <strong>Contributing Lab Members:</strong> {renderDevelopers(item.developers)}
                   </div>
 
                   <div className="software-meta">
@@ -163,59 +193,45 @@ const Software: React.FC = () => {
                   </div>
 
                   {relatedProjects.length > 0 && (
-                    <div className="software-related-projects">
-                      <h4>Related Projects</h4>
-                      <div className="software-related-projects-list">
-                        {relatedProjects.map((project: Project) => (
-                          <Link
-                            key={project.id}
-                            to={`/projects/${project.id}`}
-                            className="software-project-link"
-                          >
-                            <div className="software-project-name">
-                              <h5>{project.title}</h5>
-                            </div>
-                          </Link>
-                        ))}
+                    <div className="software-related-project">
+                      <div className="software-relation-label">
+                        Related Research {relatedProjects.length > 1 ? 'Areas' : 'Area'}:
                       </div>
+                      <ul className="related-projects-list">
+                        {relatedProjects.map((project: Project) => (
+                          <li key={project.id} className="related-project-item">
+                            <Link to={`/projects/${project.id}`} className="related-project-link">
+                              {project.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
 
                   {relatedPublications.length > 0 && (
-                    <div className="software-related-publications">
-                      <h4>Related Publications</h4>
-                      <div className="software-publications-list">
-                        {relatedPublications.map((publication: Publication) => (
-                          <div key={publication.id} className="software-publication-item">
-                            <h5 className="publication-title">
-                              {publication.url ? (
-                                <a href={publication.url} target="_blank" rel="noopener noreferrer">
-                                  {publication.title}
-                                </a>
-                              ) : (
-                                publication.title
-                              )}
-                            </h5>
-                            <p className="publication-authors">{publication.authors.join(', ')}</p>
-                            <div className="publication-meta">
-                              <span className="publication-journal">
-                                <em>{publication.journal}</em>
-                              </span>
-                              <span className="publication-year">{publication.year}</span>
-                              {publication.doi && (
-                                <a
-                                  href={`https://doi.org/${publication.doi}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="publication-doi"
-                                >
-                                  DOI: {publication.doi}
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        ))}
+                    <div className="software-related-publication">
+                      <div className="software-relation-label">
+                        Related {relatedPublications.length > 1 ? 'Publications' : 'Publication'}:
                       </div>
+                      <ul className="related-publications-list">
+                        {relatedPublications.map((publication: Publication) => (
+                          <li key={publication.id} className="related-publication-item">
+                            {publication.url ? (
+                              <a 
+                                href={publication.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="related-publication-link"
+                              >
+                                {publication.title}
+                              </a>
+                            ) : (
+                              <span className="related-publication-title">{publication.title}</span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>
