@@ -368,7 +368,7 @@ const ProjectDetails: React.FC = () => {
             <div className="publications-list">
               {projectPublications.map((publication) => (
                 <div key={publication.id} className="publication-item">
-                  <h4 className="publication-title">
+                  <h3 className="publication-title">
                     {publication.url ? (
                       <a
                         href={publication.url}
@@ -380,8 +380,10 @@ const ProjectDetails: React.FC = () => {
                     ) : (
                       publication.title
                     )}
-                  </h4>
+                  </h3>
+                  
                   <p className="publication-authors">{publication.authors.join(', ')}</p>
+                  
                   <div className="publication-meta">
                     <span className="publication-journal">
                       <em>{publication.journal}</em>
@@ -391,11 +393,46 @@ const ProjectDetails: React.FC = () => {
                       <span className="publication-type">{publication.type}</span>
                     )}
                   </div>
+                  
                   {publication.abstract && (
                     <div className="publication-abstract">
                       <p>{publication.abstract}</p>
                     </div>
                   )}
+                  
+                  {publication.keywords && publication.keywords.length > 0 && (
+                    <div className="publication-keywords">
+                      {publication.keywords.map((keyword: string) => (
+                        <span key={keyword} className="publication-keyword">
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Related software section */}
+                  {publication.softwareIds && publication.softwareIds.length > 0 && (
+                    <div className="publication-software">
+                      <span className="publication-relation-label">Related Software:</span>
+                      <div className="related-links">
+                        {publication.softwareIds.map((softwareId: string) => {
+                          const softwareItem = software.find((s: any) => s.id === softwareId);
+                          return softwareItem ? (
+                            <a 
+                              key={softwareId} 
+                              href={softwareItem.repoUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="related-software-link"
+                            >
+                              {softwareItem.name}
+                            </a>
+                          ) : null;
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  
                   {publication.doi && (
                     <p className="publication-doi">
                       DOI: <a

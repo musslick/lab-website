@@ -6,9 +6,10 @@ import '../styles/styles.css';
 import { Software as SoftwareType } from '../data/software';
 import { Project } from '../data/projects';
 import { Publication } from '../data/publications';
+import { TeamMember } from '../data/team';
 
 const Software: React.FC = () => {
-  const { software, getProjectById, getPublicationById } = useContent();
+  const { software, getProjectById, getPublicationById, teamMembers } = useContent();
   const [selectedTech, setSelectedTech] = useState<string>('All');
 
   // Get unique technologies
@@ -44,6 +45,35 @@ const Software: React.FC = () => {
         .filter((publication): publication is Publication => publication !== undefined);
     }
     return [];
+  };
+
+  // Helper function to find a team member by name
+  const findTeamMemberByName = (name: string): TeamMember | undefined => {
+    return teamMembers.find(member => member.name === name);
+  };
+
+  // Helper function to render developer names with links if they're team members
+  const renderDevelopers = (developers: string[]) => {
+    return developers.map((developer, index) => {
+      const teamMember = findTeamMemberByName(developer);
+      
+      // If developer is a team member, render a link; otherwise render plain text
+      const developerElement = teamMember ? (
+        <Link key={teamMember.id} to={`/team/${teamMember.id}`} className="team-member-link">
+          {developer}
+        </Link>
+      ) : (
+        <span key={`dev-${index}`}>{developer}</span>
+      );
+
+      // Add comma separator if not the last item
+      return (
+        <React.Fragment key={`dev-fragment-${index}`}>
+          {developerElement}
+          {index < developers.length - 1 ? ', ' : ''}
+        </React.Fragment>
+      );
+    });
   };
 
   return (
@@ -112,7 +142,7 @@ const Software: React.FC = () => {
                   </div>
 
                   <div className="software-developed-by">
-                    <strong>Contributing Lab Members:</strong> {item.developers.join(', ')}
+                    <strong>Contributing Lab Members:</strong> {renderDevelopers(item.developers)}
                   </div>
 
                   <div className="software-meta">

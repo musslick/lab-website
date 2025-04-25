@@ -6,6 +6,12 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Define standard card shadow as a CSS variable */
+  --card-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  --card-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
 html, body, #root, .app {
   height: 100%;
   background-color: #ffffff; /* Ensure consistent white background */
@@ -322,17 +328,12 @@ header {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-decoration: none;
   height: 100%;
-}
-
-.team-member-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .team-member-image {
@@ -541,12 +542,12 @@ header {
   height: 500px; /* Maintained height at 500px */
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   transition: box-shadow 0.3s ease;
 }
 
 .team-picture-link:hover .team-picture-container {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .team-picture {
@@ -621,7 +622,7 @@ header {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: var(--card-shadow);
 }
 
 .benefits-list {
@@ -645,7 +646,7 @@ header {
   background-color: #ffffff;
   border-radius: 8px;
   padding: 25px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  box-shadow: var(--card-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -890,16 +891,11 @@ header {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   text-decoration: none;
   transition: transform 0.3s, box-shadow 0.3s;
   color: #000000;
   height: 100%;
-}
-
-.team-member-project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .project-color-indicator {
@@ -1041,7 +1037,7 @@ header {
   display: block;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Only keep basic hover effects */
   text-decoration: none;
   color: #000000; /* Changed from inherit to pure black */
@@ -1052,11 +1048,6 @@ header {
   will-change: transform; /* Optimize performance for transforms */
   margin-bottom: 15px; /* Add some spacing between cards */
   min-height: 350px; /* Set minimum height for consistency */
-}
-
-.project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .project-thumbnail {
@@ -1476,7 +1467,7 @@ header {
 .software-card {
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   padding: 20px;
   margin-bottom: 20px;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -1693,7 +1684,7 @@ header {
   }
 
   .software-link {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 120px;
   }
 }
@@ -1709,7 +1700,7 @@ header {
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--card-shadow);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -1824,6 +1815,11 @@ header {
 
   .software-links {
     margin-top: 0.5rem;
+  }
+
+  .software-link {
+    flex: 0 1 auto;
+    min-width: 120px;
   }
 }
 
@@ -2275,7 +2271,7 @@ header {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -2283,7 +2279,7 @@ header {
 
 .news-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--card-shadow-hover);
 }
 
 /* News emoji container styles */
@@ -2651,7 +2647,7 @@ header {
 }
 
 .add-emoji-btn:hover {
-  background-color: #0088cc;
+  background-color: #0089cc;
 }
 
 .add-emoji-btn:disabled {
@@ -2840,13 +2836,9 @@ header {
 .collaborator-logo {
   max-height: 60px;
   max-width: 90px;
-  margin-right: 16px;
-  object-fit: contain;
-  border-radius: 4px;
-
+  margin: 0 10px 0 0;
 }
 
-/* Add responsive styles for collaborator grid to match project grid */
 @media (max-width: 1100px) {
   .collaborator-list {
     grid-template-columns: repeat(2, 1fr);
@@ -3475,9 +3467,6 @@ header {
   padding: 40px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  color: #666;
-  font-size: 18px;
-  margin-top: 20px;
 }
 
 /* =========================================
@@ -3661,7 +3650,50 @@ header {
   color: #333;
 }
 
-/* Footer Styles to match the header */
+/* =========================================
+   STANDARDIZED CARD ANIMATIONS
+   ========================================= */
+
+/* Apply consistent card hover animations across the entire site */
+.project-card:hover,
+.team-member-card:hover,
+.news-card:hover,
+.software-card:hover,
+.collaborator-tag:hover,
+.publication-item:hover,
+.job-opening-card:hover,
+.team-member-project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Remove any specific overrides to ensure consistency */
+@media (max-width: 650px) {
+  /* Disable hover animations on mobile */
+  .project-card:hover,
+  .team-member-card:hover,
+  .news-card:hover,
+  .software-card:hover,
+  .collaborator-tag:hover,
+  .publication-item:hover,
+  .job-opening-card:hover,
+  .team-member-project-card:hover {
+    transform: none !important;
+    box-shadow: var(--card-shadow);
+  }
+  
+  /* Ensure featured cards don't have different transforms */
+  .news-card.featured,
+  .project-card.featured {
+    transform: none !important;
+    border: 2px solid #00AAFF;
+  }
+}
+
+/* =========================================
+   FOOTER STYLES
+   ========================================= */
+
 .site-footer {
   background-color: #ffffff;
   padding: 1.5rem 0;
