@@ -1920,7 +1920,6 @@ header {
 
   .home-page .project-card {
     margin-bottom: 0; /* Remove default margin since we're using flex gap */
-    width: 100%;
   }
 
   /* Prevent hover transforms on mobile */
@@ -2006,7 +2005,7 @@ header {
   /* Make sure featured cards stack properly with enough space between them */
   .home-page .project-card {
     margin-bottom: 30px; /* Increased from 15px for better spacing when stacked */
-    width: 100%; /* Ensure full width */
+    width: 100%;
   }
 
   /* Ensure the last card doesn't have extra bottom margin */
@@ -2812,7 +2811,7 @@ header {
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  color: #000000;
+   color: #000000;
   display: flex;
   align-items: center;
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
@@ -2927,7 +2926,7 @@ header {
 }
 
 .contact-form-container {
-  background-color: #f8f8f8;
+  background-color: #f8f9fa;
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
@@ -3078,7 +3077,6 @@ header {
   transform: translateX(3px);
 }
 
-/* See All Links Container - for multiple links in a row */
 .see-all-links-container {
   display: flex;
   flex-wrap: wrap;
@@ -3402,20 +3400,45 @@ header {
   background-color: #e0e0e0;
 }
 
-.publication-project {
+/* Updated styles for Related Research Areas and Related Software lists */
+.publication-project, .publication-software {
   margin: 15px 0 10px 0;
   font-size: 0.9rem;
 }
 
-.publication-project a {
+.publication-relation-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.related-projects-list, .related-software-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
+.related-project-item, .related-software-item {
+  margin-bottom: 3px;
+}
+
+.related-project-link, .related-software-link {
   color: #00AAFF;
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.publication-project a:hover {
+.related-project-link:hover, .related-software-link:hover {
   text-decoration: underline;
   color: #0088cc;
+}
+
+.publication-software .related-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+  font-size: 0.9rem;
 }
 
 .publication-doi {

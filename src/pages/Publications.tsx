@@ -279,25 +279,47 @@ const Publications: React.FC = () => {
                 </div>
               )}
 
-              {/* Display related projects */}
-              {(publication.projectId || (publication.projectIds && publication.projectIds.length > 0)) && (
-                <div className="publication-project">
-                  <span>Related Research {getProjectTitles(publication).length > 1 ? 'Areas' : 'Area'}: </span>
-                  <div className="related-links">
-                    {getProjectTitles(publication)}
+              {/* Display related projects as a list, only when projects exist */}
+              {(() => {
+                const projectLinks = getProjectTitles(publication);
+                if (projectLinks.length === 0) return null;
+                
+                return (
+                  <div className="publication-project">
+                    <div className="publication-relation-label">
+                      Related Research {projectLinks.length > 1 ? 'Areas' : 'Area'}:
+                    </div>
+                    <ul className="related-projects-list">
+                      {projectLinks.map((projectLink, index) => (
+                        <li key={index} className="related-project-item">
+                          {projectLink}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
-              {/* Display related software */}
-              {publication.softwareIds && publication.softwareIds.length > 0 && (
-                <div className="publication-software">
-                  <span>Related Software: </span>
-                  <div className="related-links">
-                    {getSoftwareLinks(publication)}
+              {/* Display related software as a list */}
+              {(() => {
+                const softwareLinks = getSoftwareLinks(publication);
+                if (softwareLinks.length === 0) return null;
+                
+                return (
+                  <div className="publication-software">
+                    <div className="publication-relation-label">
+                      Related Software:
+                    </div>
+                    <ul className="related-software-list">
+                      {softwareLinks.map((softwareLink, index) => (
+                        <li key={index} className="related-software-item">
+                          {softwareLink}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {publication.doi && (
                 <div className="publication-doi">
