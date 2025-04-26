@@ -125,108 +125,134 @@ const Home: React.FC = () => {
                 <div className="projects-grid">
                     {/* News Card */}
                     {featuredNewsItem && (
-                        <Link to="/feed" className="project-card">
-                            <div className="project-color-block" style={{ background: '#00AAFF' }}>
-                                {/* Display emojis if they exist for the featured news item */}
-                                {featuredNewsItem.emojiHexcodes && featuredNewsItem.emojiHexcodes.length > 0 ? (
-                                    <div className="project-emoji-container">
-                                        {featuredNewsItem.emojiHexcodes.map((hexcode, index) => (
-                                            <img
-                                                key={index}
-                                                src={getOpenMojiUrl(hexcode, true)}
-                                                alt={`News Emoji ${index+1}`}
+                        <>
+                            <Link to="/feed" className="project-card">
+                                <div className="project-color-block" style={{ background: '#00AAFF' }}>
+                                    {/* Display emojis if they exist for the featured news item */}
+                                    {featuredNewsItem.emojiHexcodes && featuredNewsItem.emojiHexcodes.length > 0 ? (
+                                        <div className="project-emoji-container">
+                                            {featuredNewsItem.emojiHexcodes.map((hexcode, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={getOpenMojiUrl(hexcode, true)}
+                                                    alt={`News Emoji ${index+1}`}
+                                                    className="project-emoji"
+                                                    style={{ filter: 'invert(1)' }}
+                                                    onError={(e) => {
+                                                        console.error(`Failed to load emoji with hexcode: ${hexcode}`);
+                                                        (e.target as HTMLImageElement).style.display = 'none';
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="project-emoji-container">
+                                            <img 
+                                                src={handshakeEmojiUrl} 
+                                                alt="Handshake Emoji" 
                                                 className="project-emoji"
                                                 style={{ filter: 'invert(1)' }}
-                                                onError={(e) => {
-                                                    console.error(`Failed to load emoji with hexcode: ${hexcode}`);
-                                                    (e.target as HTMLImageElement).style.display = 'none';
-                                                }}
                                             />
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="project-emoji-container">
-                                        <img 
-                                            src={handshakeEmojiUrl} 
-                                            alt="Handshake Emoji" 
-                                            className="project-emoji"
-                                            style={{ filter: 'invert(1)' }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="project-content">
-                                <h3 className="project-title">{featuredNewsItem.title}</h3>
-                                <div className="news-meta">
-                                    <span className="news-date">{formatDate(featuredNewsItem.date)}</span>
-                                    <span className="news-author">By {featuredNewsItem.author}</span>
+                                        </div>
+                                    )}
                                 </div>
-                                <p className="project-excerpt">
-                                    {featuredNewsItem.content.length > 115
-                                        ? `${featuredNewsItem.content.slice(0, 115)}...`
-                                        : featuredNewsItem.content}
-                                </p>
-                                {featuredNewsItem.tags && featuredNewsItem.tags.length > 0 && (
-                                    <div className="news-tags">
-                                        {featuredNewsItem.tags.slice(0, 3).map(tag => (
-                                            <span key={tag} className="news-tag">{tag}</span>
-                                        ))}
+                                <div className="project-content">
+                                    <h3 className="project-title">{featuredNewsItem.title}</h3>
+                                    <div className="news-meta">
+                                        <span className="news-date">{formatDate(featuredNewsItem.date)}</span>
+                                        <span className="news-author">By {featuredNewsItem.author}</span>
                                     </div>
-                                )}
+                                    <p className="project-excerpt">
+                                        {featuredNewsItem.content.length > 115
+                                            ? `${featuredNewsItem.content.slice(0, 115)}...`
+                                            : featuredNewsItem.content}
+                                    </p>
+                                    {featuredNewsItem.tags && featuredNewsItem.tags.length > 0 && (
+                                        <div className="news-tags">
+                                            {featuredNewsItem.tags.slice(0, 3).map(tag => (
+                                                <span key={tag} className="news-tag">{tag}</span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </Link>
+                            {/* Mobile "See all news" link */}
+                            <div className="mobile-see-all-links">
+                                <Link to="/feed" className="see-more-link">
+                                    See all news <span className="arrow-icon">→</span>
+                                </Link>
                             </div>
-                        </Link>
+                        </>
                     )}
 
                     {/* Project Card */}
-                    {featuredProject && <ProjectCard key={featuredProject.id} project={featuredProject} />}
+                    {featuredProject && (
+                        <>
+                            <ProjectCard key={featuredProject.id} project={featuredProject} />
+                            {/* Mobile "See all research areas" link */}
+                            <div className="mobile-see-all-links">
+                                <Link to="/projects" className="see-more-link">
+                                    See all research areas <span className="arrow-icon">→</span>
+                                </Link>
+                            </div>
+                        </>
+                    )}
 
                     {/* Publication Card */}
                     {featuredPublication && (
-                        <Link to="/publications" className="project-card">
-                            <div
-                                className="project-color-block"
-                                style={{ background: '#00AAFF' }}
-                            >
-                                {/* Always display bookmark emoji for publications - now using black and white version */}
-                                <div className="project-emoji-container">
-                                    <img
-                                        src={getOpenMojiUrl('1F4D1', true)}
-                                        alt="Publication Bookmark"
-                                        className="project-emoji"
-                                        style={{ filter: 'invert(1)' }}
-                                        onError={(e) => {
-                                            console.error('Failed to load bookmark emoji');
-                                            (e.target as HTMLImageElement).style.display = 'none';
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                            <div className="project-content">
-                                <h3 className="project-title">{featuredPublication.title}</h3>
-                                <p className="project-excerpt">
-                                    {featuredPublication.authors.join(", ")}
-                                </p>
-                                {featuredPublication.abstract && (
-                                    <p className="project-excerpt">
-                                        {featuredPublication.abstract.length > 115
-                                            ? `${featuredPublication.abstract.slice(0, 115)}...`
-                                            : featuredPublication.abstract}
-                                    </p>
-                                )}
-                                <div className="project-metadata">
-                                    <span className="project-category">
-                                        {featuredPublication.journal} ({featuredPublication.year})
-                                    </span>
-                                </div>
-                                {featuredPublication.keywords && featuredPublication.keywords.length > 0 && (
-                                    <div className="news-tags">
-                                        {featuredPublication.keywords.slice(0, 3).map(keyword => (
-                                            <span key={keyword} className="news-tag">{keyword}</span>
-                                        ))}
+                        <>
+                            <Link to="/publications" className="project-card">
+                                <div
+                                    className="project-color-block"
+                                    style={{ background: '#00AAFF' }}
+                                >
+                                    {/* Always display bookmark emoji for publications - now using black and white version */}
+                                    <div className="project-emoji-container">
+                                        <img
+                                            src={getOpenMojiUrl('1F4D1', true)}
+                                            alt="Publication Bookmark"
+                                            className="project-emoji"
+                                            style={{ filter: 'invert(1)' }}
+                                            onError={(e) => {
+                                                console.error('Failed to load bookmark emoji');
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                            }}
+                                        />
                                     </div>
-                                )}
+                                </div>
+                                <div className="project-content">
+                                    <h3 className="project-title">{featuredPublication.title}</h3>
+                                    <p className="project-excerpt">
+                                        {featuredPublication.authors.join(", ")}
+                                    </p>
+                                    {featuredPublication.abstract && (
+                                        <p className="project-excerpt">
+                                            {featuredPublication.abstract.length > 115
+                                                ? `${featuredPublication.abstract.slice(0, 115)}...`
+                                                : featuredPublication.abstract}
+                                        </p>
+                                    )}
+                                    <div className="project-metadata">
+                                        <span className="project-category">
+                                            {featuredPublication.journal} ({featuredPublication.year})
+                                        </span>
+                                    </div>
+                                    {featuredPublication.keywords && featuredPublication.keywords.length > 0 && (
+                                        <div className="news-tags">
+                                            {featuredPublication.keywords.slice(0, 3).map(keyword => (
+                                                <span key={keyword} className="news-tag">{keyword}</span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </Link>
+                            {/* Mobile "See all publications" link */}
+                            <div className="mobile-see-all-links">
+                                <Link to="/publications" className="see-more-link">
+                                    See all publications <span className="arrow-icon">→</span>
+                                </Link>
                             </div>
-                        </Link>
+                        </>
                     )}
                 </div>
 

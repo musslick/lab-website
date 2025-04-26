@@ -26,6 +26,34 @@ const TopNav: React.FC = () => {
         setMobileMenuOpen(!mobileMenuOpen);
     };
 
+    // Close the mobile menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const navContainer = document.querySelector('.nav-container');
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (mobileMenuOpen && navContainer && !navContainer.contains(event.target as Node) && 
+                menuToggle && !menuToggle.contains(event.target as Node)) {
+                setMobileMenuOpen(false);
+            }
+        };
+        
+        // Close the menu when window is resized to desktop size
+        const handleResize = () => {
+            if (window.innerWidth > 768 && mobileMenuOpen) {
+                setMobileMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        window.addEventListener('resize', handleResize);
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            window.addEventListener('resize', handleResize);
+        };
+    }, [mobileMenuOpen]);
+
     return (
         <nav 
             className="top-nav" 
@@ -45,6 +73,7 @@ const TopNav: React.FC = () => {
                     className="mobile-menu-toggle" 
                     onClick={toggleMobileMenu}
                     aria-label="Toggle navigation menu"
+                    aria-expanded={mobileMenuOpen}
                 >
                     <span className="bar"></span>
                     <span className="bar"></span>
@@ -53,32 +82,32 @@ const TopNav: React.FC = () => {
                 
                 <ul className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
                     <li>
-                        <NavLink to="/" className={({isActive}) => isActive ? 'active' : ''}>
+                        <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
                             Home
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/feed" className={({isActive}) => isActive ? 'active' : ''}>
+                        <NavLink to="/feed" onClick={() => setMobileMenuOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
                             News
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/projects" className={({isActive}) => isActive ? 'active' : ''}>
+                        <NavLink to="/projects" onClick={() => setMobileMenuOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
                             Research
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/publications" className={({isActive}) => isActive ? 'active' : ''}>
+                        <NavLink to="/publications" onClick={() => setMobileMenuOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
                             Publications
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/software" className={({isActive}) => isActive ? 'active' : ''}>
+                        <NavLink to="/software" onClick={() => setMobileMenuOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
                             Software
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/team" className={({isActive}) => isActive ? 'active' : ''}>
+                        <NavLink to="/team" onClick={() => setMobileMenuOpen(false)} className={({isActive}) => isActive ? 'active' : ''}>
                             Team
                         </NavLink>
                     </li>
