@@ -995,8 +995,7 @@ header {
   }
 
   .team-member-profile-info h1,
-  .team-member-role,
-  .team-member-bio-extended p {
+  .team-member-role {
     text-align: center;
   }
 
@@ -2833,7 +2832,7 @@ header {
   color: #000000;
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 8px rgba(0,0,0.08);
   justify-content: flex-start; /* Change from center to flex-start to align left */
   min-height: 100px;
 }
