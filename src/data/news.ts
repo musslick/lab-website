@@ -31,7 +31,7 @@ export const newsItems: NewsItem[] = [
     "content": "We are fortunate to have received support from Lower Saxony's Ministry of Science and Culture for a workshop on “AI for Discovery of Mind and Brain” (PROFIL International, MWK, 28.204 Euro) for hosting a Workshop at Princeton University together with our collaborators there, Younes Strittmatter and Jonathan D. Cohen.\n\nThis workshop will host a series of tutorials on open-software scientific software for automating scientific discovery in cognitive science, and present cutting-edge research on AI for cognitive science and automated scientific discovery.\n\nStay tuned for more details!",
     "date": "2025-04-11",
     "author": "Sebastian Musslick",
-    "featured": true,
+    "featured": false,
     "tags": [
       "AI for science",
       "automated scientific discovery",
@@ -39,12 +39,14 @@ export const newsItems: NewsItem[] = [
       "hackathon",
       "funding"
     ],
-    "imageUrl": "https://i.postimg.cc/Y2RwQtJ4/New-Logo-3.png"
+    "emojiHexcodes": [
+      "1F91D"
+    ]
   },
   {
     "id": "news-3",
     "title": "Moritz Hartstang joining the lab as PhD student",
-    "content": "We're excited to welcome Moritz Hartstang as a doctoral student to our lab. Moritz has background in Design and Cognitive Science and will be focusing on automated systems for improving the understanding of scientific texts.",
+    "content": "We're excited to welcome Moritz Hartstang as a doctoral student to our lab. Moritz has a background in Design and Cognitive Science and will be focusing on automated systems to adapt medical and scientific texts to a person's growing comprehension.",
     "date": "2025-04-03",
     "author": "Sebastian Musslick",
     "featured": false,
@@ -80,7 +82,7 @@ export const newsItems: NewsItem[] = [
   {
     "id": "news-1745334035309",
     "title": "Computational Modeling Workshop at Brown University",
-    "content": "Our lab co-organized Computational Modeling Workshop at held at the Carney Institute for Brain Science at Brown University. The workshop enabled students of Osnabrück University and other institutions to learn about basic and advanced methods in computational modeling. Students travel grants were supported by the Institute of Cognitive Science and the Universitätsgesellschaft of Osnabrück University.",
+    "content": "Our lab co-organized Computational Modeling Workshop at held at the Carney Institute for Brain Science at Brown University. The workshop enabled students of Osnabrück University and other institutions to learn about basic and advanced methods in computational modeling. Students travel grants were supported by the Institute of Cognitive Science and the Universitätsgesellschaft of Osnabrück University.",
     "date": "2024-07-12",
     "author": "Sebastian Musslick",
     "featured": false,
