@@ -50,7 +50,7 @@ const TopNav: React.FC = () => {
         
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-            window.addEventListener('resize', handleResize);
+            window.removeEventListener('resize', handleResize);
         };
     }, [mobileMenuOpen]);
 
@@ -70,7 +70,7 @@ const TopNav: React.FC = () => {
                 </div>
                 
                 <button 
-                    className="mobile-menu-toggle" 
+                    className={`mobile-menu-toggle ${mobileMenuOpen ? 'active' : ''}`}
                     onClick={toggleMobileMenu}
                     aria-label="Toggle navigation menu"
                     aria-expanded={mobileMenuOpen}

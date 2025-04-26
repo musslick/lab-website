@@ -89,7 +89,7 @@ header {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 10px 10px; /* Increased from 5px to 15px for better spacing */
+  padding: 0 10px 10px; /* Horizontal padding set to 15px for better spacing */
 }
 
 .container {
@@ -113,7 +113,7 @@ header {
   z-index: 1000;
   font-family: 'Inter', sans-serif;
   margin-bottom: 0;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, height 0.3s ease;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-bottom: 1px solid #eee !important; /* Ensure border is visible */
@@ -125,8 +125,9 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px; /* Increased from 10px to 15px */
-  height: 70px;
+  padding: 0 15px; /* Consistent with main-content padding */
+  height: 70px; /* Standard height for desktop */
+  transition: height 0.3s ease;
 }
 
 .logo-container {
@@ -168,7 +169,7 @@ header {
   color: #000000; /* Black text for nav links */
   text-decoration: none;
   font-weight: 500;
-  transition: font-weight 0.2s;
+  transition: color 0.2s, font-weight 0.2s;
   border-radius: 4px;
   text-shadow: none;
   background-color: transparent;
@@ -201,52 +202,82 @@ header {
   border: none;
   cursor: pointer;
   padding: 0;
+  z-index: 101; /* Higher z-index to stay on top */
+  transition: transform 0.3s ease;
 }
 
 .bar {
   height: 3px;
   width: 100%;
-  background-color: #000000; /* Changed to black for contrast on white background */
+  background-color: #000000; /* Black bars for the hamburger menu */
   border-radius: 10px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 @media (max-width: 768px) {
+  .nav-container {
+    height: 60px; /* Reduced height for mobile to match footer better */
+  }
+  
   .mobile-menu-toggle {
     display: flex;
   }
+  
+  /* Transform hamburger to X when menu is open */
+  .mobile-menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+  }
+  
+  .mobile-menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .mobile-menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+  }
 
   .nav-links {
-    position: absolute;
-    top: 70px;
+    position: fixed; /* Change to fixed for full-screen overlay */
+    top: 60px; /* Match new mobile header height */
     left: 0;
     right: 0;
+    bottom: 0; /* Extend to bottom of screen */
     flex-direction: column;
     background-color: #ffffff !important; /* White background for mobile menu */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 10px 0;
+    padding: 0;
     gap: 0;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    opacity: 0;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease, padding 0.4s ease;
     z-index: 100;
   }
 
   .nav-links.active {
-    max-height: 300px;
-    padding: 10px 0;
+    max-height: calc(100vh - 60px); /* Full height minus header */
+    opacity: 1;
+    padding: 20px 0;
+    overflow-y: auto; /* Allow scrolling if many menu items */
   }
 
   .nav-links li {
     width: 100%;
+    text-align: center; /* Center align the links */
   }
 
   .nav-links a {
     padding: 15px 20px;
     width: 100%;
     display: block;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Darker border for white background */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border for white background */
     text-shadow: none; /* Ensure no text shadow on mobile */
     color: #000000; /* Ensure text is black on mobile */
+    font-size: 1.1rem; /* Slightly larger for better touch targets */
+  }
+  
+  .nav-links a.active {
+    color: #00AAFF; /* Blue color for active items on mobile */
   }
 
   .logo-text {
@@ -254,10 +285,6 @@ header {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .mobile-menu-toggle .bar {
-    background-color: #000000; /* Black bars for the hamburger menu */
   }
 }
 
@@ -2862,15 +2889,14 @@ header {
   align-items: center;
 }
 
-.add-button::before```css
-{
+.add-button::before {
   content: '+';
   margin-right: 5px;
   font-weight: bold;
   font-size: 18px;
 }
 
-/*/* Contact page styles */
+/* Contact page styles */
 .contact-page {
   max-width: 1200px;
   margin: 0 auto;
