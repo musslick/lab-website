@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useContent } from '../contexts/ContentContext';
-import { TopNav, Footer } from '../components/Components';
+import Layout from '../components/Layout';
 import { createProjectGradient, getTopicColorsFromProject, generateTopicColor, OPENMOJI_BASE_URL } from '../utils/colorUtils';
 import '../styles/styles.css';
 
@@ -183,8 +183,7 @@ const ProjectDetails: React.FC = () => {
   }
 
   return (
-    <>
-      <TopNav />
+    <Layout>
       <div className="project-details">
         <div
           ref={colorHeaderRef}
@@ -450,8 +449,7 @@ const ProjectDetails: React.FC = () => {
           </div>
         )}
       </div>
-      <Footer />
-    </>
+    </Layout>
   );
 };
 
