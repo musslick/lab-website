@@ -215,7 +215,7 @@ export const teamMembers = [
     "name": "Melissa Jansen",
     "role": "Master Student",
     "bio": "Hi, I'm Melissa! Currently, I'm a master's student working on my thesis in the lab. I'm transitioning from a background in psychology an neurobiology to the realm of Neural Networks and AI, after getting in touch during a lab rotation in summer 2024. If I'm not busy with working on the project, I'm always up for a chat about statistics, books, or house plants. :)",
-    "imageUrl": "https://i.postimg.cc/0Qzb79Tr/no-picture.png",
+    "imageUrl": "https://i.postimg.cc/xCdtHpyt/Melissa.jpg",
     "color": "#00AAFF",
     "projects": [
       "project-1744367667570"
