@@ -91,5 +91,67 @@ export const newsItems: NewsItem[] = [
       "workshop"
     ],
     "imageUrl": "https://i.postimg.cc/zvDN4stk/brown-workshop.jpg"
+  },
+  {
+    "id": "news-1745765607888",
+    "title": "New Visiting PhD Student from NTU Singapore: Priyadharshini Santhanakrishnan ",
+    "content": "We welcome Priyadharshini Santhanakrishnan to the lab, who is a visiting PhD student from Nanyang Technological University where she works with Victoria Leong from the Early Mental Potential & Wellbeing Research Centre (EMPOWER).  studies how, in mother – infant dyadic contexts, maternal behaviour influences infants’ attention allocation and consequently their learning.  In our lab, Priya will apply automated model discovery techniques to uncover hidden cognitive dynamics of mother – infant interactions based on EEG and behavioral data.",
+    "date": "2025-03-03",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [
+      "team update"
+    ],
+    "imageUrl": "https://i.postimg.cc/yYtstF3Q/Priya.jpg"
+  },
+  {
+    "id": "news-1745765977905",
+    "title": "Alessandra Brondetta joining the lab as PhD student",
+    "content": "We are excited to welcome Alessandra Brondetta to the lab! Alessandra has a background in the physics of complex systems and will be joining our lab to study the mechanisms of cognitive flexibility. Her work addresses how diversity in cognitive mechanisms among individuals can facilitate cognitive and belief flexibility at the group level.",
+    "date": "2024-01-09",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [
+      "team update"
+    ],
+    "imageUrl": "https://i.postimg.cc/Nj03bL0s/Alessandra-Brondetta.jpg"
+  },
+  {
+    "id": "news-1745766151086",
+    "title": "Sedighe Raeisi joining the lab as Humboldt Fellow",
+    "content": "We are excited to welcome Sedighe Raeisi who will be joining the lab as postdoctoral Humboldt Fellow. Sedighe obtained her PhD in physics and will be developing novel statistical methods for the automated discovery of individual differences in cognitive mechanisms.",
+    "date": "2024-04-01",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [
+      "team update"
+    ],
+    "imageUrl": "https://i.postimg.cc/L8z1C4QW/Sedighe.jpg"
+  },
+  {
+    "id": "news-1745768023319",
+    "title": "Teaching Collaboration with SlashWhy on LLMs for Science",
+    "content": "Our lab started a collaboration between SlashWhy and our study course \"LLMs for Science\", which is co-taught by researchers at the German Research Center for Artificial Intelligence. SlashWhy provide our students with insights into user experience research when it comes to developing LLM-based tools for science. ",
+    "date": "2025-04-04",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [
+      "teaching",
+      "collaboration"
+    ],
+    "imageUrl": "https://i.postimg.cc/3xTMp7y1/slashwhy1.jpg"
+  },
+  {
+    "id": "news-1745768945020",
+    "title": "AutoRA interacts with humans at UOS open house",
+    "content": "We premiered a physical exhibit of AutoRA at the Open House at Osnabrück University. The exhibit autonomously performed studies with participants, studying their learning behavior, and provided them with explanations about what it learned.",
+    "date": "2024-10-26",
+    "author": "Sebastian Musslick",
+    "featured": false,
+    "tags": [
+      "AI for science",
+      "automated scientific discovery"
+    ],
+    "imageUrl": "https://i.postimg.cc/Lsj3PK1t/tag-der-offenen-tuer.jpg"
   }
 ];
