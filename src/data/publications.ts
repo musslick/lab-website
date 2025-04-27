@@ -744,5 +744,164 @@ export const publications: Publication[] = [
     "keywords": [
       "control allocation"
     ]
+  },
+  {
+    "id": "pub-1745790290408",
+    "title": "Rationalizing constraints on the capacity for cognitive control",
+    "journal": "Trends in Cognitive Sciences",
+    "year": 2021,
+    "type": "journal article",
+    "authors": [
+      "Musslick, S.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., & Cohen, J. D. (2021). Rationalizing constraints on the capacity for cognitive control. Trends in cognitive sciences, 25(9), 757-775.",
+    "doi": "10.1016/j.tics.2021.06.001",
+    "url": "https://doi.org/10.1016/j.tics.2021.06.001",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200"
+  },
+  {
+    "id": "pub-1745790426187",
+    "title": "Academic performance of K-12 students in an online-learning environment for mathematics increased during the shutdown of schools in wake of the COVID-19 pandemic",
+    "journal": "PloS One",
+    "year": 2021,
+    "type": "journal article",
+    "authors": [
+      "Spitzer, M. W. H. ",
+      "Musslick, S."
+    ],
+    "citation": "Spitzer, M. W. H., & Musslick, S. (2021). Academic performance of K-12 students in an online-learning environment for mathematics increased during the shutdown of schools in wake of the COVID-19 pandemic. PloS one, 16(8), e0255629.",
+    "doi": "10.1371/journal.pone.0255629",
+    "url": "https://doi.org/10.1371/journal.pone.0255629"
+  },
+  {
+    "id": "pub-1745790525917",
+    "title": "Meta-control: From psychology to computational neuroscience",
+    "journal": "Cognitive, Affective, & Behavioral Neuroscience",
+    "year": 2021,
+    "type": "journal article",
+    "authors": [
+      "Eppinger, B.",
+      "Goschke, T.",
+      "Musslick, S."
+    ],
+    "citation": "Eppinger, B., Goschke, T., & Musslick, S. (2021). Meta-control: From psychology to computational neuroscience. Cognitive, Affective, & Behavioral Neuroscience, 21(3), 447-452.",
+    "doi": "10.3758/s13415-021-00919-4",
+    "url": "https://doi.org/10.3758/s13415-021-00919-4",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745790668972",
+    "title": "Learning to overexert cognitive control in a Stroop task",
+    "journal": "Cognitive, Affective, & Behavioral Neuroscience",
+    "year": 2021,
+    "type": "journal article",
+    "authors": [
+      "Bustamante*, L.",
+      "Lieder*, F.",
+      "Musslick, S.",
+      "Shenhav, A.",
+      "Cohen, J. D."
+    ],
+    "citation": "Bustamante, L., Lieder, F., Musslick, S., Shenhav, A., & Cohen, J. (2021). Learning to overexert cognitive control in a Stroop task. Cognitive, Affective, & Behavioral Neuroscience, 21, 453-471.",
+    "doi": "10.3758/s13415-020-00845-x",
+    "url": "https://doi.org/10.3758/s13415-020-00845-x",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745790778952",
+    "title": "Topological limits to the parallel processing capability of network architectures",
+    "journal": "Nature Physics ",
+    "year": 2021,
+    "type": "journal article",
+    "authors": [
+      "Petri*, G.",
+      "Musslick*, S.",
+      "Dey, B.",
+      "Özcimder, K.",
+      "Turner, D.",
+      "Ahmed, N. K.",
+      "Willke, T. L.",
+      "Cohen, J. D."
+    ],
+    "citation": "Petri, G., Musslick, S., Dey, B., Özcimder, K., Turner, D., Ahmed, N. K., ... & Cohen, J. D. (2021). Topological limits to the parallel processing capability of network architectures. Nature Physics, 17(5), 646-651.",
+    "doi": "10.1038/s41567-021-01170-x",
+    "url": "https://doi.org/10.1038/s41567-021-01170-x",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200"
+  },
+  {
+    "id": "pub-1745790950108",
+    "title": "Recovering quantitative models of human information processing with differentiable architecture search",
+    "journal": "In Proceedings of the 43rd Annual Conference of the Cognitive Science Society",
+    "year": 2021,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S."
+    ],
+    "citation": "Musslick, S. (2021). Recovering quantitative models of human information processing with differentiable architecture search. In Proceedings of the 43rd Annual Conference of the Cognitive Science Society (pp. 1837 – 1843).",
+    "url": "https://escholarship.org/content/qt9wd571ts/qt9wd571ts_noSplash_09fd8880773599de91894a910a676b19.pdf",
+    "projectIds": [
+      "project-1744367667570"
+    ],
+    "projectId": "project-1744367667570",
+    "keywords": [
+      "NAS"
+    ]
+  },
+  {
+    "id": "pub-1745791250191",
+    "title": "The value of learning and cognitive control allocation",
+    "journal": "In Proceedings of the 43rd Annual Conference of the Cognitive Science Society",
+    "year": 2021,
+    "type": "conference proceeding",
+    "authors": [
+      "Masis, J.",
+      "Musslick, S.",
+      "Cohen, J. D."
+    ],
+    "citation": "Masís, J. A., Musslick, S., & Cohen, J. (2021). The value of learning and cognitive control allocation. In Proceedings of the 43rd Annual Conference of the Cognitive Science Society (pp. 348 – 354).",
+    "url": "https://escholarship.org/uc/item/7w0223v0#:~:text=Current%20models%20of%20cognitive%20control,task%20when%20estimating%20its%20value.",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745791442007",
+    "title": "On the rational boundedness of cognitive control: Shared versus separated representations",
+    "journal": "PsyArXiv",
+    "year": 2020,
+    "type": "preprint",
+    "authors": [
+      "Musslick, S.",
+      "Saxe, A. ",
+      "Hoskin, A. N.",
+      "Sagiv, Y.",
+      "Reichman, D.",
+      "Petri, G.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Saxe, A., Hoskin, A. N., Sagiv, Y., Reichman, D., Petri, G., & Cohen, J. D. (2020). On the rational boundedness of cognitive control: Shared versus separated representations.",
+    "doi": "10.31234/osf.io/jkhdf",
+    "url": "https://osf.io/preprints/psyarxiv/jkhdf_v1",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200"
   }
 ];

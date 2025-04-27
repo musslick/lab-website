@@ -131,7 +131,7 @@ export const newsItems: NewsItem[] = [
   {
     "id": "news-1745768023319",
     "title": "Teaching Collaboration with SlashWhy on LLMs for Science",
-    "content": "Our lab started a collaboration between SlashWhy and our study course \"LLMs for Science\", which is co-taught by researchers at the German Research Center for Artificial Intelligence. SlashWhy provide our students with insights into user experience research when it comes to developing LLM-based tools for science. ",
+    "content": "Our lab started a collaboration with SlashWhy in the context of our study course on \"LLMs for Science\", co-taught by researchers at the German Research Center for Artificial Intelligence. In an initial workshop, SlashWhy provided a hands-on introduction into user experience research, with the focus on AI products for scientists.",
     "date": "2025-04-04",
     "author": "Sebastian Musslick",
     "featured": false,
@@ -144,7 +144,7 @@ export const newsItems: NewsItem[] = [
   {
     "id": "news-1745768945020",
     "title": "AutoRA interacts with humans at UOS open house",
-    "content": "We premiered a physical exhibit of AutoRA at the Open House at Osnabrück University. The exhibit autonomously performed studies with participants, studying their learning behavior, and provided them with explanations about what it learned.",
+    "content": "We premiered a physical exhibit of our Automated Research Assistant (AuroRA) at the Open House at Osnabrück University. AutoRA autonomously performed studies with participants, studying their learning behavior, and provided them with explanations about what it learned.",
     "date": "2024-10-26",
     "author": "Sebastian Musslick",
     "featured": false,
