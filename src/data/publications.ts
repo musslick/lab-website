@@ -689,5 +689,60 @@ export const publications: Publication[] = [
     ],
     "citation": "Zerroug, A., Vaishnav, M., Colin, J., Musslick, S., & Serre, T. (2022). A benchmark for compositional visual reasoning. Advances in Neural Information Processing Systems, 35, 29776-29788.",
     "url": "https://proceedings.neurips.cc/paper_files/paper/2022/file/c08ee8fe3d19521f3bfa4102898329fd-Paper-Datasets_and_Benchmarks.pdf"
+  },
+  {
+    "id": "pub-1745777833743",
+    "title": "SweetPea: A standard language for factorial experimental design",
+    "journal": "Behavior Research Methods",
+    "year": 2022,
+    "type": "journal article",
+    "authors": [
+      "Musslick, S.",
+      "Cherkaev, A.",
+      "Draut, B.",
+      "Butt, A.",
+      "Darragh, P.",
+      "Srikumar, V.",
+      "Flatt, M.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Cherkaev, A., Draut, B., Butt, A. S., Darragh, P., Srikumar, V., ... & Cohen, J. D. (2022). SweetPea: A standard language for factorial experimental design. Behavior Research Methods, 1-25.",
+    "doi": "10.3758/s13428-021-01598-2",
+    "url": "https://link.springer.com/article/10.3758/s13428-021-01598-2",
+    "projectIds": [
+      "project-1744380957652",
+      "project-1744383288085"
+    ],
+    "projectId": "project-1744380957652",
+    "softwareIds": [
+      "neuro-bci"
+    ],
+    "keywords": [
+      "SAT sampling"
+    ]
+  },
+  {
+    "id": "pub-1745778121908",
+    "title": "Leveraging psychometrics of rational inattention to estimate individual differences in the capacity for cognitive control",
+    "journal": "Proceedings of the 44th Annual Meeting of the Cognitive Science Society",
+    "year": 2022,
+    "type": "conference proceeding",
+    "authors": [
+      "Ham, H.",
+      "Grahek, I.",
+      "Bustamante, L. A.",
+      "Daw, N.",
+      "Caplin, A.",
+      "Musslick, S."
+    ],
+    "citation": "Ham, H., Grahek, I., Bustamante, L. A., Daw, N., Caplin, A., & Musslick, S. (2022). Leveraging psychometrics of rational inattention to estimate individual differences in the capacity for cognitive control. In Proceedings of the 44th Annual Meeting of the Cognitive Science Society (pp. 2222-2229).",
+    "url": "https://escholarship.org/uc/item/7v97g8j5",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212",
+    "keywords": [
+      "control allocation"
+    ]
   }
 ];

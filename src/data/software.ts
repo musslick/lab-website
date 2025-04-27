@@ -70,6 +70,9 @@ export const software: Software[] = [
       "project-1744383465177"
     ],
     "projectId": "project-1744383288085",
+    "publicationIds": [
+      "pub-003"
+    ],
     "releaseDate": "2024-12-10"
   },
   {
@@ -92,7 +95,9 @@ export const software: Software[] = [
     ],
     "projectId": "project-1744380957652",
     "releaseDate": "2018-09-20",
-    "publicationIds": []
+    "publicationIds": [
+      "pub-1745777833743"
+    ]
   },
   {
     "id": "software-1744661083211",
@@ -109,7 +114,10 @@ export const software: Software[] = [
     ],
     "license": "MIT",
     "documentationUrl": "https://autoresearch.github.io/EEG-GAN/",
-    "releaseDate": "2023-03-28"
+    "releaseDate": "2023-03-28",
+    "publicationIds": [
+      "pub-1745760067373"
+    ]
   },
   {
     "id": "software-1745315215124",
