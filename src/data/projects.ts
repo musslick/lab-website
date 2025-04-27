@@ -35,8 +35,11 @@ export const projects: Project[] = [
       "Sebastian Musslick",
       "Sedighe Raeisi",
       "Daniel Weinhardt",
+      "Priyadharshini Santhanakrishnan",
       "Muhip Tezcan",
-      "Se Eun Choi"
+      "Se Eun Choi",
+      "Alexander Ditz",
+      "Melissa Jansen"
     ],
     "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
@@ -79,7 +82,7 @@ export const projects: Project[] = [
     ],
     "image": "https://i.postimg.cc/cCm37nc5/model-discovery.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744902884665
+    "_lastUpdated": 1745763073771
   },
   {
     "id": "project-1744380957652",
@@ -92,6 +95,7 @@ export const projects: Project[] = [
     "team": [
       "Sebastian Musslick",
       "Sedighe Raeisi",
+      "Leon Schmid",
       "Pelin Kömürlüoğlu",
       "Se Eun Choi"
     ],
@@ -134,7 +138,7 @@ export const projects: Project[] = [
     ],
     "image": "https://i.postimg.cc/0NyP1hcn/experimental-design.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744902569877
+    "_lastUpdated": 1745763037202
   },
   {
     "id": "project-1744383288085",
@@ -212,7 +216,7 @@ export const projects: Project[] = [
       "1F52C"
     ],
     "image": "https://i.postimg.cc/02TXR40S/integrated-discovery.png",
-    "_lastUpdated": 1744903251954
+    "_lastUpdated": 1745763063784
   },
   {
     "id": "project-1744383465177",
@@ -227,7 +231,8 @@ export const projects: Project[] = [
     "team": [
       "Sebastian Musslick",
       "Alessandra Brondetta",
-      "Moritz Hartstang"
+      "Moritz Hartstang",
+      "Sabrina Namazova"
     ],
     "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
@@ -262,7 +267,7 @@ export const projects: Project[] = [
     ],
     "image": "https://i.postimg.cc/NfxbJF9S/synthetic-participants.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744902962907
+    "_lastUpdated": 1745763089290
   },
   {
     "id": "project-1744537991200",
@@ -319,7 +324,9 @@ export const projects: Project[] = [
     "team": [
       "Sebastian Musslick",
       "Alessandra Brondetta",
-      "Moritz Hartstang"
+      "Moritz Hartstang",
+      "Priyadharshini Santhanakrishnan",
+      "Mahnaz Mousavinezhad"
     ],
     "color": "linear-gradient(to right, #00AAFF 0%, #005580 100%)",
     "topics": [
@@ -352,6 +359,6 @@ export const projects: Project[] = [
     ],
     "image": "https://i.postimg.cc/bYW5nczG/mental-effort.png",
     "startDate": "2023-10-01",
-    "_lastUpdated": 1744903153667
+    "_lastUpdated": 1745763131213
   }
 ];

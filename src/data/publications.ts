@@ -652,5 +652,42 @@ export const publications: Publication[] = [
       "random sampling",
       "metascience"
     ]
+  },
+  {
+    "id": "pub-1745760067373",
+    "title": "Augmenting EEG with generative adversarial networks enhances brain decoding across classifiers and sample sizes",
+    "journal": "Proceedings of the 45th Annual Meeting of the Cognitive Science Society",
+    "year": 2023,
+    "type": "conference proceeding",
+    "authors": [
+      "Williams, C. C.",
+      "Weinhardt, D.",
+      "Wirzberger, M.",
+      "Musslick, S."
+    ],
+    "citation": "Williams, C. C., Weinhardt, D., Wirzberger, M., & Musslick, S. (2023). Augmenting EEG with generative adversarial networks enhances brain decoding across classifiers and sample sizes. In Proceedings of the 45th Annual Meeting of the Cognitive Science Society (pp. 1770–1776).",
+    "url": "https://escholarship.org/uc/item/9gz8g908",
+    "softwareIds": [
+      "software-1744661083211"
+    ],
+    "keywords": [
+      "data augmentation"
+    ]
+  },
+  {
+    "id": "pub-1745760413224",
+    "title": "A benchmark for compositional visual reasoning",
+    "journal": "Advances in Neural Information Processing Systems",
+    "year": 2022,
+    "type": "conference proceeding",
+    "authors": [
+      "Zerroug, A.",
+      "Vaishnav, M.",
+      "Colin, J.",
+      "Musslick, S.",
+      "Serre, T."
+    ],
+    "citation": "Zerroug, A., Vaishnav, M., Colin, J., Musslick, S., & Serre, T. (2022). A benchmark for compositional visual reasoning. Advances in Neural Information Processing Systems, 35, 29776-29788.",
+    "url": "https://proceedings.neurips.cc/paper_files/paper/2022/file/c08ee8fe3d19521f3bfa4102898329fd-Paper-Datasets_and_Benchmarks.pdf"
   }
 ];
