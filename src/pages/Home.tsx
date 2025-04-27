@@ -111,7 +111,7 @@ const Home: React.FC = () => {
                     }}>
                         <h3 style={{ marginTop: '0', color: '#000000', fontSize: '1.3rem', fontWeight: '600', marginBottom: '10px', lineHeight: '1.3' }}>Our Mission</h3>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem' }}>
-                            Our lab studies the computational principles that underlie the <b><span style={{ color: '#00AAFF' }}>capabilities and limitations of human cognition.</span></b> Ironically, as human scientists, we are constrained by the very cognitive limitations we seek to understand: the space of possible scientific models and experiments is too vast for the human brain to navigate alone, making it difficult to achieve an integrative understanding of the mind.
+                            Our lab studies the computational principles that underlie the <b><span style={{ color: '#00AAFF' }}>capabilities and limitations of human cognition.</span></b> Ironically, as human scientists, we are constrained by the very cognitive limitations we seek to understand: the space of possible scientific models and experiments is too vast for the human brain to navigate alone, making it challenging for us to achieve an integrative understanding of the mind.
                         </p>
                         <p style={{ lineHeight: '1.7', fontSize: '1rem', marginBottom: '0' }}>
                             To overcome these limits, we integrate AI into the scientific process. We <b><span style={{ color: '#00AAFF' }}>build artificial scientists</span></b> that work alongside us as research partners — systems that can explore larger spaces of theories and experiments, and uncover patterns that human researchers might overlook. Together, we aim to better understand the computational principles behind human thought and behavior— and to push the boundaries of how science itself is done.
@@ -147,9 +147,9 @@ const Home: React.FC = () => {
                                         </div>
                                     ) : (
                                         <div className="project-emoji-container">
-                                            <img 
-                                                src={handshakeEmojiUrl} 
-                                                alt="Handshake Emoji" 
+                                            <img
+                                                src={handshakeEmojiUrl}
+                                                alt="Handshake Emoji"
                                                 className="project-emoji"
                                                 style={{ filter: 'invert(1)' }}
                                             />
