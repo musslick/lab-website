@@ -535,9 +535,9 @@ export const publications: Publication[] = [
     "type": "journal article",
     "authors": [
       "Silvestrini, N.",
-      "Musslick, S.",
-      "Berry, A.",
-      "Vassena, E."
+      "Musslick*, S.",
+      "Berry*, A.",
+      "Vassena*, E."
     ],
     "citation": "Silvestrini, N., Musslick, S., Berry, A. S., & Vassena, E. (2023). An integrative effort: Bridging motivational intensity theory and recent neurocomputational and neuronal models of effort and control allocation. Psychological Review, 130(4), 1081.",
     "doi": "10.1037/rev0000372",
