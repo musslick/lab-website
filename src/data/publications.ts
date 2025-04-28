@@ -903,5 +903,171 @@ export const publications: Publication[] = [
       "project-1744383751212"
     ],
     "projectId": "project-1744537991200"
+  },
+  {
+    "id": "pub-1745842243211",
+    "title": "A computational perspective on the roles of affect in cognitive control",
+    "journal": "International Journal of Psychophysiology",
+    "year": 2020,
+    "type": "journal article",
+    "authors": [
+      "Grahek*, I.",
+      "Musslick*, S.",
+      "Shenhav, A."
+    ],
+    "citation": "Grahek, I., Musslick, S., & Shenhav, A. (2020). A computational perspective on the roles of affect in cognitive control. International Journal of Psychophysiology, 151, 25-34.",
+    "doi": "10.1016/j.ijpsycho.2020.02.001",
+    "url": "https://doi.org/10.1016/j.ijpsycho.2020.02.001",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745842388190",
+    "title": "Mental effort: One construct, many faces?",
+    "journal": "Proceedings of the 42nd Annual Meeting of the Cognitive Science Society",
+    "year": 2020,
+    "type": "workshop contribution",
+    "authors": [
+      "Wirzberger, M.",
+      "Grahek, I.",
+      "Bustamante, L.",
+      "Shenhav, A.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Wirzberger, M., Grahek, I., Bustamante, L., Shenhav, A., & Cohen, J. D. (2020). Mental effort: One construct, many faces?. In Proceedings of the 42nd Annual Meeting of the Cognitive Science Society (pp. 1–2).",
+    "url": "https://escholarship.org/content/qt3f33p0sd/qt3f33p0sd.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745842525116",
+    "title": "Motivation and cognitive control in depression",
+    "journal": "Neuroscience & Biobehavioral Reviews",
+    "year": 2019,
+    "type": "journal article",
+    "authors": [
+      "Grahek, I.",
+      "Shenhav, A.",
+      "Musslick, S.",
+      "Krebs, R. M.",
+      "Koster, E. H."
+    ],
+    "citation": "Grahek, I., Shenhav, A., Musslick, S., Krebs, R. M., & Koster, E. H. (2019). Motivation and cognitive control in depression. Neuroscience & Biobehavioral Reviews, 102, 371-381.",
+    "doi": "10.1016/j.neubiorev.2019.04.011",
+    "url": "https://doi.org/10.1016/j.neubiorev.2019.04.011",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212",
+    "keywords": [
+      "computational psychiatry"
+    ]
+  },
+  {
+    "id": "pub-1745843283414",
+    "title": "Understanding interactions amongst cognitive control, learning and representation",
+    "journal": "Proceedings of the 41st Annual Meeting of the Cognitive Science Society",
+    "year": 2019,
+    "type": "workshop contribution",
+    "authors": [
+      "Musslick, S.",
+      "Novick, A. H.",
+      "Webb, T.",
+      "Frankland, S.",
+      "Cohen, J. D.",
+      "Jackson, R. J.",
+      "Ralph, M. A. L.",
+      "Chen, L.",
+      "Rogers, T. T."
+    ],
+    "citation": "Musslick, S., Novick, A. H., Webb, T., Frankland, S., Cohen, J., Jackson, R. J., ... & Rogers, T. T. (2019). Understanding interactions amongst cognitive control, learning and representation. In Proceedings of the 41st Annual Meeting of the Cognitive Science Society (pp. 35 – 26).",
+    "url": "https://escholarship.org/content/qt1dk0g95w/qt1dk0g95w.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745856499310",
+    "title": "Stability-Flexibility Dilemma in Cognitive Control: A Dynamical System Perspective",
+    "journal": "Proceedings of the 41st Annual Meeting of the Cognitive Science Society",
+    "year": 2019,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Bizyaeva, A.",
+      "Agaron, S.",
+      "Leonard, N.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Bizyaeva, A., Agaron, S., Leonard, N., & Cohen, J. D. (2019). Stability-flexibility dilemma in cognitive control: A dynamical system perspective. In Proceedings of the 41st Annual Meeting of the Cognitive Science Society (pp. 2420 – 2426).",
+    "url": "https://escholarship.org/content/qt3342x11v/qt3342x11v.pdf",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200",
+    "softwareIds": [
+      "software-1745315215124"
+    ]
+  },
+  {
+    "id": "pub-1745856703857",
+    "title": "A Mechanistic Account of Constraints on Control-Dependent Processing: Shared Representation, Conflict and Persistence",
+    "journal": "Proceedings of the 41st Annual Meeting of the Cognitive Science Society",
+    "year": 2019,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., & Cohen, J. D. (2019). A mechanistic account of constraints on control-dependent processing: Shared representation, conflict and persistence. In Proceedings of the 41st Annual Meeting of the Cognitive Science Society (pp. 849 – 855).",
+    "url": "https://escholarship.org/content/qt0q15s405/qt0q15s405_noSplash_457f855b4dd9018590e3b7840e9886f1.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745856779899",
+    "title": "Decomposing Individual Differences in Cognitive Control: A Model-Based Approach",
+    "journal": "Proceedings of the 41st Annual Meeting of the Cognitive Science Society",
+    "year": 2019,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Cohen, J. D.",
+      "Shenhav, A."
+    ],
+    "citation": "Musslick, S., Cohen, J. D., & Shenhav, A. (2019). Decomposing individual differences in cognitive control: A model-based approach. In Proceedings of the 41st Annual Meeting of the Cognitive Science Society (pp. 2427 – 2433).",
+    "url": "https://escholarship.org/content/qt95f995wb/qt95f995wb.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745856879360",
+    "title": "Asymmetric Switch Costs as a Function of Task Strength",
+    "journal": "Proceedings of the 41st Annual Meeting of the Cognitive Science Society",
+    "year": 2019,
+    "type": "conference proceeding",
+    "authors": [
+      "Spitzer*, M.",
+      "Musslick*, S.",
+      "Shvartsman, M.",
+      "Shenhav, A.",
+      "Cohen, J. D."
+    ],
+    "citation": "Spitzer, M., Musslick, S., Shvartsman, M., Shenhav, A., & Cohen, J. D. (2019). Asymmetric Switch Costs as a Function of Task Strength. In Proceedings of the 41st Annual Meeting of the Cognitive Science Society (pp. 1070-1076).",
+    "url": "https://www.shenhavlab.org/s/Spitzer_5_9.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
   }
 ];
