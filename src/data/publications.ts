@@ -1176,5 +1176,110 @@ export const publications: Publication[] = [
       "project-1744383751212"
     ],
     "projectId": "project-1744537991200"
+  },
+  {
+    "id": "pub-1745866123035",
+    "title": "Multitasking Capability Versus Learning Efficiency in Neural Network Architectures",
+    "journal": "Proceedings of the 39th Annual Meeting of the Cognitive Science Society",
+    "year": 2017,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Saxe, A. M.",
+      "Ozcimder, K.",
+      "Dey, B.",
+      "Henselman, G.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Saxe, A. M., Ozcimder, K., Dey, B., Henselman, G., & Cohen, J. D. (2017). Multitasking Capability Versus Learning Efficiencyin Neural Network Architectures. In Proceedings of the 39th Annual Meeting of the Cognitive Science Society (pp. 829 – 834). ",
+    "url": "https://escholarship.org/content/qt5t85k9bm/qt5t85k9bm.pdf",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200"
+  },
+  {
+    "id": "pub-1745866319882",
+    "title": "Toward a rational and mechanistic account of mental effort",
+    "journal": "Annual Review of Neuroscience",
+    "year": 2017,
+    "type": "journal article",
+    "authors": [
+      "Shenhav, A.",
+      "Musslick, S.",
+      "Lieder, F.",
+      "Kool, W.",
+      "Griffiths, T. L.",
+      "Cohen, J. D.",
+      "Botvinick, M. M."
+    ],
+    "citation": "Shenhav, A., Musslick, S., Lieder, F., Kool, W., Griffiths, T. L., Cohen, J. D., & Botvinick, M. M. (2017). Toward a rational and mechanistic account of mental effort. Annual review of neuroscience, 40(1), 99-124.",
+    "doi": "10.1146/annurev-neuro-072116-031526",
+    "url": "https://doi.org/10.1146/annurev-neuro-072116-031526",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745866581913",
+    "title": "Learning to (mis) allocate control: maltransfer can lead to self-control failure",
+    "journal": "The 3rd Multidisciplinary Conference on Reinforcement Learning and Decision Making",
+    "year": 2017,
+    "type": "conference proceeding",
+    "authors": [
+      "Bustamante, L.",
+      "Lieder, F.",
+      "Musslick, S.",
+      "Shenhav, A.",
+      "Cohen, J. D."
+    ],
+    "citation": "Bustamante, L., Lieder, F., Musslick, S., Shenhav, A., & Cohen, J. D. (2017). Learning to (mis) allocate control: maltransfer can lead to self-control failure. In The 3rd Multidisciplinary Conference on Reinforcement Learning and Decision Making. Ann Arbor, Michigan.",
+    "url": "https://www.researchgate.net/profile/Falk-Lieder/publication/314257973_Learning_to_misallocate_control_maltransfer_can_lead_to_self-control_failure/links/58be407792851c471d5c0451/Learning-to-misallocate-control-maltransfer-can-lead-to-self-control-failure.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745871382153",
+    "title": "Controlled vs. Automatic Processing: A Graph-Theoretic Approach to the Analysis of Serial vs. Parallel Processing in Neural Network Architectures",
+    "journal": "Proceedings of the 38th Annual Meeting of the Cognitive Science Society",
+    "year": 2016,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Dey, B.",
+      "Ozcimder, K.",
+      "Patwary, M.",
+      "Willke, T.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Dey, B., Ozcimder, K., Patwary, M., Willke, T., & Cohen, J. D. (2016). Controlled vs. automatic processing: A graph-theoretic approach to the analysis of serial vs. parallel processing in neural network architectures. In Proceedings of the Annual Meeting of the Cognitive Science Society (pp. 1547 – 1552).",
+    "url": "https://escholarship.org/content/qt8gf7361v/qt8gf7361v_noSplash_9269203c7e193b96450cbd5278a264af.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745871598790",
+    "title": "A Computational Model of Control Allocation based on the Expected Value of Control",
+    "journal": "Reinforcement Learning and Decision Making Conference 2015",
+    "year": 2015,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Shenhav, A.",
+      "Botvinick, M. M.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Shenhav, A., Botvinick, M. M., & Cohen, J. D. (2015, June). A computational model of control allocation based on the expected value of control. In Reinforcement Learning and Decision Making Conference (Vol. 2015).",
+    "url": "https://www.shenhavlab.org/s/MusslickEtAl_RLDM2015.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
   }
 ];
