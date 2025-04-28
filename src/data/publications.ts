@@ -1069,5 +1069,112 @@ export const publications: Publication[] = [
       "project-1744383751212"
     ],
     "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745864928043",
+    "title": "Dissociable neural mechanisms track evidence accumulation for selection of attention versus action",
+    "journal": "Nature Communications",
+    "year": 2018,
+    "type": "journal article",
+    "authors": [
+      "Shenhav, A.",
+      "Straccia, M. A.",
+      "Musslick, S.",
+      "Cohen, J. D.",
+      "Botvinick, M. M."
+    ],
+    "citation": "Shenhav, A., Straccia, M. A., Musslick, S., Cohen, J. D., & Botvinick, M. M. (2018). Dissociable neural mechanisms track evidence accumulation for selection of attention versus action. Nature communications, 9(1), 2485.",
+    "doi": "10.1038/s41467-018-04841-1",
+    "url": "https://doi.org/10.1038/s41467-018-04841-1",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212",
+    "keywords": [
+      "fMRI"
+    ]
+  },
+  {
+    "id": "pub-1745865035111",
+    "title": "Rational metareasoning and the plasticity of cognitive control",
+    "journal": "PLoS Computational Biology ",
+    "year": 2018,
+    "type": "journal article",
+    "authors": [
+      "Lieder, F.",
+      "Shenhav, A.",
+      "Musslick, S.",
+      "Griffiths, T. L."
+    ],
+    "citation": "Lieder, F., Shenhav, A., Musslick, S., & Griffiths, T. L. (2018). Rational metareasoning and the plasticity of cognitive control. PLoS Computational Biology, 14(4), e1006043.",
+    "doi": "10.1371/journal.pcbi.1006043",
+    "url": "https://doi.org/10.1371/journal.pcbi.1006043",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200"
+  },
+  {
+    "id": "pub-1745865151727",
+    "title": "Constraints associated with cognitive control and the stability-flexibility dilemma",
+    "journal": "Proceedings of the 40th Annual Meeting of the Cognitive Science Society",
+    "year": 2018,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Jang, S. J.",
+      "Shvartsman, M.",
+      "Shenhav, A.",
+      "Cohen, J. D."
+    ],
+    "citation": "Musslick, S., Jang, S. J., Shvartsman, M., Shenhav, A., & Cohen, J. D. (2018). Constraints associated with cognitive control and the stability-flexibility dilemma. In Proceedings of the 40th Annual Meeting of the Cognitive Science Society (pp. 804 – 809).",
+    "url": "https://escholarship.org/content/qt7nm3c7xj/qt7nm3c7xj.pdf",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200",
+    "softwareIds": [
+      "software-1745315215124"
+    ]
+  },
+  {
+    "id": "pub-1745865348347",
+    "title": "Estimating the costs of cognitive control from task performance: theoretical validation and potential pitfalls",
+    "journal": "Proceedings of the 40th Annual Meeting of the Cognitive Science Society",
+    "year": 2018,
+    "type": "conference proceeding",
+    "authors": [
+      "Musslick, S.",
+      "Cohen, J. D.",
+      "Shenhav, A."
+    ],
+    "citation": "Musslick, S., Cohen, J. D., & Shenhav, A. (2018). Estimating the costs of cognitive control from task performance: theoretical validation and potential pitfalls. In Proceedings of the 40th Annual Meeting of the Cognitive Science Society (pp. 800 – 8005).",
+    "url": "https://escholarship.org/content/qt59r5d8sk/qt59r5d8sk.pdf",
+    "projectIds": [
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1745865523935",
+    "title": "Efficiency of learning vs. processing: Towards a normative theory of multitasking",
+    "journal": "Proceedings of the 40th Annual Meeting of the Cognitive Science Society",
+    "year": 2018,
+    "type": "conference proceeding",
+    "authors": [
+      "Sagiv, Y.",
+      "Musslick, S.",
+      "Niv, Y.",
+      "Cohen, J. D."
+    ],
+    "citation": "Sagiv, Y., Musslick, S., Niv, Y., & Cohen, J. D. (2020). Efficiency of learning vs. processing: Towards a normative theory of multitasking. In Proceedings of the 40th Annual Meeting of the Cognitive Science Society (pp. 1002 – 1007).",
+    "url": "https://escholarship.org/uc/item/8501s6t8",
+    "projectIds": [
+      "project-1744537991200",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744537991200"
   }
 ];
