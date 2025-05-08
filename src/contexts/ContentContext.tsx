@@ -199,7 +199,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [featuredPublication, setFeaturedPublication] = useState<string | null>(null);
 
   // Add state for team image
-  const [teamImage, setTeamImage] = useState<string>('https://i.postimg.cc/66F1ryNx/lab-team.jpg');
+  const [teamImage, setTeamImage] = useState<string>('https://i.postimg.cc/j2yg6GfL/lab-team.jpg');
   // Add state for team image position (default to 'center')
   const [teamImagePosition, setTeamImagePosition] = useState<string>('center');
 

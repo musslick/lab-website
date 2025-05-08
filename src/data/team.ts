@@ -208,7 +208,8 @@ export const teamMembers = [
       "project-1744383751212"
     ],
     "email": "aditz@uni-osnabrueck.de",
-    "github": "AlexanderDitz"
+    "github": "AlexanderDitz",
+    "cvUrl": "https://myshare.uni-osnabrueck.de/f/8bcc84e02f544b87b82e/"
   },
   {
     "id": "member-1745762589358",
