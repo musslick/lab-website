@@ -30,6 +30,12 @@ jobs:
         env:
           CI: false
 
+      - name: Copy index.html to 404.html
+        run: cp build/index.html build/404.html
+
+      - name: Add CNAME file
+        run: echo "www.ai4cogsci.com" > build/CNAME
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
