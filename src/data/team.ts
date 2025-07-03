@@ -145,8 +145,8 @@ export const teamMembers = [
   {
     "id": "member-1741684620075",
     "name": "Pelin Kömürlüoğlu",
-    "role": "Research Assistant",
-    "bio": "Pelin Kömürlüoğlu ​​i​s a Master Student in Cognitive Science, with a background in psychology. Pelin's work focuses on the development of optimal experimental design algorithms.",
+    "role": "Doctoral Researcher",
+    "bio": "Pelin Kömürlüoğlu ​​i​s a PhD student in Cognitive Science, with a background in psychology. Pelin's work focuses on the development of optimal experimental design algorithms.",
     "imageUrl": "/assets/team/Pelin.jpg",
     "color": "#00AAFF",
     "projects": [
