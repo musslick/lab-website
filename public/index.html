@@ -10,51 +10,48 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>Automated Lab</title>
-    <!-- Version checker - auto-reloads on new deployment -->
+    <!-- Add Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Version checker - must be at the end of head to see all script tags -->
     <script>
-      (function() {
-        // Use the main JS filename as version indicator
-        var currentScript = null;
-        var checkVersion = function() {
+      window.addEventListener('load', function() {
+        // Wait for all scripts to load, then check version
+        setTimeout(function() {
+          var currentVersion = null;
           var scripts = document.getElementsByTagName('script');
+          
           for (var i = 0; i < scripts.length; i++) {
             if (scripts[i].src && scripts[i].src.includes('/static/js/main.')) {
               var match = scripts[i].src.match(/main\.([a-f0-9]+)\.js/);
               if (match) {
-                currentScript = match[1];
+                currentVersion = match[1];
                 break;
               }
             }
           }
           
-          if (currentScript) {
+          if (currentVersion) {
             var storedVersion = localStorage.getItem('app_js_version');
-            if (storedVersion && storedVersion !== currentScript) {
-              // New version detected, clear localStorage and reload
-              console.log('New version detected. Updating...');
+            
+            if (storedVersion && storedVersion !== currentVersion) {
+              console.log('New version detected: ' + currentVersion + ' (was: ' + storedVersion + ')');
+              console.log('Clearing cache and reloading...');
               localStorage.clear();
               sessionStorage.clear();
-              localStorage.setItem('app_js_version', currentScript);
+              localStorage.setItem('app_js_version', currentVersion);
               window.location.reload(true);
             } else if (!storedVersion) {
-              // First visit or after cache clear
-              localStorage.setItem('app_js_version', currentScript);
+              console.log('First visit, storing version: ' + currentVersion);
+              localStorage.setItem('app_js_version', currentVersion);
+            } else {
+              console.log('Same version: ' + currentVersion);
             }
           }
-        };
-        
-        // Check version after page loads
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', checkVersion);
-        } else {
-          checkVersion();
-        }
-      })();
+        }, 100);
+      });
     </script>
-    <!-- Add Inter font from Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

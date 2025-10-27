@@ -18,6 +18,9 @@ import CollaboratorsList from './pages/admin/CollaboratorsList';
 import CollaboratorForm from './pages/admin/CollaboratorForm';
 import PublicationForm from './pages/admin/PublicationForm';
 import PublicationsList from './pages/admin/PublicationsList';
+
+// Cache version tracker
+const APP_VERSION = '1.0.1';
 import TeamMembersList from './pages/admin/TeamMembersList';
 import NewsList from './pages/admin/NewsList';
 import ProjectsList from './pages/admin/ProjectsList';
