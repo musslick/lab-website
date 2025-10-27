@@ -1281,5 +1281,67 @@ export const publications: Publication[] = [
       "project-1744383751212"
     ],
     "projectId": "project-1744383751212"
+  },
+  {
+    "id": "pub-1761575182202",
+    "title": "Predicting Comprehensibility in Scientific Text Based on Word Facilitation",
+    "journal": "AI in Science Summit",
+    "year": 2025,
+    "type": "conference proceeding",
+    "authors": [
+      "Hartstang, M.",
+      "Martyna Plomecka",
+      "Nicole Gotzner",
+      "Musslick, S."
+    ],
+    "citation": "Hartstang, M., Plomecka, M., Gotzner, N., & Musslick, S. (2025). Predicting Comprehensibility in Scientific Text Based on Word Facilitation. AI in Science Summit 2025, Copenhagen.",
+    "url": "https://ais25.eu/",
+    "abstract": "Comprehensible scientific writing is the basis for interdisciplinary work and science literacy. Common metrics for measuring text comprehensibility are based on word length, frequency, and predictability. Since scientific writing often contains long, rare, and low predictability words, such linguistic metrics negatively assess them without sufficiently taking the context into account. Here, we introduce an attention-based metric derived from transformer models to capture how much a word facilitates the processing of others. We find that such facilitation complements traditional linguistic metrics by explaining late reading times and neural correlates of text understanding, capturing unique variance for words that the existing linguistic metrics rate as difficult. These results hold promise for the development of an interpretable comprehensibility metric, usable for scientific writing, and potentially adaptable to individual comprehension based on vocabulary knowledge.",
+    "projectIds": [
+      "project-1744383288085",
+      "project-1744383465177",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383288085",
+    "keywords": [
+      "text understanding",
+      "computational linguistics",
+      "transformer attention"
+    ]
+  },
+  {
+    "id": "pub-1761575530281",
+    "title": "White-boxing AI Text Comprehension to Augment Human Text Comprehension",
+    "journal": "Minds in the Making",
+    "year": 2025,
+    "type": "workshop contribution",
+    "authors": [
+      "Hartstang, M.",
+      "Musslick, S."
+    ],
+    "citation": "Hartstang, M. & Musslick, S. (2025). White-boxing AI text comprehension to augment human text comprehension. Minds in the Making Workshop 2025, San Francisco.",
+    "url": "https://minds-making.github.io/",
+    "abstract": "The visualization of the reciprocal contextualizing and contextual integration of words in a text could give readers a visualized contextual understanding of the text that was hidden before in our very own “Black Box”, the human brain. This work explores how “white-boxing” AI can not only support its explainability and potential to simulate human text comprehension, but also be used to augment and empower humans.",
+    "projectIds": [
+      "project-1744383288085",
+      "project-1744383465177",
+      "project-1744383751212"
+    ],
+    "projectId": "project-1744383288085"
+  },
+  {
+    "id": "pub-1761575968551",
+    "title": "Collaborative Effect-Centered Problem-Solving",
+    "journal": "Design Issues",
+    "year": 2024,
+    "type": "journal article",
+    "authors": [
+      "Hartstang, M.",
+      "Jürgen Held"
+    ],
+    "citation": "Moritz Hartstang, Jürgen Held; Collaborative Effect-Centered Problem-Solving. Design Issues 2024; 40 (3): 77–87. doi: https://doi.org/10.1162/desi_a_00768",
+    "doi": "https://doi.org/10.1162/desi_a_00768",
+    "url": "https://direct.mit.edu/desi/article/40/3/77/123238/Collaborative-Effect-Centered-Problem-Solving",
+    "abstract": "To justify the individuality of design as a discipline, researchers repeatedly separated it from other disciplines while underscoring the integration of design in those disciplines. We resolve this apparent paradox by recognizing that people have knowledge, abilities, and tasks that can be attributed to several disciplines. We emphasize a collaborative effect-centered understanding and execution of problem-solving rather than an individual and design-centered one to enable each person to perform to the best of their abilities. Therefore, we introduce the newly developed “effect method,” which, by researching defined interrelations between subjects (terms considered as single entities) and systems (terms considered as multipart entities), empowers people to identify and understand relevant problems and solution approaches. The interrelations are defined by effects to be prevented (problem) or achieved (solution). Based on this, the effect method enables the development of system-compatible solution concepts. As a result, each person's creativity, knowledge, and best abilities can contribute to the collaborative development of relevant solutions."
   }
 ];

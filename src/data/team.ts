@@ -32,7 +32,11 @@ export const teamMembers = [
     ],
     "email": "sebastian.musslick@uos.de",
     "github": "musslick",
-    "cvUrl": "https://www.linkedin.com/in/musslick"
+    "cvUrl": "https://www.linkedin.com/in/musslick",
+    "publications": [
+      "pub-1761575182202",
+      "pub-1761575530281"
+    ]
   },
   {
     "id": "member-1744661796349",
@@ -93,7 +97,7 @@ export const teamMembers = [
     "id": "member-1744540658243",
     "name": "Moritz Hartstang",
     "role": "Doctoral Researcher",
-    "bio": "Moritz Hartstang is a PhD student in cognitive science with a backgrund in design. Moritz seeks to develop autonomous systems for improving the understandability of scientific text.  He is also the designer and developer of our lab website. ",
+    "bio": "Moritz explores how large language models process meaning and context, combining psycholinguistic theory with computational modeling. Supervised by Sebastian Musslick and Nicole Gotzner, he conducts his research jointly at the Automated Scientific Discovery of Mind and Brain Lab and the SPA Lab. His work investigates how mechanisms in large language models can be interpreted as predictors of human text comprehension. He develops interpretable metrics to measure and personalize the comprehensibility of scientific and medical texts, connecting the Lab’s work on automated scientific discovery with applications in explainable AI and health communication.",
     "imageUrl": "/assets/team/Moritz.jpg",
     "color": "#00AAFF",
     "projects": [
@@ -101,7 +105,7 @@ export const teamMembers = [
       "project-1744383465177",
       "project-1744383751212"
     ],
-    "email": "moritz.hartstang@web.de"
+    "email": "mhartstang@uni-osnabrueck.de"
   },
   {
     "id": "member-1744662524503",
