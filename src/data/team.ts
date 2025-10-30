@@ -35,7 +35,9 @@ export const teamMembers = [
     "cvUrl": "https://www.linkedin.com/in/musslick",
     "publications": [
       "pub-1761575182202",
-      "pub-1761575530281"
+      "pub-1761575530281",
+      "pub-1761834265554",
+      "pub-1761834519748"
     ]
   },
   {
@@ -91,7 +93,23 @@ export const teamMembers = [
     ],
     "email": "alessandrabrondetta@gmail.com",
     "github": "alessandrabrondetta",
-    "cvUrl": "/assets/cv/brondetta.pdf"
+    "cvUrl": "https://alessandrabrondetta.github.io/",
+    "publications": [
+      "pub-1761834265554",
+      "pub-1761834519748"
+    ]
+  },
+  {
+    "id": "member-1741684620075",
+    "name": "Pelin Kömürlüoğlu",
+    "role": "Doctoral Researcher",
+    "bio": "Pelin Kömürlüoğlu ​​i​s a PhD student in Cognitive Science, with a background in psychology. Pelin's work focuses on the development of optimal experimental design algorithms.",
+    "imageUrl": "/assets/team/Pelin.jpg",
+    "color": "#00AAFF",
+    "projects": [
+      "project-1744380957652"
+    ],
+    "email": "pkoemuerlueo@uni-osnabrueck.de"
   },
   {
     "id": "member-1744540658243",
@@ -131,7 +149,10 @@ export const teamMembers = [
     "projects": [
       "project-1744383465177"
     ],
-    "email": "snamazova@uni-osnabrueck.de"
+    "email": "snamazova@uni-osnabrueck.de",
+    "publications": [
+      "pub-1761834265554"
+    ]
   },
   {
     "id": "member-1741684793619",
@@ -145,18 +166,6 @@ export const teamMembers = [
       "project-1744383288085"
     ],
     "email": "lschmid@uos.de"
-  },
-  {
-    "id": "member-1741684620075",
-    "name": "Pelin Kömürlüoğlu",
-    "role": "Doctoral Researcher",
-    "bio": "Pelin Kömürlüoğlu ​​i​s a PhD student in Cognitive Science, with a background in psychology. Pelin's work focuses on the development of optimal experimental design algorithms.",
-    "imageUrl": "/assets/team/Pelin.jpg",
-    "color": "#00AAFF",
-    "projects": [
-      "project-1744380957652"
-    ],
-    "email": "pkoemuerlueo@uni-osnabrueck.de"
   },
   {
     "id": "member-1741684567423",

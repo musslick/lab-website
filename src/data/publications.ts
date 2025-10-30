@@ -1343,5 +1343,46 @@ export const publications: Publication[] = [
     "doi": "https://doi.org/10.1162/desi_a_00768",
     "url": "https://direct.mit.edu/desi/article/40/3/77/123238/Collaborative-Effect-Centered-Problem-Solving",
     "abstract": "To justify the individuality of design as a discipline, researchers repeatedly separated it from other disciplines while underscoring the integration of design in those disciplines. We resolve this apparent paradox by recognizing that people have knowledge, abilities, and tasks that can be attributed to several disciplines. We emphasize a collaborative effect-centered understanding and execution of problem-solving rather than an individual and design-centered one to enable each person to perform to the best of their abilities. Therefore, we introduce the newly developed “effect method,” which, by researching defined interrelations between subjects (terms considered as single entities) and systems (terms considered as multipart entities), empowers people to identify and understand relevant problems and solution approaches. The interrelations are defined by effects to be prevented (problem) or achieved (solution). Based on this, the effect method enables the development of system-compatible solution concepts. As a result, each person's creativity, knowledge, and best abilities can contribute to the collaborative development of relevant solutions."
+  },
+  {
+    "id": "pub-1761834265554",
+    "title": "Not Yet AlphaFold for the Mind: Evaluating Centaur as a Synthetic Participant",
+    "journal": "arXiv",
+    "year": 2025,
+    "type": "preprint",
+    "authors": [
+      "Namazova, S.",
+      "Brondetta, A.",
+      "Younes Strittmatter",
+      "Mathew Nassar",
+      "Musslick, S."
+    ],
+    "citation": "Namazova, S., Brondetta, A., Strittmatter, Y., Nassar, M., & Musslick, S. (2025). Not Yet AlphaFold for the Mind: Evaluating Centaur as a Synthetic Participant. arXiv preprint arXiv:2508.07887.",
+    "doi": "https://doi.org/10.48550/arXiv.2508.07887",
+    "url": "https://arxiv.org/abs/2508.07887",
+    "abstract": "Simulators have revolutionized scientific practice across the natural sciences. By generating data that reliably approximate real-world phenomena, they enable scientists to accelerate hypothesis testing and optimize experimental designs. This is perhaps best illustrated by AlphaFold, a Nobel-prize winning simulator in chemistry that predicts protein structures from amino acid sequences, enabling rapid prototyping of molecular interactions, drug targets, and protein functions. In the behavioral sciences, a reliable participant simulator - a system capable of producing human-like behavior across cognitive tasks - would represent a similarly transformative advance. Recently, Binz et al. introduced Centaur, a large language model (LLM) fine-tuned on human data from 160 experiments, proposing its use not only as a model of cognition but also as a participant simulator for \"in silico prototyping of experimental studies\", e.g., to advance automated cognitive science. Here, we review the core criteria for a participant simulator and assess how well Centaur meets them. Although Centaur demonstrates strong predictive accuracy, its generative behavior - a critical criterion for a participant simulator - systematically diverges from human data. This suggests that, while Centaur is a significant step toward predicting human behavior, it does not yet meet the standards of a reliable participant simulator or an accurate model of cognition.",
+    "projectIds": [
+      "project-1744383465177"
+    ],
+    "projectId": "project-1744383465177"
+  },
+  {
+    "id": "pub-1761834519748",
+    "title": "Automated Prototyping of Behavioral Experiments with Large Language Models",
+    "journal": "AI in Science Summit",
+    "year": 2025,
+    "type": "conference proceeding",
+    "authors": [
+      "Brondetta, A.",
+      "Musslick, S."
+    ],
+    "citation": ".",
+    "url": "https://ais25.eu/exhibition",
+    "abstract": "Piloting behavioral experiments is a critical yet resource-intensive step in behavioral research. Behavioral scientists often rely on intuition and repeated data collection before arriving at experimental designs that elicit desired behavioral phenomena. To address this challenge, we introduce a large language model (LLM)-driven framework for in silico prototyping of behavioral experiments. The framework involves an iterative interaction between an experimentalist LLM, that proposes candidate designs, and participant LLMs, that engage with them. We formalize this interaction as a black-box optimization problem, where the experimentalist LLM aims to minimize a loss function defined over behavioral metrics of interest by iteratively revising its proposals. We illustrate this approach in the context of task framing—the narrative explanations used to introduce participants to experimental tasks. Using the Wisconsin Card Sorting Test, a canonical psychological paradigm for studying cognitive flexibility, we demonstrate that the framework can discover framings that systematically shift the behavior of synthetic participants along a spectrum of cognitive stability and flexibility. Our findings demonstrate the potential of LLM-based in silico experimentation to accelerate the design cycle in behavioral research, enabling cost-effective exploration of experimental design spaces prior to in vivo validation with human participants.",
+    "projectIds": [
+      "project-1744380957652",
+      "project-1744383465177"
+    ],
+    "projectId": "project-1744380957652"
   }
 ];
