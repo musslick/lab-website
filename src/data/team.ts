@@ -205,7 +205,7 @@ export const teamMembers = [
       "project-1744383751212"
     ],
     "email": "smousavinezh@uni-osnabrueck.de",
-    "cvUrl": "/assets/cv/mahnaz.pdf"
+    "cvUrl": "http://www.linkedin.com/in/mahnaz-mousavinezhad"
   },
   {
     "id": "member-1745326186229",
