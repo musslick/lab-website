@@ -4,6 +4,7 @@ build
 # Environment variables
 .env.local
 .env
+# Note: .env.production is safe to commit for Firebase client-side apps
 
 # Firebase
 .firebase
