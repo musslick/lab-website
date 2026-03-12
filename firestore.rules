@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is an authorized admin
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.token.email in [
+               'sebastian@musslick.de',
+               'musslick.s@gmail.com',
+               'sebastian.musslick@uos.de',
+               'sebastian_musslick@brown.edu',
+               'ai4cogsci@gmail.com'
+             ];
+    }
+
+    // Allow all users to read all documents (public website content)
+    match /{document=**} {
+      allow read: if true;
+    }
+
+    // Only allow admins to write (create, update, delete) any documents
+    match /{document=**} {
+      allow write: if isAdmin();
+    }
+  }
+}
