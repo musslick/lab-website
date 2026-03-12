@@ -9,6 +9,9 @@ import { Software, software as initialSoftware } from '../data/software';
 import { JobOpening, jobOpenings as initialJobOpenings } from '../data/jobOpenings';
 import { createGradient, generateTopicColor, createProjectGradient, hexToHsl, LAB_COLOR } from '../utils/colorUtils';
 
+// Import Firestore functions
+import * as db from '../firebase/db';
+
 // Define the topic color structure
 export interface TopicColor {
   name: string;
@@ -18,6 +21,9 @@ export interface TopicColor {
 
 // Define the Content Context type
 interface ContentContextType {
+  // Loading state
+  loading: boolean;
+
   // Data arrays
   projects: Project[];
   teamMembers: TeamMember[];
@@ -53,7 +59,7 @@ interface ContentContextType {
   updateCollaborator: (collaborator: Collaborator) => void;
   addCollaborator: (collaborator: Collaborator) => Collaborator;
   deleteCollaborator: (id: string) => void;
-  reorderCollaborators: (collaboratorIds: string[]) => void; // Added reorderCollaborators
+  reorderCollaborators: (collaboratorIds: string[]) => void;
   getCollaboratorById: (id: string) => Collaborator | undefined;
 
   // Publication operations
@@ -104,6 +110,7 @@ interface ContentContextType {
 
 // Create the context with a default value
 export const ContentContext = createContext<ContentContextType>({
+  loading: true,
   projects: [],
   teamMembers: [],
   newsItems: [],
@@ -134,7 +141,7 @@ export const ContentContext = createContext<ContentContextType>({
   updateCollaborator: () => {},
   addCollaborator: () => ({ id: '', name: '', url: '' }),
   deleteCollaborator: () => {},
-  reorderCollaborators: () => {}, // Added reorderCollaborators
+  reorderCollaborators: () => {},
   getCollaboratorById: () => undefined,
 
   updatePublication: () => {},
@@ -183,6 +190,7 @@ interface ContentProviderProps {
 }
 
 export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [projects, setProjects] = useState<Project[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
@@ -194,21 +202,18 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   const [topicColorRegistry, setTopicColorRegistry] = useState<Record<string, TopicColor>>({});
 
   // Add state for featured items
-  const [featuredProject, setFeaturedProject] = useState<string | null>(null);
-  const [featuredNewsItem, setFeaturedNewsItem] = useState<string | null>(null);
-  const [featuredPublication, setFeaturedPublication] = useState<string | null>(null);
+  const [featuredProject, setFeaturedProjectState] = useState<string | null>(null);
+  const [featuredNewsItem, setFeaturedNewsItemState] = useState<string | null>(null);
+  const [featuredPublication, setFeaturedPublicationState] = useState<string | null>(null);
 
   // Add state for team image
-  const [teamImage, setTeamImage] = useState<string>('https://i.postimg.cc/j2yg6GfL/lab-team.jpg');
-  // Add state for team image position (default to 'center')
-  const [teamImagePosition, setTeamImagePosition] = useState<string>('center');
+  const [teamImage, setTeamImageState] = useState<string>('https://i.postimg.cc/j2yg6GfL/lab-team.jpg');
+  const [teamImagePosition, setTeamImagePositionState] = useState<string>('center');
 
   // Replace radial gradient function with linear gradient function
   const updateProjectGradients = (currentProjects: Project[]): Project[] => {
     return currentProjects.map(project => {
-      // Generate a fixed lab blue linear gradient regardless of team
       const gradient = `linear-gradient(to right, #00AAFF 0%, #005580 100%)`;
-
       return {
         ...project,
         color: gradient
@@ -216,128 +221,84 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     });
   };
 
+  // Load all data from Firestore on mount
   useEffect(() => {
-    // Load saved data or use initial data
-    const loadData = () => {
+    const loadData = async () => {
       try {
-        const savedProjects = localStorage.getItem('projects');
-        const savedTeamMembers = localStorage.getItem('teamMembers');
-        const savedNewsItems = localStorage.getItem('newsItems');
-        const savedCollaborators = localStorage.getItem('collaborators');
-        const savedPublications = localStorage.getItem('publications');
-        const savedSoftware = localStorage.getItem('software');
-        const savedJobOpenings = localStorage.getItem('jobOpenings');
-        const savedFundingSources = localStorage.getItem('fundingSources');
-        const savedTopicColorRegistry = localStorage.getItem('topicColorRegistry');
+        setLoading(true);
 
-        let projectsData: Project[];
-        let teamData: TeamMember[];
-        let newsData: NewsItem[];
+        // Load all collections in parallel
+        const [
+          projectsData,
+          teamData,
+          newsData,
+          collaboratorsData,
+          publicationsData,
+          softwareData,
+          jobOpeningsData,
+          fundingSourcesData,
+          topicColorsData,
+          featuredItemsData,
+          teamImageData,
+        ] = await Promise.all([
+          db.getProjects(),
+          db.getTeamMembers(),
+          db.getNewsItems(),
+          db.getCollaborators(),
+          db.getPublications(),
+          db.getSoftware(),
+          db.getJobOpenings(),
+          db.getFundingSources(),
+          db.getTopicColors(),
+          db.getFeaturedItems(),
+          db.getTeamImage(),
+        ]);
 
-        if (savedTeamMembers) {
-          teamData = JSON.parse(savedTeamMembers);
-        } else {
-          teamData = initialTeamMembers;
-        }
+        // If Firestore is empty (first time), use initial data
+        const finalProjects = projectsData.length > 0 ? projectsData : initialProjects;
+        const finalTeamMembers = teamData.length > 0 ? teamData : initialTeamMembers;
+        const finalNewsItems = newsData.length > 0 ? newsData : initialNewsItems;
+        const finalCollaborators = collaboratorsData.length > 0 ? collaboratorsData : initialCollaborators;
+        const finalPublications = publicationsData.length > 0 ? publicationsData : initialPublications;
+        const finalSoftware = softwareData.length > 0 ? softwareData : initialSoftware;
+        const finalJobOpenings = jobOpeningsData.length > 0 ? jobOpeningsData : initialJobOpenings;
+        const finalFundingSources = fundingSourcesData.length > 0 ? fundingSourcesData : initialFundingSources;
 
-        // Deduplicate project IDs for all team members (whether from storage or initial data)
-        teamData = teamData.map(member => {
+        // Deduplicate project IDs for all team members
+        const dedupedTeamMembers = finalTeamMembers.map(member => {
           if (member.projects && Array.isArray(member.projects)) {
-            // Use a Set to ensure unique project IDs
             const uniqueProjectIds = Array.from(new Set(member.projects));
             return { ...member, projects: uniqueProjectIds };
           }
           return member;
         });
 
-        setTeamMembers(teamData);
+        // Update projects with lab blue gradient
+        const updatedProjects = updateProjectGradients(finalProjects);
 
-        if (savedProjects) {
-          projectsData = JSON.parse(savedProjects);
-        } else {
-          projectsData = initialProjects;
-        }
-
-        // Update projects with lab blue gradient instead of team colors
-        const updatedProjects = updateProjectGradients(projectsData);
+        // Set all state
         setProjects(updatedProjects);
+        setTeamMembers(dedupedTeamMembers);
+        setNewsItems(finalNewsItems);
+        setCollaborators(finalCollaborators);
+        setPublications(finalPublications);
+        setSoftware(finalSoftware);
+        setJobOpenings(finalJobOpenings);
+        setFundingSources(finalFundingSources);
+        setTopicColorRegistry(topicColorsData);
 
-        if (savedNewsItems) {
-          newsData = JSON.parse(savedNewsItems);
-        } else {
-          newsData = initialNewsItems;
-        }
-        setNewsItems(newsData);
+        // Set featured items
+        setFeaturedProjectState(featuredItemsData.projectId || (updatedProjects.length > 0 ? updatedProjects[0].id : null));
+        setFeaturedNewsItemState(featuredItemsData.newsItemId || (finalNewsItems.length > 0 ? finalNewsItems[0].id : null));
+        setFeaturedPublicationState(featuredItemsData.publicationId || (finalPublications.length > 0 ? finalPublications[0].id : null));
 
-        if (savedCollaborators) {
-          setCollaborators(JSON.parse(savedCollaborators));
-        } else {
-          setCollaborators(initialCollaborators);
-        }
+        // Set team image
+        setTeamImageState(teamImageData.imageUrl || 'https://i.postimg.cc/j2yg6GfL/lab-team.jpg');
+        setTeamImagePositionState(teamImageData.position || 'center');
 
-        if (savedPublications) {
-          setPublications(JSON.parse(savedPublications));
-        } else {
-          setPublications(initialPublications);
-        }
-
-        if (savedSoftware) {
-          setSoftware(JSON.parse(savedSoftware));
-        } else {
-          setSoftware(initialSoftware);
-        }
-
-        if (savedJobOpenings) {
-          setJobOpenings(JSON.parse(savedJobOpenings));
-        } else {
-          setJobOpenings(initialJobOpenings);
-        }
-
-        if (savedFundingSources) {
-          setFundingSources(JSON.parse(savedFundingSources));
-        } else {
-          setFundingSources(initialFundingSources);
-        }
-
-        if (savedTopicColorRegistry) {
-          setTopicColorRegistry(JSON.parse(savedTopicColorRegistry));
-        }
-
-        // Load featured items
-        const savedFeaturedItems = localStorage.getItem('featuredItems');
-        if (savedFeaturedItems) {
-          const featuredItems = JSON.parse(savedFeaturedItems);
-          setFeaturedProject(featuredItems.projectId || null);
-          setFeaturedNewsItem(featuredItems.newsItemId || null);
-          setFeaturedPublication(featuredItems.publicationId || null);
-        } else {
-          // Default to first items if available
-          setFeaturedProject(projectsData.length > 0 ? projectsData[0].id : null);
-          setFeaturedNewsItem(newsData.length > 0 ? newsData[0].id : null);
-          setFeaturedPublication(initialPublications.length > 0 ? initialPublications[0].id : null);
-        }
-
-        // Load team image
-        const savedTeamImage = localStorage.getItem('teamImage');
-        if (savedTeamImage) {
-          setTeamImage(savedTeamImage);
-        }
-
-        // Load team image position
-        const savedTeamImagePosition = localStorage.getItem('teamImagePosition');
-        if (savedTeamImagePosition) {
-          setTeamImagePosition(savedTeamImagePosition);
-        }
-
-        // Save the updated projects if necessary
-        if (savedProjects && JSON.stringify(updatedProjects) !== savedProjects) {
-          localStorage.setItem('projects', JSON.stringify(updatedProjects));
-        }
-
-        // Save the deduped team members back to localStorage
-        localStorage.setItem('teamMembers', JSON.stringify(teamData));
       } catch (error) {
-        console.error("Error loading data from localStorage:", error);
+        console.error("Error loading data from Firestore:", error);
+        // Fallback to initial data on error
         setProjects(initialProjects);
         setTeamMembers(initialTeamMembers);
         setNewsItems(initialNewsItems);
@@ -346,757 +307,413 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         setSoftware(initialSoftware);
         setJobOpenings(initialJobOpenings);
         setFundingSources(initialFundingSources);
+      } finally {
+        setLoading(false);
       }
     };
 
     loadData();
   }, []);
 
-  // Save featured items
-  const saveFeaturedItems = () => {
-    try {
-      const featuredItems = {
-        projectId: featuredProject,
-        newsItemId: featuredNewsItem,
-        publicationId: featuredPublication
-      };
-      localStorage.setItem('featuredItems', JSON.stringify(featuredItems));
-    } catch (error) {
-      console.error("Error saving featured items to localStorage:", error);
-    }
+  // ==================== PROJECT OPERATIONS ====================
+
+  const updateProject = (project: Project) => {
+    const updatedProjects = projects.map(p => p.id === project.id ? project : p);
+    setProjects(updatedProjects);
+    db.saveProject(project).catch(err => console.error('Error updating project:', err));
   };
 
-  // Update featured project
-  const handleSetFeaturedProject = (projectId: string) => {
-    setFeaturedProject(projectId);
-    setTimeout(() => saveFeaturedItems(), 0);
+  const addProject = (project: Project): Project => {
+    const newProject = { ...project, _lastUpdated: Date.now() };
+    setProjects([...projects, newProject]);
+    db.saveProject(newProject).catch(err => console.error('Error adding project:', err));
+    return newProject;
   };
 
-  // Update featured news item
-  const handleSetFeaturedNewsItem = (newsItemId: string) => {
-    setFeaturedNewsItem(newsItemId);
-    setTimeout(() => saveFeaturedItems(), 0);
+  const deleteProject = (id: string) => {
+    setProjects(projects.filter(p => p.id !== id));
+    db.deleteProject(id).catch(err => console.error('Error deleting project:', err));
   };
 
-  // Update featured publication
-  const handleSetFeaturedPublication = (publicationId: string) => {
-    setFeaturedPublication(publicationId);
-    setTimeout(() => saveFeaturedItems(), 0);
+  const reorderProjects = (projectIds: string[]) => {
+    const reorderedProjects = projectIds.map(id => projects.find(p => p.id === id)!).filter(Boolean);
+    setProjects(reorderedProjects);
+    // Save all projects with updated order
+    reorderedProjects.forEach(project => {
+      db.saveProject(project).catch(err => console.error('Error reordering projects:', err));
+    });
   };
 
-  // Get all featured items
-  const getFeaturedItems = () => {
-    return {
-      projectId: featuredProject,
-      newsItemId: featuredNewsItem,
-      publicationId: featuredPublication
-    };
+  const getProjectById = (id: string): Project | undefined => {
+    return projects.find(p => p.id === id);
   };
 
-  // Get team image function
-  const getTeamImage = (): string => {
-    return teamImage;
+  // ==================== TEAM MEMBER OPERATIONS ====================
+
+  const updateTeamMember = (teamMember: TeamMember) => {
+    const updatedTeamMembers = teamMembers.map(t => t.id === teamMember.id ? teamMember : t);
+    setTeamMembers(updatedTeamMembers);
+    db.saveTeamMember(teamMember).catch(err => console.error('Error updating team member:', err));
   };
 
-  // Update team image function
-  const updateTeamImage = (imageUrl: string): void => {
-    try {
-      setTeamImage(imageUrl);
-      localStorage.setItem('teamImage', imageUrl);
-    } catch (error) {
-      console.error("Error saving team image to localStorage:", error);
-    }
+  const addTeamMember = (teamMember: TeamMember): TeamMember => {
+    const newTeamMember = { ...teamMember, _lastUpdated: Date.now() };
+    setTeamMembers([...teamMembers, newTeamMember]);
+    db.saveTeamMember(newTeamMember).catch(err => console.error('Error adding team member:', err));
+    return newTeamMember;
   };
 
-  // Get team image position function
-  const getTeamImagePosition = (): string => {
-    return teamImagePosition;
+  const deleteTeamMember = (id: string) => {
+    setTeamMembers(teamMembers.filter(t => t.id !== id));
+    db.deleteTeamMember(id).catch(err => console.error('Error deleting team member:', err));
   };
 
-  // Update team image position function
-  const updateTeamImagePosition = (position: string): void => {
-    try {
-      setTeamImagePosition(position);
-      localStorage.setItem('teamImagePosition', position);
-    } catch (error) {
-      console.error("Error saving team image position to localStorage:", error);
-    }
+  const reorderTeamMembers = (teamMemberIds: string[]) => {
+    const reorderedTeamMembers = teamMemberIds.map(id => teamMembers.find(t => t.id === id)!).filter(Boolean);
+    setTeamMembers(reorderedTeamMembers);
+    reorderedTeamMembers.forEach(member => {
+      db.saveTeamMember(member).catch(err => console.error('Error reordering team members:', err));
+    });
   };
 
-  // Topic color management functions
+  const getTeamMemberById = (id: string): TeamMember | undefined => {
+    return teamMembers.find(t => t.id === id);
+  };
+
+  // ==================== NEWS ITEM OPERATIONS ====================
+
+  const updateNewsItem = (newsItem: NewsItem) => {
+    const updatedNewsItems = newsItems.map(n => n.id === newsItem.id ? newsItem : n);
+    setNewsItems(updatedNewsItems);
+    db.saveNewsItem(newsItem).catch(err => console.error('Error updating news item:', err));
+  };
+
+  const addNewsItem = (newsItem: NewsItem): NewsItem => {
+    const newNewsItem = { ...newsItem, _lastUpdated: Date.now() };
+    setNewsItems([...newsItems, newNewsItem]);
+    db.saveNewsItem(newNewsItem).catch(err => console.error('Error adding news item:', err));
+    return newNewsItem;
+  };
+
+  const deleteNewsItem = (id: string) => {
+    setNewsItems(newsItems.filter(n => n.id !== id));
+    db.deleteNewsItem(id).catch(err => console.error('Error deleting news item:', err));
+  };
+
+  const getNewsItemById = (id: string): NewsItem | undefined => {
+    return newsItems.find(n => n.id === id);
+  };
+
+  // ==================== PUBLICATION OPERATIONS ====================
+
+  const updatePublication = (publication: Publication) => {
+    const updatedPublications = publications.map(p => p.id === publication.id ? publication : p);
+    setPublications(updatedPublications);
+    db.savePublication(publication).catch(err => console.error('Error updating publication:', err));
+  };
+
+  const addPublication = (publication: Publication): Publication => {
+    const newPublication = { ...publication, _lastUpdated: Date.now() };
+    setPublications([...publications, newPublication]);
+    db.savePublication(newPublication).catch(err => console.error('Error adding publication:', err));
+    return newPublication;
+  };
+
+  const deletePublication = (id: string) => {
+    setPublications(publications.filter(p => p.id !== id));
+    db.deletePublication(id).catch(err => console.error('Error deleting publication:', err));
+  };
+
+  const getPublicationById = (id: string): Publication | undefined => {
+    return publications.find(p => p.id === id);
+  };
+
+  // ==================== SOFTWARE OPERATIONS ====================
+
+  const updateSoftware = (softwareItem: Software) => {
+    const updatedSoftware = software.map(s => s.id === softwareItem.id ? softwareItem : s);
+    setSoftware(updatedSoftware);
+    db.saveSoftware(softwareItem).catch(err => console.error('Error updating software:', err));
+  };
+
+  const addSoftware = (softwareItem: Software): Software => {
+    const newSoftware = { ...softwareItem, _lastUpdated: Date.now() };
+    setSoftware([...software, newSoftware]);
+    db.saveSoftware(newSoftware).catch(err => console.error('Error adding software:', err));
+    return newSoftware;
+  };
+
+  const deleteSoftware = (id: string) => {
+    setSoftware(software.filter(s => s.id !== id));
+    db.deleteSoftware(id).catch(err => console.error('Error deleting software:', err));
+  };
+
+  const getSoftwareById = (id: string): Software | undefined => {
+    return software.find(s => s.id === id);
+  };
+
+  // ==================== JOB OPENING OPERATIONS ====================
+
+  const updateJobOpening = (jobOpening: JobOpening) => {
+    const updatedJobOpenings = jobOpenings.map(j => j.id === jobOpening.id ? jobOpening : j);
+    setJobOpenings(updatedJobOpenings);
+    db.saveJobOpening(jobOpening).catch(err => console.error('Error updating job opening:', err));
+  };
+
+  const addJobOpening = (jobOpening: JobOpening): JobOpening => {
+    const newJobOpening = { ...jobOpening, _lastUpdated: Date.now() };
+    setJobOpenings([...jobOpenings, newJobOpening]);
+    db.saveJobOpening(newJobOpening).catch(err => console.error('Error adding job opening:', err));
+    return newJobOpening;
+  };
+
+  const deleteJobOpening = (id: string) => {
+    setJobOpenings(jobOpenings.filter(j => j.id !== id));
+    db.deleteJobOpening(id).catch(err => console.error('Error deleting job opening:', err));
+  };
+
+  const getJobOpeningById = (id: string): JobOpening | undefined => {
+    return jobOpenings.find(j => j.id === id);
+  };
+
+  // ==================== COLLABORATOR OPERATIONS ====================
+
+  const updateCollaborator = (collaborator: Collaborator) => {
+    const updatedCollaborators = collaborators.map(c => c.id === collaborator.id ? collaborator : c);
+    setCollaborators(updatedCollaborators);
+    db.saveCollaborator(collaborator).catch(err => console.error('Error updating collaborator:', err));
+  };
+
+  const addCollaborator = (collaborator: Collaborator): Collaborator => {
+    const newCollaborator = { ...collaborator, _lastUpdated: Date.now() };
+    setCollaborators([...collaborators, newCollaborator]);
+    db.saveCollaborator(newCollaborator).catch(err => console.error('Error adding collaborator:', err));
+    return newCollaborator;
+  };
+
+  const deleteCollaborator = (id: string) => {
+    setCollaborators(collaborators.filter(c => c.id !== id));
+    db.deleteCollaborator(id).catch(err => console.error('Error deleting collaborator:', err));
+  };
+
+  const reorderCollaborators = (collaboratorIds: string[]) => {
+    const reorderedCollaborators = collaboratorIds.map(id => collaborators.find(c => c.id === id)!).filter(Boolean);
+    setCollaborators(reorderedCollaborators);
+    reorderedCollaborators.forEach(collaborator => {
+      db.saveCollaborator(collaborator).catch(err => console.error('Error reordering collaborators:', err));
+    });
+  };
+
+  const getCollaboratorById = (id: string): Collaborator | undefined => {
+    return collaborators.find(c => c.id === id);
+  };
+
+  // ==================== FUNDING SOURCE OPERATIONS ====================
+
+  const updateFundingSource = (fundingSource: FundingSource) => {
+    const updatedFundingSources = fundingSources.map(f => f.id === fundingSource.id ? fundingSource : f);
+    setFundingSources(updatedFundingSources);
+    db.saveFundingSource(fundingSource).catch(err => console.error('Error updating funding source:', err));
+  };
+
+  const addFundingSource = (fundingSource: FundingSource): FundingSource => {
+    const newFundingSource = { ...fundingSource, _lastUpdated: Date.now() };
+    setFundingSources([...fundingSources, newFundingSource]);
+    db.saveFundingSource(newFundingSource).catch(err => console.error('Error adding funding source:', err));
+    return newFundingSource;
+  };
+
+  const deleteFundingSource = (id: string) => {
+    setFundingSources(fundingSources.filter(f => f.id !== id));
+    db.deleteFundingSource(id).catch(err => console.error('Error deleting funding source:', err));
+  };
+
+  const getFundingSourceById = (id: string): FundingSource | undefined => {
+    return fundingSources.find(f => f.id === id);
+  };
+
+  // ==================== TOPIC COLOR OPERATIONS ====================
+
   const updateTopicColor = (name: string, color: string) => {
     const existingTopic = topicColorRegistry[name];
     const hue = existingTopic ? existingTopic.hue : hexToHsl(color)[0];
-    const updatedTopicColorRegistry = {
+    const updatedRegistry = {
       ...topicColorRegistry,
       [name]: { name, color, hue }
     };
-    setTopicColorRegistry(updatedTopicColorRegistry);
-    localStorage.setItem('topicColorRegistry', JSON.stringify(updatedTopicColorRegistry));
+    setTopicColorRegistry(updatedRegistry);
+    db.saveTopicColors(updatedRegistry).catch(err => console.error('Error updating topic color:', err));
   };
 
   const addTopicColor = (name: string, color: string) => {
     const hue = hexToHsl(color)[0];
-    const updatedTopicColorRegistry = {
+    const updatedRegistry = {
       ...topicColorRegistry,
       [name]: { name, color, hue }
     };
-    setTopicColorRegistry(updatedTopicColorRegistry);
-    localStorage.setItem('topicColorRegistry', JSON.stringify(updatedTopicColorRegistry));
+    setTopicColorRegistry(updatedRegistry);
+    db.saveTopicColors(updatedRegistry).catch(err => console.error('Error adding topic color:', err));
   };
 
   const removeTopicColor = (name: string) => {
-    const updatedTopicColorRegistry = { ...topicColorRegistry };
-    delete updatedTopicColorRegistry[name];
-    setTopicColorRegistry(updatedTopicColorRegistry);
-    localStorage.setItem('topicColorRegistry', JSON.stringify(updatedTopicColorRegistry));
+    const updatedRegistry = { ...topicColorRegistry };
+    delete updatedRegistry[name];
+    setTopicColorRegistry(updatedRegistry);
+    db.saveTopicColors(updatedRegistry).catch(err => console.error('Error removing topic color:', err));
   };
 
   const getTopicColorByName = (name: string): TopicColor | undefined => {
     return topicColorRegistry[name];
   };
 
-  // Save changes to localStorage
-  const saveProjects = (updatedProjects: Project[]) => {
-    try {
-      localStorage.setItem('projects', JSON.stringify(updatedProjects));
-      setProjects(updatedProjects);
-    } catch (error) {
-      console.error("Error saving projects to localStorage:", error);
-      alert("Failed to save projects. LocalStorage might be full or unavailable.");
-    }
-  };
+  // ==================== FEATURED ITEMS OPERATIONS ====================
 
-  const saveTeamMembers = (updatedMembers: TeamMember[]) => {
-    try {
-      localStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
-      setTeamMembers(updatedMembers);
-
-      // Don't update project colors when team members change
-    } catch (error) {
-      console.error("Error saving team members to localStorage:", error);
-      alert("Failed to save team members. LocalStorage might be full or unavailable.");
-    }
-  };
-
-  const saveNewsItems = (updatedNews: NewsItem[]) => {
-    try {
-      localStorage.setItem('newsItems', JSON.stringify(updatedNews));
-      console.log("Saved news items to localStorage, count:", updatedNews.length);
-      setNewsItems(updatedNews);
-    } catch (error) {
-      console.error("Error saving news items to localStorage:", error);
-      alert("Failed to save news. LocalStorage might be full or unavailable.");
-    }
-  };
-
-  // Funding sources management functions
-  const saveFundingSources = (updatedFundingSources: FundingSource[]) => {
-    try {
-      localStorage.setItem('fundingSources', JSON.stringify(updatedFundingSources));
-      setFundingSources(updatedFundingSources);
-    } catch (error) {
-      console.error("Error saving funding sources to localStorage:", error);
-      alert("Failed to save funding sources. LocalStorage might be full or unavailable.");
-    }
-  };
-
-  const updateFundingSource = (updatedFunding: FundingSource) => {
-    const newFundingSources = fundingSources.map(source =>
-      source.id === updatedFunding.id ? updatedFunding : source
-    );
-    saveFundingSources(newFundingSources);
-  };
-
-  const addFundingSource = (newFunding: FundingSource): FundingSource => {
-    try {
-      const fundingId = newFunding.id || `funding-${Date.now()}`;
-      const fundingWithId = {
-        ...newFunding,
-        id: fundingId
-      };
-
-      const newFundingSources = [...fundingSources, fundingWithId];
-      saveFundingSources(newFundingSources);
-
-      return fundingWithId;
-    } catch (error) {
-      console.error("Failed to add funding source:", error);
-      throw error;
-    }
-  };
-
-  const deleteFundingSource = (id: string) => {
-    const newFundingSources = fundingSources.filter(source => source.id !== id);
-    saveFundingSources(newFundingSources);
-  };
-
-  const getFundingSourceById = (id: string): FundingSource | undefined => {
-    return fundingSources.find(source => source.id === id);
-  };
-
-  // Project management functions
-  const updateProject = (updatedProject: Project) => {
-    const existingProject = projects.find(p => p.id === updatedProject.id);
-    let projectWithConsistentColors = { ...updatedProject };
-
-    if (updatedProject.topics && updatedProject.topics.length > 0) {
-      const topicsWithColors = updatedProject.topics.map((topic, index) => {
-        const existingTopicWithColor = updatedProject.topicsWithColors?.find(t => t.name === topic);
-
-        if (existingTopicWithColor) {
-          return existingTopicWithColor;
-        } else {
-          // Generate a hue based on index in the array
-          const hue = Math.round((index / updatedProject.topics!.length) * 360);
-          const color = generateTopicColor(hue);
-          const [h, s, l] = hexToHsl(color);
-          return {
-            name: topic,
-            color,
-            hue: h
-          };
-        }
-      });
-
-      projectWithConsistentColors = {
-        ...projectWithConsistentColors,
-        topicsWithColors
-      };
-    }
-
-    // Use lab blue linear gradient instead of team-based gradient
-    const projectWithUpdatedColor = {
-      ...projectWithConsistentColors,
-      color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`,
-      _lastUpdated: Date.now()
+  const setFeaturedProject = (projectId: string) => {
+    setFeaturedProjectState(projectId);
+    const featuredItems = {
+      projectId,
+      newsItemId: featuredNewsItem,
+      publicationId: featuredPublication,
     };
-
-    const newProjects = projects.map(project =>
-      project.id === updatedProject.id ? projectWithUpdatedColor : project
-    );
-
-    // Only update team-project relations, not colors
-    if (existingProject && !areArraysEqual(existingProject.team, updatedProject.team)) {
-      const updatedTeamMembers = teamMembers.map(member => {
-        if (existingProject.team.includes(member.name) && !updatedProject.team.includes(member.name)) {
-          return {
-            ...member,
-            projects: member.projects?.filter(id => id !== updatedProject.id) || []
-          };
-        }
-        if (!existingProject.team.includes(member.name) && updatedProject.team.includes(member.name)) {
-          return {
-            ...member,
-            projects: [...(member.projects || []), updatedProject.id]
-          };
-        }
-        return member;
-      });
-
-      saveTeamMembers(updatedTeamMembers);
-    }
-
-    saveProjects(newProjects);
-    window.dispatchEvent(new CustomEvent('project-updated', {
-      detail: { projectId: updatedProject.id, timestamp: Date.now() }
-    }));
+    db.saveFeaturedItems(featuredItems).catch(err => console.error('Error setting featured project:', err));
   };
 
-  const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
-    if (arr1.length !== arr2.length) return false;
-    return arr1.every(item => arr2.includes(item));
-  };
-
-  const addProject = (newProject: Project): Project => {
-    try {
-      const projectId = newProject.id || `project-${Date.now()}`;
-      const projectWithId = {
-        ...newProject,
-        id: projectId
-      };
-
-      let projectWithTopicColors = { ...projectWithId };
-
-      if (newProject.topics && newProject.topics.length > 0) {
-        const topicsWithColors = newProject.topics.map((topic, index) => {
-          // Generate a hue based on index in the array
-          const hue = Math.round((index / newProject.topics!.length) * 360);
-          const color = generateTopicColor(hue);
-          const [h, s, l] = hexToHsl(color);
-          return {
-            name: topic,
-            color,
-            hue: h
-          };
-        });
-
-        projectWithTopicColors = {
-          ...projectWithTopicColors,
-          topicsWithColors
-        };
-      }
-
-      // Use lab blue linear gradient instead of team-based gradient
-      const projectWithColor = {
-        ...projectWithTopicColors,
-        color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
-      };
-
-      const newProjects = [...projects, projectWithColor];
-      setProjects(newProjects);
-
-      try {
-        localStorage.setItem('projects', JSON.stringify(newProjects));
-      } catch (storageError) {
-        console.error("Failed to save projects to localStorage:", storageError);
-      }
-
-      window.dispatchEvent(new CustomEvent('project-added', {
-        detail: { projectId: projectWithColor.id, timestamp: Date.now() }
-      }));
-
-      return projectWithColor;
-    } catch (error) {
-      console.error("Failed to add project:", error);
-      throw error;
-    }
-  };
-
-  const deleteProject = (id: string) => {
-    const newProjects = projects.filter(project => project.id !== id);
-    saveProjects(newProjects);
-
-    const updatedTeamMembers = teamMembers.map(member => {
-      if (member.projects && member.projects.includes(id)) {
-        return {
-          ...member,
-          projects: member.projects.filter(projectId => projectId !== id)
-        };
-      }
-      return member;
-    });
-
-    saveTeamMembers(updatedTeamMembers);
-  };
-
-  const reorderProjects = (projectIds: string[]) => {
-    const reorderedProjects = projectIds.map(id => projects.find(project => project.id === id)).filter(Boolean) as Project[];
-    saveProjects(reorderedProjects);
-  };
-
-  const reorderTeamMembers = (teamMemberIds: string[]) => {
-    const reorderedTeamMembers = teamMemberIds.map(id => teamMembers.find(member => member.id === id)).filter(Boolean) as TeamMember[];
-    saveTeamMembers(reorderedTeamMembers);
-  };
-
-  const reorderCollaborators = (collaboratorIds: string[]) => {
-    const reorderedCollaborators = collaboratorIds.map(id => collaborators.find(collaborator => collaborator.id === id)).filter(Boolean) as Collaborator[];
-    setCollaborators(reorderedCollaborators);
-  };
-
-  // Team member management functions
-  const updateTeamMember = (updatedMember: TeamMember) => {
-    const previousMember = teamMembers.find(m => m.id === updatedMember.id);
-
-    const memberWithColor = {
-      ...updatedMember,
-      color: updatedMember.color || previousMember?.color || '#000000'
+  const setFeaturedNewsItem = (newsItemId: string) => {
+    setFeaturedNewsItemState(newsItemId);
+    const featuredItems = {
+      projectId: featuredProject,
+      newsItemId,
+      publicationId: featuredPublication,
     };
-
-    const newTeamMembers = teamMembers.map(member =>
-      member.id === memberWithColor.id ? memberWithColor : member
-    );
-
-    saveTeamMembers(newTeamMembers);
+    db.saveFeaturedItems(featuredItems).catch(err => console.error('Error setting featured news item:', err));
   };
 
-  const addTeamMember = (newMember: TeamMember): TeamMember => {
-    try {
-      const memberId = newMember.id || `member-${Date.now()}`;
-
-      const memberWithId = {
-        ...newMember,
-        id: memberId,
-        color: newMember.color || '#000000'
-      };
-
-      const updatedMembers = [...teamMembers, memberWithId];
-      saveTeamMembers(updatedMembers);
-
-      return memberWithId;
-    } catch (error) {
-      console.error("Failed to add team member:", error);
-      throw error;
-    }
+  const setFeaturedPublication = (publicationId: string) => {
+    setFeaturedPublicationState(publicationId);
+    const featuredItems = {
+      projectId: featuredProject,
+      newsItemId: featuredNewsItem,
+      publicationId,
+    };
+    db.saveFeaturedItems(featuredItems).catch(err => console.error('Error setting featured publication:', err));
   };
 
-  const deleteTeamMember = (id: string) => {
-    const memberToDelete = teamMembers.find(member => member.id === id);
-    const newTeamMembers = teamMembers.filter(member => member.id !== id);
-
-    if (memberToDelete) {
-      const updatedProjects = projects.map(project => {
-        if (project.team.includes(memberToDelete.name)) {
-          const updatedTeam = project.team.filter(name => name !== memberToDelete.name);
-
-          // Use lab blue linear gradient regardless of team
-          return {
-            ...project,
-            team: updatedTeam,
-            color: `linear-gradient(to right, #00AAFF 0%, #005580 100%)`
-          };
-        }
-        return project;
-      });
-
-      saveProjects(updatedProjects);
-    }
-
-    saveTeamMembers(newTeamMembers);
+  const getFeaturedItems = () => {
+    return {
+      projectId: featuredProject,
+      newsItemId: featuredNewsItem,
+      publicationId: featuredPublication,
+    };
   };
 
-  // News item management functions
-  const updateNewsItem = (updatedNewsItem: NewsItem) => {
-    try {
-      const newNewsItems = newsItems.map(item =>
-        item.id === updatedNewsItem.id ? updatedNewsItem : item
-      );
-      saveNewsItems(newNewsItems);
-      return true;
-    } catch (error) {
-      console.error("Error updating news item:", error);
-      throw error;
-    }
+  // ==================== TEAM IMAGE OPERATIONS ====================
+
+  const getTeamImage = (): string => {
+    return teamImage;
   };
 
-  const addNewsItem = (newNewsItem: NewsItem): NewsItem => {
-    try {
-      const newsId = newNewsItem.id || `news-${Date.now()}`;
-      const itemWithId = {
-        ...newNewsItem,
-        id: newsId
-      };
-
-      const newNewsItems = [...newsItems, itemWithId];
-      saveNewsItems(newNewsItems);
-
-      return itemWithId;
-    } catch (error) {
-      console.error("Failed to add news item:", error);
-      throw error;
-    }
+  const updateTeamImage = (imageUrl: string): void => {
+    setTeamImageState(imageUrl);
+    db.saveTeamImage({ imageUrl, position: teamImagePosition }).catch(err => console.error('Error updating team image:', err));
   };
 
-  const deleteNewsItem = (id: string) => {
-    try {
-      const newNewsItems = newsItems.filter(item => item.id !== id);
-      saveNewsItems(newNewsItems);
-      return true;
-    } catch (error) {
-      console.error("Failed to delete news item:", error);
-      throw error;
-    }
+  const getTeamImagePosition = (): string => {
+    return teamImagePosition;
   };
 
-  // Collaborator management functions
-  const saveCollaborators = (updatedCollaborators: Collaborator[]) => {
-    try {
-      localStorage.setItem('collaborators', JSON.stringify(updatedCollaborators));
-      setCollaborators(updatedCollaborators);
-    } catch (error) {
-      console.error("Error saving collaborators to localStorage:", error);
-      alert("Failed to save collaborators. LocalStorage might be full or unavailable.");
-    }
+  const updateTeamImagePosition = (position: string): void => {
+    setTeamImagePositionState(position);
+    db.saveTeamImage({ imageUrl: teamImage, position }).catch(err => console.error('Error updating team image position:', err));
   };
 
-  const updateCollaborator = (updatedCollaborator: Collaborator) => {
-    const newCollaborators = collaborators.map(collab =>
-      collab.id === updatedCollaborator.id ? updatedCollaborator : collab
-    );
-    saveCollaborators(newCollaborators);
-  };
+  // ==================== RESET TO DEFAULTS ====================
 
-  const addCollaborator = (newCollaborator: Collaborator): Collaborator => {
-    try {
-      const collabId = newCollaborator.id || `collab-${Date.now()}`;
-      const collabWithId = {
-        ...newCollaborator,
-        id: collabId
-      };
-
-      const newCollaborators = [...collaborators, collabWithId];
-      saveCollaborators(newCollaborators);
-
-      return collabWithId;
-    } catch (error) {
-      console.error("Failed to add collaborator:", error);
-      throw error;
-    }
-  };
-
-  const deleteCollaborator = (id: string) => {
-    const newCollaborators = collaborators.filter(collab => collab.id !== id);
-    saveCollaborators(newCollaborators);
-  };
-
-  // Software management functions
-  const saveSoftware = (updatedSoftware: Software[]) => {
-    try {
-      localStorage.setItem('software', JSON.stringify(updatedSoftware));
-      setSoftware(updatedSoftware);
-    } catch (error) {
-      console.error("Error saving software to localStorage:", error);
-      alert("Failed to save software. LocalStorage might be full or unavailable.");
-    }
-  };
-
-  const updateSoftware = (updatedSoftware: Software) => {
-    const newSoftwareList = software.map(item =>
-      item.id === updatedSoftware.id ? updatedSoftware : item
-    );
-    saveSoftware(newSoftwareList);
-  };
-
-  const addSoftware = (newSoftware: Software): Software => {
-    try {
-      const softwareId = newSoftware.id || `software-${Date.now()}`;
-      const softwareWithId = {
-        ...newSoftware,
-        id: softwareId
-      };
-
-      const newSoftwareList = [...software, softwareWithId];
-      saveSoftware(newSoftwareList);
-
-      return softwareWithId;
-    } catch (error) {
-      console.error("Failed to add software:", error);
-      throw error;
-    }
-  };
-
-  const deleteSoftware = (id: string) => {
-    const newSoftwareList = software.filter(item => item.id !== id);
-    saveSoftware(newSoftwareList);
-  };
-
-  const getSoftwareById = (id: string): Software | undefined => {
-    return software.find(item => item.id === id);
-  };
-
-  // Publication management functions
-  const savePublications = (updatedPublications: Publication[]) => {
-    try {
-      localStorage.setItem('publications', JSON.stringify(updatedPublications));
-      setPublications(updatedPublications);
-    } catch (error) {
-      console.error("Error saving publications to localStorage:", error);
-      alert("Failed to save publications. LocalStorage might be full or unavailable.");
-    }
-  };
-
-  const updatePublication = (updatedPublication: Publication) => {
-    const newPublications = publications.map(pub =>
-      pub.id === updatedPublication.id ? updatedPublication : pub
-    );
-    savePublications(newPublications);
-  };
-
-  const addPublication = (newPublication: Publication): Publication => {
-    try {
-      const pubId = newPublication.id || `pub-${Date.now()}`;
-      const pubWithId = {
-        ...newPublication,
-        id: pubId
-      };
-
-      const newPublications = [...publications, pubWithId];
-      savePublications(newPublications);
-
-      return pubWithId;
-    } catch (error) {
-      console.error("Failed to add publication:", error);
-      throw error;
-    }
-  };
-
-  const deletePublication = (id: string) => {
-    const newPublications = publications.filter(pub => pub.id !== id);
-    savePublications(newPublications);
-  };
-
-  // Job openings management functions
-  const saveJobOpenings = (updatedJobOpenings: JobOpening[]) => {
-    try {
-      localStorage.setItem('jobOpenings', JSON.stringify(updatedJobOpenings));
-      setJobOpenings(updatedJobOpenings);
-    } catch (error) {
-      console.error("Error saving job openings to localStorage:", error);
-      alert("Failed to save job openings. LocalStorage might be full or unavailable.");
-    }
-  };
-
-  const updateJobOpening = (updatedJobOpening: JobOpening) => {
-    const newJobOpenings = jobOpenings.map(job =>
-      job.id === updatedJobOpening.id ? updatedJobOpening : job
-    );
-    saveJobOpenings(newJobOpenings);
-  };
-
-  const addJobOpening = (newJobOpening: JobOpening): JobOpening => {
-    try {
-      const jobId = newJobOpening.id || `job-${Date.now()}`;
-      const jobWithId = {
-        ...newJobOpening,
-        id: jobId
-      };
-
-      const newJobOpenings = [...jobOpenings, jobWithId];
-      saveJobOpenings(newJobOpenings);
-
-      return jobWithId;
-    } catch (error) {
-      console.error("Failed to add job opening:", error);
-      throw error;
-    }
-  };
-
-  const deleteJobOpening = (id: string) => {
-    const newJobOpenings = jobOpenings.filter(job => job.id !== id);
-    saveJobOpenings(newJobOpenings);
-  };
-
-  const getJobOpeningById = (id: string): JobOpening | undefined => {
-    return jobOpenings.find(job => job.id === id);
-  };
-
-  // Function to reset all data to defaults
   const resetToDefaults = () => {
-    if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
-      localStorage.removeItem('projects');
-      localStorage.removeItem('teamMembers');
-      localStorage.removeItem('newsItems');
-      localStorage.removeItem('collaborators');
-      localStorage.removeItem('publications');
-      localStorage.removeItem('software');
-      localStorage.removeItem('jobOpenings');
-      localStorage.removeItem('featuredItems');
-      localStorage.removeItem('fundingSources');
-      localStorage.removeItem('teamImage');
-      localStorage.removeItem('teamImagePosition');
-      localStorage.removeItem('topicColorRegistry');
-      setTeamMembers(initialTeamMembers);
+    setProjects(initialProjects);
+    setTeamMembers(initialTeamMembers);
+    setNewsItems(initialNewsItems);
+    setCollaborators(initialCollaborators);
+    setPublications(initialPublications);
+    setSoftware(initialSoftware);
+    setJobOpenings(initialJobOpenings);
+    setFundingSources(initialFundingSources);
+    setTopicColorRegistry({});
 
-      const projectsWithGradients = updateProjectGradients(initialProjects);
-      setProjects(projectsWithGradients);
-      setNewsItems(initialNewsItems);
-      setCollaborators(initialCollaborators);
-      setPublications(initialPublications);
-      setSoftware(initialSoftware);
-      setJobOpenings(initialJobOpenings);
-      setFundingSources(initialFundingSources);
-      setTopicColorRegistry({});
-
-      // Reset featured items
-      setFeaturedProject(initialProjects.length > 0 ? initialProjects[0].id : null);
-      setFeaturedNewsItem(initialNewsItems.length > 0 ? initialNewsItems[0].id : null);
-      setFeaturedPublication(initialPublications.length > 0 ? initialPublications[0].id : null);
-
-      // Reset team image
-      setTeamImage('/assets/lab_team.jpeg');
-
-      // Reset team image position
-      setTeamImagePosition('center');
-
-      alert('Data has been reset to defaults.');
-    }
+    // Save all initial data to Firestore
+    initialProjects.forEach(project => db.saveProject(project));
+    initialTeamMembers.forEach(member => db.saveTeamMember(member));
+    initialNewsItems.forEach(item => db.saveNewsItem(item));
+    initialCollaborators.forEach(collab => db.saveCollaborator(collab));
+    initialPublications.forEach(pub => db.savePublication(pub));
+    initialSoftware.forEach(sw => db.saveSoftware(sw));
+    initialJobOpenings.forEach(job => db.saveJobOpening(job));
+    initialFundingSources.forEach(fund => db.saveFundingSource(fund));
   };
 
-  const getTeamMemberById = (id: string): TeamMember | undefined => {
-    return teamMembers.find(member => member.id === id);
-  };
-
-  const getProjectById = (id: string): Project | undefined => {
-    return projects.find(project => project.id === id);
-  };
-
-  const getNewsItemById = (id: string): NewsItem | undefined => {
-    return newsItems.find(newsItem => newsItem.id === id);
-  };
-
-  const getCollaboratorById = (id: string): Collaborator | undefined => {
-    return collaborators.find(collaborator => collaborator.id === id);
-  };
-
-  const getPublicationById = (id: string): Publication | undefined => {
-    return publications.find(publication => publication.id === id);
+  // Return context value
+  const contextValue: ContentContextType = {
+    loading,
+    projects,
+    teamMembers,
+    newsItems,
+    collaborators,
+    fundingSources,
+    publications,
+    software,
+    jobOpenings,
+    topicColorRegistry,
+    updateProject,
+    addProject,
+    deleteProject,
+    reorderProjects,
+    getProjectById,
+    updateTeamMember,
+    addTeamMember,
+    deleteTeamMember,
+    reorderTeamMembers,
+    getTeamMemberById,
+    updateNewsItem,
+    addNewsItem,
+    deleteNewsItem,
+    getNewsItemById,
+    updateCollaborator,
+    addCollaborator,
+    deleteCollaborator,
+    reorderCollaborators,
+    getCollaboratorById,
+    updatePublication,
+    addPublication,
+    deletePublication,
+    getPublicationById,
+    updateSoftware,
+    addSoftware,
+    deleteSoftware,
+    getSoftwareById,
+    updateJobOpening,
+    addJobOpening,
+    deleteJobOpening,
+    getJobOpeningById,
+    updateFundingSource,
+    addFundingSource,
+    deleteFundingSource,
+    getFundingSourceById,
+    updateTopicColor,
+    addTopicColor,
+    removeTopicColor,
+    getTopicColorByName,
+    resetToDefaults,
+    setFeaturedProject,
+    setFeaturedNewsItem,
+    setFeaturedPublication,
+    getFeaturedItems,
+    getTeamImage,
+    updateTeamImage,
+    getTeamImagePosition,
+    updateTeamImagePosition,
   };
 
   return (
-    <ContentContext.Provider value={{
-      projects,
-      teamMembers,
-      newsItems,
-      collaborators,
-      publications,
-      software,
-      jobOpenings,
-      fundingSources,
-      topicColorRegistry,
-      updateProject,
-      addProject,
-      deleteProject,
-      reorderProjects,
-      reorderTeamMembers,
-      reorderCollaborators, // Added reorderCollaborators
-      updateTeamMember,
-      addTeamMember,
-      deleteTeamMember,
-      updateNewsItem,
-      addNewsItem,
-      deleteNewsItem,
-      updateCollaborator,
-      addCollaborator,
-      deleteCollaborator,
-      updatePublication,
-      addPublication,
-      deletePublication,
-      updateSoftware,
-      addSoftware,
-      deleteSoftware,
-      updateJobOpening,
-      addJobOpening,
-      deleteJobOpening,
-      updateFundingSource,
-      addFundingSource,
-      deleteFundingSource,
-      resetToDefaults,
-      getTeamMemberById,
-      getProjectById,
-      getNewsItemById,
-      getCollaboratorById,
-      getPublicationById,
-      getSoftwareById,
-      getJobOpeningById,
-      getFundingSourceById,
-
-      // Topic color management
-      updateTopicColor,
-      addTopicColor,
-      removeTopicColor,
-      getTopicColorByName,
-
-      // Add the new methods
-      setFeaturedProject: handleSetFeaturedProject,
-      setFeaturedNewsItem: handleSetFeaturedNewsItem,
-      setFeaturedPublication: handleSetFeaturedPublication,
-      getFeaturedItems,
-      getTeamImage,
-      updateTeamImage,
-      getTeamImagePosition,
-      updateTeamImagePosition,
-    }}>
+    <ContentContext.Provider value={contextValue}>
       {children}
     </ContentContext.Provider>
   );

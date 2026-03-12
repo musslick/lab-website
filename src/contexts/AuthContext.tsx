@@ -1,15 +1,28 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import {
+  signInWithPopup,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  User
+} from 'firebase/auth';
+import { auth, googleProvider } from '../firebase/config';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (password: string) => Promise<boolean>;
-  logout: () => void;
+  user: User | null;
+  loading: boolean;
+  login: () => Promise<boolean>;
+  logout: () => Promise<void>;
+  error: string | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
+  user: null,
+  loading: true,
   login: async () => false,
-  logout: () => {},
+  logout: async () => {},
+  error: null,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -19,37 +32,49 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if user is already logged in
-    const authStatus = localStorage.getItem('isAuthenticated');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
-    }
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
 
-  const login = async (password: string): Promise<boolean> => {
-    // In a real app, this would validate against a backend
-    // For demo purposes, we're using a hardcoded password
-    const adminPassword = 'password'; // Would be environment variable in production
-    
-    if (password === adminPassword) {
-      setIsAuthenticated(true);
-      localStorage.setItem('isAuthenticated', 'true');
+  const login = async (): Promise<boolean> => {
+    try {
+      setError(null);
+      const result = await signInWithPopup(auth, googleProvider);
+      setUser(result.user);
       return true;
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Failed to sign in with Google');
+      return false;
     }
-    return false;
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
+  const logout = async (): Promise<void> => {
+    try {
+      await firebaseSignOut(auth);
+      setUser(null);
+    } catch (err: any) {
+      console.error('Logout error:', err);
+      setError(err.message || 'Failed to sign out');
+    }
   };
-  
+
+  const isAuthenticated = user !== null;
+
   // Return context value
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, error }}>
       {children}
     </AuthContext.Provider>
   );
